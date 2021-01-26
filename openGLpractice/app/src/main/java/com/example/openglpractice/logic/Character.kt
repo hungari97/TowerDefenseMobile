@@ -1,6 +1,8 @@
 package com.example.openglpractice.logic
 
-interface Character:Interactable,Animated {
-    val goal:Int
-    val path:Int
+import com.example.openglpractice.model.CharacterData
+import com.example.openglpractice.model.Vector
+
+abstract class Character(override val data: CharacterData<*>):Interactable,Animatable {
+    fun move(from: Vector, to:Vector){}
 }

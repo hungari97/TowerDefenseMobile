@@ -1,9 +1,9 @@
 package com.example.openglpractice.logic
 
-interface Interactable {
-    val id:Long
-    val health:Int
-    val damage:Int
-    val hitBox:Long
+import com.example.openglpractice.model.InteractableData
 
+interface Interactable {
+    val data: InteractableData
+
+    fun hit(thing:Interactable)
 }

@@ -1,12 +1,15 @@
 package com.example.openglpractice.logic
 
-class Hero:Character {
-    override val id: Long
-        get() = TODO("Not yet implemented")
-    override val health: Int
-        get() = TODO("Not yet implemented")
-    override val damage: Int
-        get() = TODO("Not yet implemented")
-    override val hitBox: Long
-        get() = TODO("Not yet implemented")
+import com.example.openglpractice.model.HeroData
+
+class Hero(override var data:HeroData):Interactable {
+
+    init {
+        data.functionality=this
+    }
+    override fun hit(thing: Interactable) {
+        TODO("Not yet implemented")
+    }
+
+
 }

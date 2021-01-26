@@ -1,4 +1,10 @@
 package com.example.openglpractice.logic
 
-abstract class Enemy:Elemental,Character {
+import com.example.openglpractice.model.EnemyData
+
+abstract class Enemy:Interactable {
+    override val data:EnemyData
+        get() {
+            TODO()
+        }
 }
