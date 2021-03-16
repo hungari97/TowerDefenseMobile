@@ -1,8 +1,8 @@
 package com.example.openglpractice.model
 
-interface AnimatableData<T:Any> {
-    val animationState:T
-    val currentAnimationProgress:Int
+interface AnimatableData<T:IFeatureEnum> {
+    val animationState:IFeatureEnum
+    var currentAnimationProgress:Int
     
     //TODO("accespoint to animation state")
     

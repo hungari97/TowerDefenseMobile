@@ -1,6 +1,6 @@
 package com.example.openglpractice.model
 
-import com.example.openglpractice.logic.Interactable
+import com.example.openglpractice.logic.Field
 
 data class FieldData(
     override val id: Long,
@@ -8,7 +8,8 @@ data class FieldData(
     override val damage: Int,
     override val hitBoxPosition: Vector,
     override val hitBoxSize: Vector,
-    override val functionality: Interactable
+    override var functionality: Field,
+    var type:Int
 ) :InteractableData {
 
 }

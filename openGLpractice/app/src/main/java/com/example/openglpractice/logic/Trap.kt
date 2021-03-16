@@ -12,7 +12,7 @@ open class Trap() : AFeature<TrapData.TrapAnimationState>() {
     }
 
     init {
-        data.functionality=this
+        ///data.functionality=this
     }
 
     override fun hit(thing: Interactable) {

@@ -9,9 +9,9 @@ class CollisionSector {
             TODO()
         }
 
-    fun detectCollision(attacker: Interactable, position: Vector) {
+    /*fun detectCollision(attacker: Interactable, position: Vector) {
         data.inventory.forEach {
             if (it.hitBoxPosition==position)
         }
-    }
+    }*/
 }

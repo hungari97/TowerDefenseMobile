@@ -10,12 +10,12 @@ data class HeroData(
     override val hitBoxPosition: Vector,
     override val hitBoxSize: Vector,
     override val animationState: HeroAnimateState,
-    override val currentAnimationProgress: Int,
+    override var currentAnimationProgress: Int,
     override var goal: Vector?,
     override var path: Array<Vector>?,
     override var functionality: Hero?,
     var trapTypes:Set<FeatureFactory>
 
 ) : CharacterData<HeroData.HeroAnimateState>() {
-    enum class HeroAnimateState
+    enum class HeroAnimateState:IFeatureEnum
 }

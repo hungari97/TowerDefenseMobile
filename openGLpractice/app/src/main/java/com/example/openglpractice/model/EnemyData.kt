@@ -9,10 +9,10 @@ data class EnemyData(
     override val hitBoxPosition: Vector,
     override val hitBoxSize: Vector,
     override val animationState: EnemyAnimateState,
-    override val currentAnimationProgress: Int,
+    override var currentAnimationProgress: Int,
     override val goal: Vector?,
     override var path: Array<Vector>?,
     override val functionality: Interactable
 ): CharacterData<EnemyData.EnemyAnimateState>() {
-    enum class EnemyAnimateState
+    enum class EnemyAnimateState:IFeatureEnum
 }

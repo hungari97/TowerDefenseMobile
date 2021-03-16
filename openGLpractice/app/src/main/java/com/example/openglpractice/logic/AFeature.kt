@@ -1,12 +1,9 @@
 package com.example.openglpractice.logic
 
-import com.example.openglpractice.model.AFeatureData
-import com.example.openglpractice.model.FeatureData
-import com.example.openglpractice.model.TrapData
-import com.example.openglpractice.model.Vector
+import com.example.openglpractice.model.*
 
 
-abstract class AFeature<T:Any> : Interactable, Animatable {
+abstract class AFeature<T:IFeatureEnum> : Interactable, Animatable {
     abstract override val data: AFeatureData<T>
     override fun hit(thing: Interactable) {
         TODO("Not yet implemented")

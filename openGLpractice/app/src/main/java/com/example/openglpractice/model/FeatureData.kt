@@ -1,5 +1,7 @@
 package com.example.openglpractice.model
 
+import com.example.openglpractice.logic.AFeature
+import com.example.openglpractice.logic.Feature
 import com.example.openglpractice.logic.Interactable
 
 data class FeatureData(
@@ -9,9 +11,9 @@ data class FeatureData(
     override val hitBoxPosition: Vector,
     override val hitBoxSize: Vector,
     override val animationState: FeatureAnimateState,
-    override val currentAnimationProgress: Int,
-    override val functionality: Interactable
+    override var currentAnimationProgress: Int,
+    override val functionality: Feature
 
 ) : AFeatureData<FeatureData.FeatureAnimateState>() {
-    enum class FeatureAnimateState
+    enum class FeatureAnimateState:IFeatureEnum
 }
