@@ -1020,6 +1020,7 @@ color foreground_material_dark
 color foreground_material_light
 color highlighted_text_material_dark
 color highlighted_text_material_light
+color invisible
 color material_blue_grey_800
 color material_blue_grey_900
 color material_blue_grey_950
@@ -1565,6 +1566,7 @@ drawable abc_textfield_search_activated_mtrl_alpha
 drawable abc_textfield_search_default_mtrl_alpha
 drawable abc_textfield_search_material
 drawable abc_vector_test
+drawable arrow_background
 drawable avd_hide_password
 drawable avd_show_password
 drawable bricks
@@ -1586,6 +1588,10 @@ drawable design_snackbar_background
 drawable dungeon_defender_texture
 drawable features_texture
 drawable fieldtexture
+drawable ic_arrow_down_bold_outline
+drawable ic_arrow_left_bold_outline
+drawable ic_arrow_right_bold_outline
+drawable ic_arrow_up_bold_outline
 drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable ic_mtrl_checked_circle
@@ -1623,6 +1629,7 @@ drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
 drawable player_texture
+drawable selected_arrow_background
 drawable selected_traplist_item
 drawable spike_texture
 drawable spritestrip
@@ -1811,6 +1818,10 @@ id hideable
 id home
 id homeAsUp
 id honorRequest
+id ibArrowDown
+id ibArrowLeft
+id ibArrowRight
+id ibArrowUp
 id ibTrapSelect1
 id ibTrapSelect2
 id ibTrapSelect3
@@ -1839,6 +1850,7 @@ id line3
 id linear
 id listMode
 id list_item
+id llRotationArrow
 id masked
 id message
 id middle

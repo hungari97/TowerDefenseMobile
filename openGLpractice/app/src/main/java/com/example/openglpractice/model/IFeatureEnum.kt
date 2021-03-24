@@ -1,8 +1,8 @@
 package com.example.openglpractice.model
 
 interface IFeatureEnum {
-    val textureIndexes: FloatArray
+    val textureArray: Array<FloatArray>
 
-    fun valueOfCurrentState(state :Int):FloatArray
-    fun calculateCurrentState(minR:Int,minC:Int,maxR:Int,maxC:Int):FloatArray
+    fun calculateAnimationArray(type:Int,rest:Boolean):Array<FloatArray>
+
 }

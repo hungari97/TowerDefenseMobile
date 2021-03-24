@@ -10,11 +10,13 @@ import com.example.openglpractice.presenter.GamePresenter
 import com.example.openglpractice.view.opengl.TileType.*
 import javax.microedition.khronos.opengles.GL10
 
-class LessonFourRenderer(activityContext: Context,var presenter: GamePresenter) : GLSurfaceView.Renderer {
+class LessonFourRenderer(activityContext: Context, var presenter: GamePresenter) :
+    GLSurfaceView.Renderer {
     private val mActivityContext: Context = activityContext
 
-    val fieldMatrix=presenter.logicFieldMatrix()
-    var featureMatrix=presenter.buildFeatureMatrix()
+    val fieldMatrix = presenter.logicFieldMatrix()
+    var featureMatrix = presenter.buildFeatureMatrix()
+    var characterMatrix = presenter.buildCharacterMatrix()
 
     /** How many bytes per float.  */
     internal val mBytesPerFloat = 4
@@ -50,7 +52,7 @@ class LessonFourRenderer(activityContext: Context,var presenter: GamePresenter) 
     private val gameLevelRowSize = 8
 
 
-    val layers= listOf<DrawableLayer>(
+    val layers = listOf<DrawableLayer>(
 
         FieldLayer(this),
         FeatureLayer(this)
@@ -79,7 +81,7 @@ class LessonFourRenderer(activityContext: Context,var presenter: GamePresenter) 
         GLES20.glDisable(GLES20.GL_DEPTH_TEST)
 
         GLES20.glEnable(GLES20.GL_BLEND)
-        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA,GLES20.GL_ONE_MINUS_SRC_ALPHA)
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
 
         val vertexShader = vertexShader
         val fragmentShader = fragmentShader
@@ -101,7 +103,9 @@ class LessonFourRenderer(activityContext: Context,var presenter: GamePresenter) 
             )
 
         // Load the texture
-        layers.forEach{it.mTextureDataHandle=TextureHelper.loadTexture(mActivityContext,it.textureFile)}
+        layers.forEach {
+            it.mTextureDataHandle = TextureHelper.loadTexture(mActivityContext, it.textureFile)
+        }
 
         /*mTextureDataHandle =
             TextureHelper.loadTexture(
@@ -124,7 +128,7 @@ class LessonFourRenderer(activityContext: Context,var presenter: GamePresenter) 
         val far = 10.0f
         Matrix.frustumM(mProjectionMatrix, 0, left, ratio, bottom, top, near, far)
 
-        width/14
+        width / 14
         println("width: ${width}")
         println("height: ${height}")
 
@@ -166,23 +170,28 @@ class LessonFourRenderer(activityContext: Context,var presenter: GamePresenter) 
         GLES20.glUseProgram(mProgramHandle)
 
         mTextureUniformHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_Texture")
-// Set the active texture unit to texture unit 0.
+        // Set the active texture unit to texture unit 0.
         //GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
 
-        layers.forEach{it.draw()}
+        layers.forEach { it.draw() }
 
     }
 
     /**Initialize the model data.    */
     init {
 
-        layers.forEach{it.initialize()}
+        layers.forEach { it.initialize() }
 
     }
 
-    fun featureUpdate(){
-        featureMatrix=presenter.buildFeatureMatrix()
-        layers.forEach { it.updateMatrix() }
+    fun characterUpdate() {
+        characterMatrix = presenter.buildCharacterMatrix()
+        layers[2].updateMatrix()
+    }
+
+    fun featureUpdate() {
+        featureMatrix = presenter.buildFeatureMatrix()
+        layers[1].updateMatrix()
     }
 
     private fun calculateTextureCoords(

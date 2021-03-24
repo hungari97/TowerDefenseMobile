@@ -4,6 +4,7 @@ import android.opengl.GLES20
 import android.opengl.Matrix
 import com.example.openglpractice.R
 import com.example.openglpractice.logic.AFeature
+import java.lang.Math.abs
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -101,14 +102,12 @@ class FeatureLayer(
         for (row in 0 until matrix.size) {
             for (cell in 0 until matrix[row].size) {
                 matrix[row][cell]?.let {
-
-                    it.data.animationState.valueOfCurrentState(it.data.currentAnimationProgress)
-                        .forEach { trapIndex ->
-                            textureCoordArray[rectangleStartIndex] = trapIndex
-                            rectangleStartIndex++
-                        }
-                } ?: TileType.TRAP_NOTHING.textureIndexes.forEach { trapIndex ->
-                    textureCoordArray[rectangleStartIndex] = trapIndex
+                    cellTextureWithRotation(row, cell, it).forEachIndexed { index, trapFloat ->
+                        textureCoordArray[rectangleStartIndex] = trapFloat
+                        rectangleStartIndex++
+                    }
+                } ?: TileType.TRAP_NOTHING.textureIndexes.forEachIndexed { index, trapFloat ->
+                    textureCoordArray[rectangleStartIndex] = trapFloat
                     rectangleStartIndex++
                 }
             }
@@ -126,7 +125,89 @@ class FeatureLayer(
         mTextureCoordinates.put(textureCoordArray).position(0)
     }
 
+    /** A mátrix cellájának megfelelő irányba való elforgatásával való része*/
+    fun cellTextureWithRotation(
+        row: Int,
+        cell: Int,
+        it: AFeature<*>
+    ): FloatArray {
+        val sor: Int
+        val oszlop: Int
+        val temp: FloatArray
+        if (it.data.rotation == 0.toByte() || it.data.rotation == 2.toByte()) {
+            sor = abs(it.data.hitBoxPosition.y.toInt() - row)
+            oszlop = abs(it.data.hitBoxPosition.x.toInt() - cell)
+            temp =
+                it.data.animationState.textureArray[it.data.currentAnimationProgress * it.data.hitBoxSize.x.toInt() * it.data.hitBoxSize.y.toInt() + sor * it.data.hitBoxSize.x.toInt() + oszlop]
+
+        } else {
+            sor = abs(it.data.hitBoxPosition.y.toInt() - row)
+            oszlop = abs(it.data.hitBoxPosition.x.toInt() - cell)
+            temp =
+                it.data.animationState.textureArray[it.data.currentAnimationProgress * it.data.hitBoxSize.x.toInt() * it.data.hitBoxSize.y.toInt() + sor * it.data.hitBoxSize.y.toInt() +oszlop]
+        }
+
+        when (it.data.rotation) {
+            0.toByte() -> {
+                return floatArrayOf(
+                    temp[8],
+                    temp[9],
+                    temp[4],
+                    temp[5],
+                    temp[2],
+                    temp[3],
+                    temp[4],
+                    temp[5],
+                    temp[0],
+                    temp[1],
+                    temp[2],
+                    temp[3]
+                )
+            }
+            1.toByte() -> {
+                return floatArrayOf(
+                    temp[4],
+                    temp[5],
+                    temp[0],
+                    temp[1],
+                    temp[8],
+                    temp[9],
+                    temp[0],
+                    temp[1],
+                    temp[2],
+                    temp[3],
+                    temp[8],
+                    temp[9]
+                )
+            }
+            2.toByte() -> {
+                return temp
+            }
+            3.toByte() -> {
+                return floatArrayOf(
+                    temp[2],
+                    temp[3],
+                    temp[8],
+                    temp[9],
+                    temp[0],
+                    temp[1],
+                    temp[8],
+                    temp[9],
+                    temp[4],
+                    temp[5],
+                    temp[0],
+                    temp[1]
+                )
+            }
+
+        }
+
+        return it.data.animationState.textureArray[it.data.currentAnimationProgress * it.data.hitBoxSize.x.toInt() * it.data.hitBoxSize.y.toInt() + sor * it.data.hitBoxSize.x.toInt() + oszlop]
+    }
+
     override fun draw() {
+
+
         // Set the active texture unit to texture unit 0.
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
 

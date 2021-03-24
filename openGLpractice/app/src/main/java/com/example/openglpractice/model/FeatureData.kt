@@ -10,8 +10,9 @@ data class FeatureData(
     override val damage: Int,
     override val hitBoxPosition: Vector,
     override val hitBoxSize: Vector,
-    override val animationState: FeatureAnimateState,
+    override var animationState: FeatureAnimateState,
     override var currentAnimationProgress: Int,
+    override var rotation: Byte,
     override val functionality: Feature
 
 ) : AFeatureData<FeatureData.FeatureAnimateState>() {

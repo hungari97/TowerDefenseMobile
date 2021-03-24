@@ -6,15 +6,13 @@ import android.content.pm.ConfigurationInfo
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.example.openglpractice.R
 import com.example.openglpractice.injector
-import com.example.openglpractice.logic.Trap
+import com.example.openglpractice.logic.Timer
 import com.example.openglpractice.model.Vector
 import com.example.openglpractice.presenter.GamePresenter
 import com.example.openglpractice.screen.GameScreen
@@ -22,12 +20,12 @@ import com.example.openglpractice.view.opengl.LessonFourRenderer
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-
 class GameActivity : AppCompatActivity(), GameScreen {
     @Inject
     lateinit var gamePresenter: GamePresenter
 
     lateinit var ibSelectTraps: Array<ImageButton>
+    lateinit var ibSelectArrow: Array<ImageButton>
     var x: Float = 0.0f
     var y: Float = 0.0f
     lateinit var render: LessonFourRenderer
@@ -65,14 +63,13 @@ class GameActivity : AppCompatActivity(), GameScreen {
             return;
         }
 
-
         swGameView.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View, m: MotionEvent): Boolean {
                 if (m.getAction() == MotionEvent.ACTION_DOWN) {
                     // Perform tasks here
                     x = m.x * 8 / swGameView.height
                     y = 8 - (m.y * 8 / swGameView.height)
-                    println("x:${x} y:${y}")
+                    //println("x:${x} y:${y}")
 
                     if (y >= 8.0f) {
                         y = 7.9f
@@ -94,7 +91,6 @@ class GameActivity : AppCompatActivity(), GameScreen {
 
         swGameView.setZOrderMediaOverlay(true)
 
-
         ibSelectTraps = arrayOf(
             ibTrapSelect1,
             ibTrapSelect2,
@@ -103,19 +99,26 @@ class GameActivity : AppCompatActivity(), GameScreen {
             ibTrapSelect5,
             ibTrapSelect6
         )
-        ibSelectTraps.forEach { button -> button.setOnClickListener { trapSelectOnClick(button) } }
+        ibSelectTraps.forEachIndexed { index, button ->
+            //button.setBackgroundResource(gamePresenter.getSelectedTrapList()[index])
+            button.setOnClickListener { trapSelectOnClick(button) }
+        }
 
         ibSelectTraps[0].setImageResource(gamePresenter.getSelectedTrapList()[0])
+        ibSelectTraps[1].setImageResource(gamePresenter.getSelectedTrapList()[1])
 
-        /*findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }*/
+        ibSelectArrow = arrayOf(ibArrowLeft, ibArrowUp, ibArrowRight, ibArrowDown)
+        ibSelectArrow.forEach { button ->
+            button.setOnClickListener { arrowSelectOnClick(button) }
+        }
+
+        llRotationArrow.visibility = View.INVISIBLE
+
+        Timer.subbscribers.plusAssign(::updateScreen)
 
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
@@ -129,7 +132,7 @@ class GameActivity : AppCompatActivity(), GameScreen {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
-    }
+    }*/
 
     override fun onResume() {
         super.onResume()
@@ -144,19 +147,36 @@ class GameActivity : AppCompatActivity(), GameScreen {
     }
 
     fun trapSelectOnClick(v: ImageButton) {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (v.background.constantState == getDrawable(R.drawable.selected_traplist_item)!!.constantState) {
                 v.setBackgroundResource(R.drawable.not_selected_traplist_item)
+                gamePresenter.trapHasBeenSelected(ibSelectTraps.indexOf((v)))
+                llRotationArrow.visibility = View.GONE
             } else {
                 resetTrapBackgound()
                 v.setBackgroundResource(R.drawable.selected_traplist_item)
+                llRotationArrow.visibility = View.VISIBLE
                 gamePresenter.trapHasBeenSelected(ibSelectTraps.indexOf(v))
             }
         } else {
             TODO("VERSION.SDK_INT < LOLLIPOP")
         }
+    }
 
+    fun arrowSelectOnClick(v: ImageButton) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (v.background.constantState == getDrawable(R.drawable.selected_arrow_background)!!.constantState) {
+                gamePresenter.buildArrowSelected(ibSelectArrow.indexOf(v))
+            } else {
+                ibSelectArrow.forEach { it.background=getDrawable(R.color.invisible) }
+                v.background=getDrawable(R.drawable.selected_arrow_background)
+                gamePresenter.buildArrowSelected(ibSelectArrow.indexOf(v))
+            }
+
+
+        } else {
+            TODO("VERSION.SDK_INT < LOLLIPOP")
+        }
     }
 
     private fun resetTrapBackgound() {
@@ -165,16 +185,8 @@ class GameActivity : AppCompatActivity(), GameScreen {
         }
     }
 
-    override fun selectTrap(index: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun drawTrap(trap: Trap) {
-        TODO("Not yet implemented")
-    }
-
-    override fun initialise() {
-        TODO("Not yet implemented")
+    override fun updateScreen() {
+        render.featureUpdate()
     }
 
 

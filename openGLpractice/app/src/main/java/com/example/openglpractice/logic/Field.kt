@@ -19,4 +19,8 @@ class Field(idGen:Long,row:Int,coloum:Int,type:Int):Interactable {
         TODO("Not yet implemented")
     }
 
+    override fun death() {
+        TODO("Not yet implemented")
+    }
+
 }

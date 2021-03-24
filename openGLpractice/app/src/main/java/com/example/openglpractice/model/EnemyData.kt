@@ -12,7 +12,10 @@ data class EnemyData(
     override var currentAnimationProgress: Int,
     override val goal: Vector?,
     override var path: Array<Vector>?,
+    override var rotation: Byte,
     override val functionality: Interactable
 ): CharacterData<EnemyData.EnemyAnimateState>() {
-    enum class EnemyAnimateState:IFeatureEnum
+    enum class EnemyAnimateState:IFeatureEnum{
+
+    }
 }

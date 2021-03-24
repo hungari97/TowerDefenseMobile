@@ -1,6 +1,5 @@
 package com.example.openglpractice.logic
 
-import com.example.openglpractice.model.AFeatureData
 import com.example.openglpractice.model.FeatureData
 import com.example.openglpractice.model.Vector
 
@@ -13,10 +12,21 @@ class Feature(row: Double,coloum:Double) : AFeature<FeatureData.FeatureAnimateSt
         hitBoxSize = Vector(0.5, 0.5),
         animationState = FeatureData.FeatureAnimateState.valueOf(""),
         currentAnimationProgress = 1,
-        functionality = this
+        functionality = this,
+        rotation =0
+
     )
 
-    override fun positionToMatrixPosition(position: Vector): Boolean {
+    init {
+        Timer.subbscribers.plus(onThick())
+    }
+    override fun death() {
+        Timer.subbscribers.remove { this.onThick() }
+
+    }
+
+    override fun onThick() {
         TODO("Not yet implemented")
     }
+
 }

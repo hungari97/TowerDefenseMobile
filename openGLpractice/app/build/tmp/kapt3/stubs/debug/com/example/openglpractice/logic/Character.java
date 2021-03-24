@@ -2,24 +2,19 @@ package com.example.openglpractice.logic;
 
 import java.lang.System;
 
-@kotlin.Metadata(mv = {1, 4, 1}, bv = {1, 0, 3}, k = 1, d1 = {"\u0000$\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0004\n\u0002\u0010\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\b&\u0018\u00002\u00020\u00012\u00020\u0002B\u0011\u0012\n\u0010\u0003\u001a\u0006\u0012\u0002\b\u00030\u0004\u00a2\u0006\u0002\u0010\u0005J\u0016\u0010\b\u001a\u00020\t2\u0006\u0010\n\u001a\u00020\u000b2\u0006\u0010\f\u001a\u00020\u000bR\u0018\u0010\u0003\u001a\u0006\u0012\u0002\b\u00030\u0004X\u0096\u0004\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0006\u0010\u0007\u00a8\u0006\r"}, d2 = {"Lcom/example/openglpractice/logic/Character;", "Lcom/example/openglpractice/logic/Interactable;", "Lcom/example/openglpractice/logic/Animatable;", "data", "Lcom/example/openglpractice/model/CharacterData;", "(Lcom/example/openglpractice/model/CharacterData;)V", "getData", "()Lcom/example/openglpractice/model/CharacterData;", "move", "", "from", "Lcom/example/openglpractice/model/Vector;", "to", "app_debug"})
-public abstract class Character implements com.example.openglpractice.logic.Interactable, com.example.openglpractice.logic.Animatable {
+@kotlin.Metadata(mv = {1, 4, 1}, bv = {1, 0, 3}, k = 1, d1 = {"\u0000,\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0010\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\b&\u0018\u0000*\b\b\u0000\u0010\u0001*\u00020\u00022\u00020\u00032\u00020\u0004B\u0005\u00a2\u0006\u0002\u0010\u0005J\u0016\u0010\n\u001a\u00020\u000b2\u0006\u0010\f\u001a\u00020\r2\u0006\u0010\u000e\u001a\u00020\rR\u0018\u0010\u0006\u001a\b\u0012\u0004\u0012\u00028\u00000\u0007X\u00a6\u0004\u00a2\u0006\u0006\u001a\u0004\b\b\u0010\t\u00a8\u0006\u000f"}, d2 = {"Lcom/example/openglpractice/logic/Character;", "T", "Lcom/example/openglpractice/model/IFeatureEnum;", "Lcom/example/openglpractice/logic/Interactable;", "Lcom/example/openglpractice/logic/Animatable;", "()V", "data", "Lcom/example/openglpractice/model/CharacterData;", "getData", "()Lcom/example/openglpractice/model/CharacterData;", "move", "", "from", "Lcom/example/openglpractice/model/Vector;", "to", "app_debug"})
+public abstract class Character<T extends com.example.openglpractice.model.IFeatureEnum> implements com.example.openglpractice.logic.Interactable, com.example.openglpractice.logic.Animatable {
+    
     @org.jetbrains.annotations.NotNull()
-    private final com.example.openglpractice.model.CharacterData<?> data = null;
+    @java.lang.Override()
+    public abstract com.example.openglpractice.model.CharacterData<T> getData();
     
     public final void move(@org.jetbrains.annotations.NotNull()
     com.example.openglpractice.model.Vector from, @org.jetbrains.annotations.NotNull()
     com.example.openglpractice.model.Vector to) {
     }
     
-    @org.jetbrains.annotations.NotNull()
-    @java.lang.Override()
-    public com.example.openglpractice.model.CharacterData<?> getData() {
-        return null;
-    }
-    
-    public Character(@org.jetbrains.annotations.NotNull()
-    com.example.openglpractice.model.CharacterData<?> data) {
+    public Character() {
         super();
     }
 }

@@ -1,19 +1,17 @@
 package com.example.openglpractice.model.interactor
 
-import android.graphics.drawable.Icon
 import com.example.openglpractice.logic.AFeature
-import com.example.openglpractice.logic.FeatureFactory
+import com.example.openglpractice.logic.Character
 import com.example.openglpractice.logic.Field
-import com.example.openglpractice.logic.LevelManager
 import com.example.openglpractice.model.Vector
+import com.example.openglpractice.presenter.GamePresenter
 import javax.inject.Inject
 
 class BuildInteractor @Inject constructor() {
+    private val levelManager = com.example.openglpractice.logic.LevelManager
 
-    val levelManager = com.example.openglpractice.logic.LevelManager
     fun buildTouchPosition(position: Vector) {
         levelManager.buildTrap(position)
-
     }
 
     fun buildTrapSelect(trapIndex: Int) {
@@ -36,6 +34,14 @@ class BuildInteractor @Inject constructor() {
         return Array(levelManager.selectedTraps.size) {
             levelManager.selectedTraps.elementAt(it).iconIndex
         }
+    }
+
+    fun buildArrowSelected(arrow: Int) {
+        levelManager.selectedRotation=arrow.toByte()
+    }
+
+    fun getCharacterMatrix(): Array<Array<Character<*>?>> {
+        return levelManager.characterMatrix
     }
 
 }

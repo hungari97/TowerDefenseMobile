@@ -31,6 +31,7 @@ interface DrawableLayer {
 
 
 
+
     /** Store the model matrix. This matrix is used to move models from object space (where each model can be thought
      * of being located at the center of the universe) to world space.     */
     val mModelMatrix:FloatArray
@@ -88,4 +89,5 @@ interface DrawableLayer {
 
         return rectangle
     }
+
 }

@@ -8,193 +8,105 @@ data class TrapData(
     override val damage: Int,
     override val hitBoxPosition: Vector,
     override val hitBoxSize: Vector,
-    override val animationState: TrapAnimationState,
+    override var animationState: TrapAnimationState,
     override var currentAnimationProgress: Int,
     override val functionality: Trap,
+    override var rotation: Byte, //0-left, 1 -up, 2-rigth, 3, down
     val coolDown: Long
 
 ) : AFeatureData<TrapData.TrapAnimationState>() {
     enum class TrapAnimationState : IFeatureEnum {
-        REST_0 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 0, 2, 1)
+        SPIKEREST {
+            override val textureArray: Array<FloatArray> by lazy {
+                textureArrayInitialise(1, 1, 1)
+            }
+
+        },
+        SPIKEATTACK {
+            override val textureArray: Array<FloatArray> by lazy {
+                textureArrayInitialise(1, 1, 2)
+            }
+
+        },
+        FIREREST {
+            override val textureArray: Array<FloatArray> by lazy {
+                textureArrayInitialise(2, 1, 3)
             }
         },
-        REST_1 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 1, 2, 2)
-            }
-        },
-        REST_2 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 2, 2, 3)
-            }
-        },
-        REST_3 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 3, 2, 4)
-            }
-        },
-        REST_4 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 4, 2, 5)
-            }
-        },
-        REST_5 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 5, 2, 6)
-            }
-        },
-        REST_6 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 6, 2, 7)
-            }
-        },
-        REST_7 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 7, 2, 8)
-            }
-        },
-        REST_8 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 8, 2, 9)
-            }
-        },
-        REST_9 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 9, 2, 10)
-            }
-        },
-        REST_10 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 10, 2, 11)
-            }
-        },
-        REST_11 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 11, 2, 12)
-            }
-        },
-        REST_12 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 12, 2, 13)
-            }
-        },
-        REST_13 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 13, 2, 14)
-            }
-        },
-        REST_14 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 14, 2, 15)
-            }
-        },
-        REST_15 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(1, 15, 2, 16)
-            }
-        },
-        ATTACK_0 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 0, 3, 1)
-            }
-        },
-        ATTACK_1 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 1, 3, 2)
-            }
-        },
-        ATTACK_2 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 2, 3, 3)
-            }
-        },
-        ATTACK_3 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 3, 3, 4)
-            }
-        },
-        ATTACK_4 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 4, 3, 5)
-            }
-        },
-        ATTACK_5 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 5, 3, 6)
-            }
-        },
-        ATTACK_6 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 6, 3, 7)
-            }
-        },
-        ATTACK_7 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 7, 3, 8)
-            }
-        },
-        ATTACK_8 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 8, 3, 9)
-            }
-        },
-        ATTACK_9 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 9, 3, 10)
-            }
-        },
-        ATTACK_10 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 10, 3, 11)
-            }
-        },
-        ATTACK_11 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 11, 3, 12)
-            }
-        },
-        ATTACK_12 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 12, 3, 13)
-            }
-        },
-        ATTACK_13 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 13, 3, 14)
-            }
-        },
-        ATTACK_14 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 14, 3, 15)
-            }
-        },
-        ATTACK_15 {
-            override val textureIndexes: FloatArray by lazy {
-                calculateCurrentState(2, 15, 3, 16)
+        FIREATTACK {
+            override val textureArray: Array<FloatArray> by lazy {
+                textureArrayInitialise(2, 1, 5)
             }
         };
 
-        override fun valueOfCurrentState(state: Int): FloatArray {
-            return values()[state].textureIndexes
+        fun changeToAttack(rest: TrapAnimationState): TrapAnimationState {
+            return if (rest.ordinal % 2 == 0)
+                values()[rest.ordinal + 1]
+            else
+                values()[rest.ordinal - 1]
         }
 
-        override fun calculateCurrentState(
+        fun calculateCurrentState(
             minR: Int,
             minC: Int,
             maxR: Int,
             maxC: Int
         ): FloatArray {
             return floatArrayOf(
-                maxC / 16.0f, minR / 7.0f,
-                maxC / 16.0f, maxR / 7.0f,
                 minC / 16.0f, minR / 7.0f,
-                maxC / 16.0f, maxR / 7.0f,
                 minC / 16.0f, maxR / 7.0f,
-                minC / 16.0f, minR / 7.0f
+                maxC / 16.0f, minR / 7.0f,
+                minC / 16.0f, maxR / 7.0f,
+                maxC / 16.0f, maxR / 7.0f,
+                maxC / 16.0f, minR / 7.0f
             )
         }
 
+        override fun calculateAnimationArray(type: Int, rest: Boolean): Array<FloatArray> {
+            when (type) {
+                0 -> if (rest) {
+                    SPIKEREST.textureArray
+                } else
+                    SPIKEATTACK.textureArray
+                1 -> if (rest) {
+                    FIREREST.textureArray
+                } else
+                    FIREATTACK.textureArray
+            }
+            return SPIKEREST.textureArray
+        }
+
+        fun textureArrayInitialise(
+            frameSizeX: Int,
+            frameSizeY: Int,
+            startingRow: Int
+        ): Array<FloatArray> {
+            var output = Array<FloatArray>(16 * frameSizeX * frameSizeY) { floatArrayOf(0.0f) }
+
+            for (frameIndex in 0 until 16)
+                for (frameX in 0 until frameSizeX) {
+                    for (frameY in 0 until frameSizeY) {
+
+                        output[frameIndex * frameSizeX * frameSizeY + frameY * frameSizeX + frameX] =
+                            calculateCurrentState(
+                                (startingRow + (((frameIndex) * frameSizeX / (16 - (16 % frameSizeX))) * frameSizeY)) + frameY,
+                                (frameIndex * frameSizeX) % (16 - (16 % frameSizeX)) + frameX,
+                                (startingRow + (((frameIndex) * frameSizeX / (16 - (16 % frameSizeX))) * frameSizeY)) + frameY + 1,
+                                (frameIndex * frameSizeX) % (16 - (16 % frameSizeX)) + frameX + 1
+                            )
+
+                    }
+                }
+            var kep = Array(16) { currentFrame ->
+                calculateCurrentState(
+                    startingRow + (((currentFrame + 1) * frameSizeX / (16 - (16 % frameSizeX))) * frameSizeY),
+                    (currentFrame * frameSizeX) % (16 - (16 % frameSizeX)),
+                    (startingRow + (((currentFrame + 1) * frameSizeX / (16 - (16 % frameSizeX))) * frameSizeY) + frameSizeY),
+                    (currentFrame * frameSizeX) % (16 - (16 % frameSizeX)) + frameSizeX
+                )
+
+            }
+            return output
+        }
     }
 }

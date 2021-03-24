@@ -2,7 +2,7 @@ package com.example.openglpractice.logic
 
 import com.example.openglpractice.model.EnemyData
 
-abstract class Enemy:Interactable {
+abstract class Enemy: Character<EnemyData.EnemyAnimateState>() {
     override val data:EnemyData
         get() {
             TODO()

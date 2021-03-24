@@ -6,4 +6,6 @@ interface Interactable {
     val data: InteractableData
 
     fun hit(thing:Interactable)
+
+    fun death()
 }

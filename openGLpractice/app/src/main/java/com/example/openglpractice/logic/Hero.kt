@@ -1,10 +1,9 @@
 package com.example.openglpractice.logic
 
-import com.example.openglpractice.model.FieldData
 import com.example.openglpractice.model.HeroData
 import com.example.openglpractice.model.Vector
 
-class Hero(id: Long, data: HeroData) : Interactable {
+class Hero(id: Long, data: HeroData) : Character<HeroData.HeroAnimateState>() {
     override val data: HeroData = HeroData(
         id,
         5,
@@ -16,14 +15,25 @@ class Hero(id: Long, data: HeroData) : Interactable {
         null,
         null,
         this,
-        setOf(FeatureFactory.TRAP)
+        0,
+        setOf(FeatureFactory.SPIKETRAP,FeatureFactory.FIRETRAP),
+
     )
 
     init {
         data.functionality = this
+        Timer.subbscribers.plus(onThick())
     }
 
     override fun hit(thing: Interactable) {
+        TODO("Not yet implemented")
+    }
+
+    override fun death() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onThick() {
         TODO("Not yet implemented")
     }
 
