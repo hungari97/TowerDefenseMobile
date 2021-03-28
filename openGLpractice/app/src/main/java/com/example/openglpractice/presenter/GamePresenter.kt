@@ -57,6 +57,12 @@ class GamePresenter(private val buildInteractor: BuildInteractor) : Presenter<Ga
         screen?.updateScreen()
     }
 
+    fun playHeroGoalPosition(to:Vector){
+        buildInteractor.playHeroGoalpositon(to)
+    }
 
+    fun buildStartWave() {
+        buildInteractor.buildStartWave()
+    }
 
 }

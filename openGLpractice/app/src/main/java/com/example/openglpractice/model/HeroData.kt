@@ -7,9 +7,9 @@ data class HeroData(
     override val id: Long,
     override val health: Int,
     override val damage: Int,
-    override val hitBoxPosition: Vector,
-    override val hitBoxSize: Vector,
-    override val animationState: HeroAnimateState,
+    override var hitBoxPosition: Vector,
+    override var hitBoxSize: Vector,
+    override var animationState: HeroAnimateState,
     override var currentAnimationProgress: Int,
     override var goal: Vector?,
     override var path: Array<Vector>?,
@@ -21,24 +21,18 @@ data class HeroData(
     enum class HeroAnimateState : IFeatureEnum {
         HEROREST {
             override val textureArray: Array<FloatArray> by lazy {
-                textureArrayInitialise(1,1,2)
+                textureArrayInitialise(1,1,1)
             }
-
-
         },
         HEROWALK {
             override val textureArray: Array<FloatArray> by lazy {
-                textureArrayInitialise(2,1,3)
+                textureArrayInitialise(2,1,2)
             }
-
-
         },
         HEROATTACK {
             override val textureArray: Array<FloatArray> by lazy {
-                textureArrayInitialise(2,1,5)
+                textureArrayInitialise(2,1,4)
             }
-
-
         };
 
         fun calculateCurrentState(
@@ -48,12 +42,12 @@ data class HeroData(
             maxC: Int
         ): FloatArray {
             return floatArrayOf(
-                minC / 16.0f, minR / 7.0f,
-                minC / 16.0f, maxR / 7.0f,
-                maxC / 16.0f, minR / 7.0f,
-                minC / 16.0f, maxR / 7.0f,
-                maxC / 16.0f, maxR / 7.0f,
-                maxC / 16.0f, minR / 7.0f
+                minC / 16.0f, minR / 6.0f,
+                minC / 16.0f, maxR / 6.0f,
+                maxC / 16.0f, minR / 6.0f,
+                minC / 16.0f, maxR / 6.0f,
+                maxC / 16.0f, maxR / 6.0f,
+                maxC / 16.0f, minR / 6.0f
             )
         }
 

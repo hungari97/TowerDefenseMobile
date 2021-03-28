@@ -29,6 +29,7 @@ class GameActivity : AppCompatActivity(), GameScreen {
     var x: Float = 0.0f
     var y: Float = 0.0f
     lateinit var render: LessonFourRenderer
+    var buildMode: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,12 +78,14 @@ class GameActivity : AppCompatActivity(), GameScreen {
                     if (x >= 14.0f) {
                         x = 13.9f
                     }
-                    gamePresenter.buildTouch(
-                        Vector(
-                            x.toDouble(),
-                            y.toDouble()
-                        )
-                    )
+                    if (buildMode)
+                        gamePresenter.buildTouch(
+                            Vector(
+                                x.toDouble(),
+                                y.toDouble()
+                            )
+                        ) else
+                        gamePresenter.playHeroGoalPosition(Vector(x.toDouble(), y.toDouble()))
                     render.featureUpdate()
                 }
                 return true
@@ -90,6 +93,13 @@ class GameActivity : AppCompatActivity(), GameScreen {
         })
 
         swGameView.setZOrderMediaOverlay(true)
+
+        fbPlayStart.setOnClickListener {
+            gamePresenter.buildStartWave()
+            buildMode=false
+            llTraps.visibility=View.GONE
+            llRotationArrow.visibility=View.GONE
+        }
 
         ibSelectTraps = arrayOf(
             ibTrapSelect1,
@@ -168,8 +178,8 @@ class GameActivity : AppCompatActivity(), GameScreen {
             if (v.background.constantState == getDrawable(R.drawable.selected_arrow_background)!!.constantState) {
                 gamePresenter.buildArrowSelected(ibSelectArrow.indexOf(v))
             } else {
-                ibSelectArrow.forEach { it.background=getDrawable(R.color.invisible) }
-                v.background=getDrawable(R.drawable.selected_arrow_background)
+                ibSelectArrow.forEach { it.background = getDrawable(R.color.invisible) }
+                v.background = getDrawable(R.drawable.selected_arrow_background)
                 gamePresenter.buildArrowSelected(ibSelectArrow.indexOf(v))
             }
 
@@ -187,6 +197,7 @@ class GameActivity : AppCompatActivity(), GameScreen {
 
     override fun updateScreen() {
         render.featureUpdate()
+        render.characterUpdate()
     }
 
 

@@ -3,30 +3,37 @@ package com.example.openglpractice.logic
 import com.example.openglpractice.model.FeatureData
 import com.example.openglpractice.model.Vector
 
-class Feature(row: Double,coloum:Double) : AFeature<FeatureData.FeatureAnimateState>() {
-    override val data = FeatureData(
-        id = 0,
-        health = 2,
-        damage = 0,
-        hitBoxPosition = Vector(row, coloum),
-        hitBoxSize = Vector(0.5, 0.5),
-        animationState = FeatureData.FeatureAnimateState.valueOf(""),
-        currentAnimationProgress = 1,
-        functionality = this,
-        rotation =0
+class Feature() : AFeature<FeatureData.FeatureAnimateState>() {
+    override lateinit var data:FeatureData
 
-    )
+    constructor(row: Double,coloum:Double) : this() {
+        this.data = FeatureData(
+            id = 0,
+            health = 2,
+            damage = 0,
+            hitBoxPosition = Vector(row, coloum),
+            hitBoxSize = Vector(1.0, 1.0),
+            animationState = FeatureData.FeatureAnimateState.valueOf("CRYSTAL"),
+            currentAnimationProgress = 1,
+            functionality = this,
+            rotation =0 )
+    }
+    constructor(rawdata:FeatureData) : this() {
+        data=rawdata
+    }
+
+
 
     init {
-        Timer.subbscribers.plus(onThick())
+        Timer.subbscribers.plusAssign(::onThick)
     }
     override fun death() {
-        Timer.subbscribers.remove { this.onThick() }
+        Timer.subbscribers.remove (::onThick )
 
     }
 
     override fun onThick() {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
 }

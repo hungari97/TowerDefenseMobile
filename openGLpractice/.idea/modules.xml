@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="openGLpractice/app" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/openGLpractice.iml" filepath="$PROJECT_DIR$/.idea/modules/openGLpractice.iml" group="openGLpractice" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/openGLpractice.iml" filepath="$PROJECT_DIR$/.idea/modules/openGLpractice.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/openGLpractice.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/openGLpractice.app.iml" />
     </modules>
   </component>
 </project>

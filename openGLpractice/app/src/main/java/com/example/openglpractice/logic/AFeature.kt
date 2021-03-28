@@ -10,7 +10,7 @@ abstract class AFeature<T : IFeatureEnum> : Interactable, Animatable {
         TODO("Not yet implemented")
     }
 
-    open fun nextAnimationState() {
+    override fun nextAnimationState() {
         data.currentAnimationProgress = (data.currentAnimationProgress + 1) % 16
 
     }

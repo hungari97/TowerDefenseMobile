@@ -10,7 +10,7 @@ data class TrapData(
     override val hitBoxSize: Vector,
     override var animationState: TrapAnimationState,
     override var currentAnimationProgress: Int,
-    override val functionality: Trap,
+    override var functionality: Trap?,
     override var rotation: Byte, //0-left, 1 -up, 2-rigth, 3, down
     val coolDown: Long
 
@@ -97,15 +97,6 @@ data class TrapData(
 
                     }
                 }
-            var kep = Array(16) { currentFrame ->
-                calculateCurrentState(
-                    startingRow + (((currentFrame + 1) * frameSizeX / (16 - (16 % frameSizeX))) * frameSizeY),
-                    (currentFrame * frameSizeX) % (16 - (16 % frameSizeX)),
-                    (startingRow + (((currentFrame + 1) * frameSizeX / (16 - (16 % frameSizeX))) * frameSizeY) + frameSizeY),
-                    (currentFrame * frameSizeX) % (16 - (16 % frameSizeX)) + frameSizeX
-                )
-
-            }
             return output
         }
     }

@@ -4,7 +4,8 @@ import com.example.openglpractice.model.*
 import com.example.openglpractice.model.Vector
 
 object LevelManager {
-    var selectedRotation: Byte =0.toByte()
+    var buildMode: Boolean = true
+    var selectedRotation: Byte = 0.toByte()
     lateinit var data: LevelData
     lateinit var collisionManager: CollisionManager
     var selectedTrap: FeatureFactory? = null//index
@@ -14,7 +15,7 @@ object LevelManager {
     var characterMatrix: Array<Array<Character<*>?>> = arrayOf()
     var selectedTraps: Set<FeatureFactory> = setOf()
     private var idGen: Long = 0
-    private var buildPhase:Boolean=true
+    private var buildPhase: Boolean = true
 
     fun initialise(hero: Hero) {
         collisionManager = CollisionManager()
@@ -32,10 +33,34 @@ object LevelManager {
 
     fun initialise() {
         idGen = 0
-//hero= Hero(1,5,2, Vector(0.5,0.5),Vector(1.0,1.0),))
-        selectedTraps = setOf(FeatureFactory.SPIKETRAP, FeatureFactory.FIRETRAP)
-        data = LevelData(initialiseFieldLayer(), initialiseFeatureLayer(), initialiseCharacterLayer(), 3, 14, 0, 3)
+        hero = Hero()
+        hero.data = HeroData(
+            2,
+            5,
+            2,
+            Vector(0.0, 0.0),
+            Vector(1.0, 1.0),
+            HeroData.HeroAnimateState.HEROREST,
+            0,
+            null,
+            null,
+            hero,
+            2,
+            setOf(FeatureFactory.SPIKETRAP, FeatureFactory.FIRETRAP)
+        )
 
+        selectedTraps = setOf(FeatureFactory.SPIKETRAP, FeatureFactory.FIRETRAP)
+        data = LevelData(
+            initialiseFieldLayer(),
+            initialiseFeatureLayer(),
+            initialiseCharacterLayer(),
+            3,
+            14,
+            0,
+            3
+        )
+
+        Timer.startThread()
     }
 
     fun initialiseFieldLayer(): Array<FieldData> {
@@ -49,7 +74,7 @@ object LevelManager {
                 )
             }
         }
-        var tempArray: MutableList<FieldData> = mutableListOf()
+        val tempArray: MutableList<FieldData> = mutableListOf()
         fieldMatrix.forEach { external ->
             external.forEach { internal ->
                 tempArray.add(internal.data)
@@ -61,10 +86,11 @@ object LevelManager {
     fun initialiseFeatureLayer(): Array<AFeatureData<*>?> {
         featureMatrix = Array(8) { row ->
             Array(14) { field ->
-                null as AFeature<*>?
+                null
             }
         }
-        var tempArray: MutableList<AFeatureData<*>?> = mutableListOf()
+        featureMatrix[3][2] = FeatureFactory.CRYSTAL.createFeature(Vector(3.0, 2.0), 1, 0.toByte())
+        val tempArray: MutableList<AFeatureData<*>?> = mutableListOf()
         featureMatrix.forEach { external ->
             external.forEach { internal ->
                 tempArray.add(internal?.data)
@@ -73,13 +99,14 @@ object LevelManager {
         return tempArray.toTypedArray()
     }
 
-    fun initialiseCharacterLayer():Array<CharacterData<*>?>{
-        characterMatrix= Array(8){ external ->
-            Array(14){internal->
-                null as Character<*>?
+    fun initialiseCharacterLayer(): Array<CharacterData<*>?> {
+        characterMatrix = Array(8) { external ->
+            Array(14) { internal ->
+                null
             }
         }
-        var tempArray: MutableList<CharacterData<*>?> = mutableListOf()
+        characterMatrix[0][0] = hero
+        val tempArray: MutableList<CharacterData<*>?> = mutableListOf()
         characterMatrix.forEach { external ->
             external.forEach { internal ->
                 tempArray.add(internal?.data)
@@ -89,38 +116,35 @@ object LevelManager {
     }
 
     fun selectedFromThePalette(selectedType: Int) {
-        if(selectedType==5){
-            Timer.startThread()
-        }else if (selectedType==4){
+        if (selectedType == 4) {
             Timer.killTimer()
-        }else
-        if (selectedTrap == null) {
-            selectedTrap = selectedTraps.elementAt(selectedType)
-        } else {
-            selectedTrap?.let {
-                if (it.ordinal == selectedTraps.elementAt(selectedType).ordinal) {
-                    selectedTrap = null
-                } else
-                    selectedTrap = selectedTraps.elementAt(selectedType)
+        } else
+            if (selectedTrap == null) {
+                selectedTrap = selectedTraps.elementAt(selectedType)
+            } else {
+                selectedTrap?.let {
+                    if (it.ordinal == selectedTraps.elementAt(selectedType).ordinal) {
+                        selectedTrap = null
+                    } else
+                        selectedTrap = selectedTraps.elementAt(selectedType)
+                }
             }
-        }
 
         //hero.data.trapTypes.elementAt(selectedType)
     }
 
-    fun idGenerate(type: FeatureFactory): Long {
+    private fun idGenerate(type: FeatureFactory): Long {
         return type.ordinal * 100 + idGen++
+    }
+
+    fun positionToHero(to: Vector) {
+        hero.data.goal = to
     }
 
     /** */
     fun buildTrap(position: Vector) {
-        /*featureMatrix.forEachIndexed { rindex, row ->
-            row.forEachIndexed { index, it ->
-                if (rindex == it?.data?.hitBoxPosition?.y?.toInt() && index == it?.data?.hitBoxPosition?.x?.toInt())
-                    it?.nextAnimationState()
-            }
-        }*/
-        if (okToPutDown(position)) {//ok position
+        if (okToPutDown(position)) {
+            //ok position
             selectedTrap?.let {
                 addTrapToData(position)
             }
@@ -140,29 +164,47 @@ object LevelManager {
             ).contains(fieldMatrix[position.y.toInt()][position.x.toInt()].data.type)
         )
             return false
+
         selectedTrap?.let {
-            val test=it.createFeature(position,0, selectedRotation).data
+            val test = it.createFeature(position, 0, selectedRotation).data
+            var bool: Boolean = true
             when (test.rotation) {
                 0.toByte() -> {
-                    featureMatrix[position.y.toInt()+test.hitBoxSize.y.toInt()][position.x.toInt()-test.hitBoxSize.x.toInt()]?.let { return false }
-                    if(position.x.toInt()-test.hitBoxSize.x +1 < 0 || position.y.toInt()+test.hitBoxSize.y-1 >7)
-                        return false
+                    featureMatrix[position.y.toInt() + test.hitBoxSize.y.toInt()][position.x.toInt() - test.hitBoxSize.x.toInt()]?.let {
+                        bool=true
+                    }
+                    if (position.x.toInt() - test.hitBoxSize.x + 1 < 0 || position.y.toInt() + test.hitBoxSize.y - 1 > 7) {
+                        bool=true
+                    }
                 }
                 1.toByte() -> {
-                    featureMatrix[position.y.toInt()+test.hitBoxSize.x.toInt()][position.x.toInt()+test.hitBoxSize.y.toInt()]?.let { return false }
-                    if(position.x.toInt()+test.hitBoxSize.y-1 >13 || position.y.toInt()+test.hitBoxSize.x-1 >7)
-                        return false
+                    featureMatrix[position.y.toInt() + test.hitBoxSize.x.toInt()][position.x.toInt() + test.hitBoxSize.y.toInt()]?.let {
+                        bool=true
+                    }
+                    if (position.x.toInt() + test.hitBoxSize.y - 1 > 13 || position.y.toInt() + test.hitBoxSize.x - 1 > 7) {
+                        bool=true
+                    }
                 }
-                2.toByte()->{
-                    featureMatrix[position.y.toInt()+test.hitBoxSize.y.toInt()][position.x.toInt()+test.hitBoxSize.x.toInt()]?.let { return false }
-                    if(position.x.toInt()+test.hitBoxSize.x-1 >13 || position.y.toInt()-test.hitBoxSize.y+1 <=0)
-                        return false
+                2.toByte() -> {
+                    featureMatrix[position.y.toInt() + test.hitBoxSize.y.toInt()][position.x.toInt() + test.hitBoxSize.x.toInt()]?.let {
+                        bool=true
+                    }
+                    if (position.x.toInt() + test.hitBoxSize.x - 1 > 13 || position.y.toInt() - test.hitBoxSize.y + 1 <= 0) {
+                        bool=true
+                    }
                 }
-                3.toByte()->{
-                    featureMatrix[position.y.toInt()-test.hitBoxSize.x.toInt()][position.x.toInt()-test.hitBoxSize.y.toInt()]?.let { return false }
-                    if(position.x.toInt()-test.hitBoxSize.y+1 <0 || position.y.toInt()-test.hitBoxSize.x+1 <0)
-                        return false
+                3.toByte() -> {
+                    featureMatrix[position.y.toInt() - test.hitBoxSize.x.toInt()][position.x.toInt() - test.hitBoxSize.y.toInt()]?.let {
+                        bool=true
+                    }
+                    if (position.x.toInt() - test.hitBoxSize.y + 1 < 0 || position.y.toInt() - test.hitBoxSize.x + 1 < 0) {
+                        bool=true
+                    }
                 }
+            }
+            if (!bool) {
+                test.functionality!!.death()
+                return false
             }
         }
         return true
@@ -173,7 +215,8 @@ object LevelManager {
     }
 
     private fun addTrapToData(position: Vector) {
-        val temp = selectedTrap!!.createFeature(position, idGenerate(selectedTrap!!), selectedRotation)
+        val temp =
+            selectedTrap!!.createFeature(position, idGenerate(selectedTrap!!), selectedRotation)
 
 
         for (initialiseX in 0 until temp.data.hitBoxSize.x.toInt())

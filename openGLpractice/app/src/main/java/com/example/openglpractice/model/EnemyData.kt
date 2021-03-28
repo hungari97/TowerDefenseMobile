@@ -6,7 +6,7 @@ data class EnemyData(
     override val id: Long,
     override val health: Int,
     override val damage: Int,
-    override val hitBoxPosition: Vector,
+    override var hitBoxPosition: Vector,
     override val hitBoxSize: Vector,
     override val animationState: EnemyAnimateState,
     override var currentAnimationProgress: Int,

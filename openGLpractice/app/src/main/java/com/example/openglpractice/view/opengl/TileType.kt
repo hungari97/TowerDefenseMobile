@@ -643,14 +643,14 @@ enum class TileType(val textureIndexes: FloatArray) {
             15/16.0f,1/5.0f
         )
     ),
-    ENEMY(
+    CHARACTER_NOTHING(
         floatArrayOf(
-            1 / 32.0f, 1 / 64.0f,
-            1 / 32.0f, 2 / 64.0f,
-            0 / 32.0f, 1 / 64.0f,
-            1 / 32.0f, 2 / 64.0f,
-            0 / 32.0f, 2 / 64.0f,
-            0 / 32.0f, 1 / 64.0f
+            1/16.0f,0/6.0f,
+            1/16.0f,1/6.0f,
+            0/16.0f,0/6.0f,
+            1/16.0f,1/6.0f,
+            0/16.0f,1/6.0f,
+            0/16.0f,0/6.0f
         )
     ),
     TRAP(
@@ -680,7 +680,7 @@ enum class TileType(val textureIndexes: FloatArray) {
         return when (rand) {
             0 -> FLOOR_LURD.textureIndexes
             1 -> WALL_LURD.textureIndexes
-            2 -> ENEMY.textureIndexes
+            2 -> CHARACTER_NOTHING.textureIndexes
             3 -> TRAP.textureIndexes
             4 -> PIT_LURD.textureIndexes
             else -> FLOOR_LURD.textureIndexes

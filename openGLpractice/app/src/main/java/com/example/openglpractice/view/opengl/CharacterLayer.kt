@@ -28,7 +28,7 @@ class CharacterLayer(override val render: LessonFourRenderer) : DrawableLayer {
         }
     override var rectengleCount: Int = columnCount * rowCount
         private set
-    var matrix: Array<Array<Character<*>?>> = arrayOf()
+    var matrix: Array<Array<Character<*>?>> = render.presenter.buildCharacterMatrix()
     override var positionArray = FloatArray(rectengleCount * 2 * 3 * render.mPositionDataSize)
     override var textureCoordArray =
         FloatArray(rectengleCount * 2 * 3 * render.mTextureCoordinateDataSize)
@@ -94,7 +94,7 @@ class CharacterLayer(override val render: LessonFourRenderer) : DrawableLayer {
                         textureCoordArray[rectangleStartIndex] = trapFloat
                         rectangleStartIndex++
                     }
-                } ?: TileType.TRAP_NOTHING.textureIndexes.forEachIndexed { index, trapFloat ->
+                } ?: TileType.CHARACTER_NOTHING.textureIndexes.forEachIndexed { index, trapFloat ->
                     textureCoordArray[rectangleStartIndex] = trapFloat
                     rectangleStartIndex++
                 }

@@ -7,7 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".view.GameActivity">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fbPlayStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:srcCompat="@android:drawable/ic_media_play" />
+
     <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -22,6 +34,7 @@
             android:layout_height="match_parent"
 
             />
+
     </FrameLayout>
 
     <LinearLayout
@@ -71,41 +84,42 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/llTraps"
         android:layout_width="290dp"
         android:layout_height="40dp"
         android:layout_marginBottom="24dp"
         android:orientation="horizontal"
+        android:visibility="visible"
+        android:weightSum="6"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:visibility="visible"
-        android:weightSum="6">
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageButton
             android:id="@+id/ibTrapSelect1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:srcCompat="@android:drawable/btn_dialog"
-            android:background="@drawable/not_selected_traplist_item"/>
+            android:background="@drawable/not_selected_traplist_item"
+            app:srcCompat="@android:drawable/btn_dialog" />
 
         <ImageButton
             android:id="@+id/ibTrapSelect2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:srcCompat="@android:drawable/btn_dialog"
-            android:clickable="true"
             android:background="@drawable/not_selected_traplist_item"
-            android:focusable="true" />
+            android:clickable="true"
+            android:focusable="true"
+            app:srcCompat="@android:drawable/btn_dialog" />
 
         <ImageButton
             android:id="@+id/ibTrapSelect3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:srcCompat="@android:drawable/btn_dialog"
-            android:background="@drawable/not_selected_traplist_item"/>
+            android:background="@drawable/not_selected_traplist_item"
+            app:srcCompat="@android:drawable/btn_dialog" />
 
 
         <ImageButton
@@ -113,24 +127,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:srcCompat="@android:drawable/btn_dialog"
-            android:background="@drawable/not_selected_traplist_item"/>
+            android:background="@drawable/not_selected_traplist_item"
+            app:srcCompat="@android:drawable/btn_dialog" />
 
         <ImageButton
             android:id="@+id/ibTrapSelect5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:srcCompat="@android:drawable/btn_dialog"
-            android:background="@drawable/not_selected_traplist_item"/>
+            android:background="@drawable/not_selected_traplist_item"
+            app:srcCompat="@android:drawable/btn_dialog" />
 
         <ImageButton
             android:id="@+id/ibTrapSelect6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:srcCompat="@android:drawable/btn_dialog"
-            android:background="@drawable/not_selected_traplist_item"/>
+            android:background="@drawable/not_selected_traplist_item"
+            app:srcCompat="@android:drawable/btn_dialog" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

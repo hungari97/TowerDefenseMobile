@@ -51,7 +51,7 @@ open class Trap() : AFeature<TrapData.TrapAnimationState>() {
     }
 
     override fun death() {
-        Timer.subbscribers.remove { this.onThick() }
+        Timer.subbscribers.remove ( ::onThick )
     }
 
     override fun onThick() {

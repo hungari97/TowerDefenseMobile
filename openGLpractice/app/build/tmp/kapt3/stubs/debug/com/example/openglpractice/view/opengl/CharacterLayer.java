@@ -8,7 +8,7 @@ public final class CharacterLayer implements com.example.openglpractice.view.ope
     private int rowCount = 8;
     private int rectengleCount;
     @org.jetbrains.annotations.NotNull()
-    private com.example.openglpractice.logic.Character<?>[][] matrix = {};
+    private com.example.openglpractice.logic.Character<?>[][] matrix;
     @org.jetbrains.annotations.NotNull()
     private float[] positionArray;
     @org.jetbrains.annotations.NotNull()

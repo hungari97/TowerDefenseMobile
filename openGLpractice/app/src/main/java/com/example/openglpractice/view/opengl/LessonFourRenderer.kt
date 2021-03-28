@@ -55,7 +55,8 @@ class LessonFourRenderer(activityContext: Context, var presenter: GamePresenter)
     val layers = listOf<DrawableLayer>(
 
         FieldLayer(this),
-        FeatureLayer(this)
+        FeatureLayer(this),
+        CharacterLayer(this)
     )
 
     protected val vertexShader: String by lazy {

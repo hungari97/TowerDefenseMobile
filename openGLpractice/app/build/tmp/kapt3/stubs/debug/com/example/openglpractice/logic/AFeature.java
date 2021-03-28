@@ -22,6 +22,7 @@ public abstract class AFeature<T extends com.example.openglpractice.model.IFeatu
     com.example.openglpractice.logic.Interactable thing) {
     }
     
+    @java.lang.Override()
     public void nextAnimationState() {
     }
     
