@@ -49,7 +49,7 @@ class GamePresenter(private val buildInteractor: BuildInteractor) : Presenter<Ga
         buildInteractor.buildArrowSelected(arrow)
     }
 
-    fun buildCharacterMatrix():Array<Array<Character<*>?>>{
+    fun buildCharacterMatrix():Array<Array<Array<Character<*>?>>>{
         return buildInteractor.getCharacterMatrix()
     }
 
@@ -58,7 +58,7 @@ class GamePresenter(private val buildInteractor: BuildInteractor) : Presenter<Ga
     }
 
     fun playHeroGoalPosition(to:Vector){
-        buildInteractor.playHeroGoalpositon(to)
+        buildInteractor.playHeroGoalPosition(to)
     }
 
     fun buildStartWave() {

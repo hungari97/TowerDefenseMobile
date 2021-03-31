@@ -20,7 +20,6 @@ data class TrapData(
             override val textureArray: Array<FloatArray> by lazy {
                 textureArrayInitialise(1, 1, 1)
             }
-
         },
         SPIKEATTACK {
             override val textureArray: Array<FloatArray> by lazy {
@@ -46,6 +45,8 @@ data class TrapData(
                 values()[rest.ordinal - 1]
         }
 
+        override val isWalking: Boolean
+            get() = false
         fun calculateCurrentState(
             minR: Int,
             minC: Int,

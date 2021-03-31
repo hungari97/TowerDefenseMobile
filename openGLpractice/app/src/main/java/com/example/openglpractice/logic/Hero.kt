@@ -42,7 +42,7 @@ class Hero() : Character<HeroData.HeroAnimateState>() {
                 data.currentAnimationProgress = 0
             changeAnimateState("HEROWALK")
             data.hitBoxSize = Vector(2.0, 1.0)
-            LevelManager.characterMatrix[data.path!![1].y.toInt()][data.path!![1].x.toInt()] = this
+            LevelManager.topCharacterMatrix[data.path!![1].y.toInt()][data.path!![1].x.toInt()] = this
 
         }
     }
@@ -54,8 +54,8 @@ class Hero() : Character<HeroData.HeroAnimateState>() {
             //ha végzett a menetellel menjen vissza várakozásba
             if (data.animationState.name.equals("HEROWALK")) {
                 data.goal = null
-                LevelManager.characterMatrix[before.y.toInt()][before.x.toInt()] = null
-                LevelManager.characterMatrix[data.hitBoxPosition.y.toInt()][data.hitBoxPosition.x.toInt()] =
+                LevelManager.lowCharacterMatrix[before.y.toInt()][before.x.toInt()] = null
+                LevelManager.lowCharacterMatrix[data.hitBoxPosition.y.toInt()][data.hitBoxPosition.x.toInt()] =
                     this
                 data.hitBoxSize = Vector(1.0, 1.0)
                 changeAnimateState("HEROREST")
@@ -66,13 +66,13 @@ class Hero() : Character<HeroData.HeroAnimateState>() {
         data.path?.let { path ->
             if (data.currentAnimationProgress == 0) {
                 if (data.goal!!.x.toInt() != path.last().x.toInt() || data.goal!!.y.toInt() != path.last().y.toInt()){
-                    println("path last ${path.last().x} x ${path.last().y} y goal ${data.goal!!.x} x ${data.goal!!.y} y" )
 
                     calcMove(data.hitBoxPosition, data.goal!!)
-                    LevelManager.characterMatrix[before.y.toInt()][before.x.toInt()] = null
-                    LevelManager.characterMatrix[data.hitBoxPosition.y.toInt()][data.hitBoxPosition.x.toInt()] =
+                    LevelManager.lowCharacterMatrix[before.y.toInt()][before.x.toInt()] = null
+                    LevelManager.topCharacterMatrix[data.hitBoxPosition.y.toInt()][data.hitBoxPosition.x.toInt()] =null
+                    LevelManager.lowCharacterMatrix[data.hitBoxPosition.y.toInt()][data.hitBoxPosition.x.toInt()] =
                         this
-                    LevelManager.characterMatrix[data.path!![1].y.toInt()][data.path!![1].x.toInt()] =
+                    LevelManager.topCharacterMatrix[data.path!![1].y.toInt()][data.path!![1].x.toInt()] =
                         this
                 }else {
                     if (data.hitBoxPosition.x.toInt() - path[1].x.toInt() == -1)
@@ -87,10 +87,12 @@ class Hero() : Character<HeroData.HeroAnimateState>() {
                                 if (data.hitBoxPosition.y.toInt() - path[1].y.toInt() == 1)
                                     data.rotation = 3
 
-                    LevelManager.characterMatrix[before.y.toInt()][before.x.toInt()] = null
-                    LevelManager.characterMatrix[data.hitBoxPosition.y.toInt()][data.hitBoxPosition.x.toInt()] =
+                    LevelManager.lowCharacterMatrix[before.y.toInt()][before.x.toInt()] = null
+                    LevelManager.lowCharacterMatrix[data.hitBoxPosition.y.toInt()][data.hitBoxPosition.x.toInt()] =
                         this
-                    LevelManager.characterMatrix[path[1].y.toInt()][path.get(1).x.toInt()] =
+                    LevelManager.topCharacterMatrix[data.hitBoxPosition.y.toInt()][data.hitBoxPosition.x.toInt()] =
+                        null
+                    LevelManager.topCharacterMatrix[path[1].y.toInt()][path.get(1).x.toInt()] =
                         this
                 }
 
@@ -108,7 +110,6 @@ class Hero() : Character<HeroData.HeroAnimateState>() {
         super.nextAnimationState()
 
     }
-
 
     override fun changeAnimateState(type: String) {
         super.changeAnimateState(type)

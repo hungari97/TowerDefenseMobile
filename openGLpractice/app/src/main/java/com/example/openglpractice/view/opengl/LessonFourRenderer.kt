@@ -18,6 +18,7 @@ class LessonFourRenderer(activityContext: Context, var presenter: GamePresenter)
     var featureMatrix = presenter.buildFeatureMatrix()
     var characterMatrix = presenter.buildCharacterMatrix()
 
+
     /** How many bytes per float.  */
     internal val mBytesPerFloat = 4
 
@@ -56,7 +57,8 @@ class LessonFourRenderer(activityContext: Context, var presenter: GamePresenter)
 
         FieldLayer(this),
         FeatureLayer(this),
-        CharacterLayer(this)
+        CharacterLayer(this),
+        TopCharacterLayer(this)
     )
 
     protected val vertexShader: String by lazy {
@@ -108,11 +110,6 @@ class LessonFourRenderer(activityContext: Context, var presenter: GamePresenter)
             it.mTextureDataHandle = TextureHelper.loadTexture(mActivityContext, it.textureFile)
         }
 
-        /*mTextureDataHandle =
-            TextureHelper.loadTexture(
-                mActivityContext,
-                R.drawable.fieldtexture
-            )*/
     }
 
     override fun onSurfaceChanged(glUnused: GL10, width: Int, height: Int) {
@@ -188,6 +185,7 @@ class LessonFourRenderer(activityContext: Context, var presenter: GamePresenter)
     fun characterUpdate() {
         characterMatrix = presenter.buildCharacterMatrix()
         layers[2].updateMatrix()
+        layers[3].updateMatrix()
     }
 
     fun featureUpdate() {

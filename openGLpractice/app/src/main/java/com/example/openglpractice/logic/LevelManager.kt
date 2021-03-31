@@ -12,10 +12,12 @@ object LevelManager {
     lateinit var hero: Hero
     var featureMatrix: Array<Array<AFeature<*>?>> = arrayOf()
     var fieldMatrix: Array<Array<Field>> = arrayOf()
-    var characterMatrix: Array<Array<Character<*>?>> = arrayOf()
+    var lowCharacterMatrix: Array<Array<Character<*>?>> = arrayOf()
+    var topCharacterMatrix: Array<Array<Character<*>?>> = arrayOf()
     var selectedTraps: Set<FeatureFactory> = setOf()
     private var idGen: Long = 0
     private var buildPhase: Boolean = true
+    private var slime=EnemyFactory.SLIME.createEnemy(Vector(5.0,5.0),20,2)
 
     fun initialise(hero: Hero) {
         collisionManager = CollisionManager()
@@ -49,7 +51,7 @@ object LevelManager {
             setOf(FeatureFactory.SPIKETRAP, FeatureFactory.FIRETRAP)
         )
 
-        selectedTraps = setOf(FeatureFactory.SPIKETRAP, FeatureFactory.FIRETRAP)
+        selectedTraps = hero.data.trapTypes
         data = LevelData(
             initialiseFieldLayer(),
             initialiseFeatureLayer(),
@@ -63,7 +65,7 @@ object LevelManager {
         Timer.startThread()
     }
 
-    fun initialiseFieldLayer(): Array<FieldData> {
+    private fun initialiseFieldLayer(): Array<FieldData> {
         fieldMatrix = Array(8) { row ->
             Array(14) { field ->
                 Field(
@@ -83,7 +85,7 @@ object LevelManager {
         return tempArray.toTypedArray()
     }
 
-    fun initialiseFeatureLayer(): Array<AFeatureData<*>?> {
+    private fun initialiseFeatureLayer(): Array<AFeatureData<*>?> {
         featureMatrix = Array(8) { row ->
             Array(14) { field ->
                 null
@@ -99,15 +101,22 @@ object LevelManager {
         return tempArray.toTypedArray()
     }
 
-    fun initialiseCharacterLayer(): Array<CharacterData<*>?> {
-        characterMatrix = Array(8) { external ->
+    private fun initialiseCharacterLayer(): Array<CharacterData<*>?> {
+        lowCharacterMatrix = Array(8) { external ->
             Array(14) { internal ->
                 null
             }
         }
-        characterMatrix[0][0] = hero
+        topCharacterMatrix = Array(8) { external ->
+            Array(14) { internal ->
+                null
+            }
+        }
+        lowCharacterMatrix[0][0] = hero
+        lowCharacterMatrix[5][5] = slime
+
         val tempArray: MutableList<CharacterData<*>?> = mutableListOf()
-        characterMatrix.forEach { external ->
+        lowCharacterMatrix.forEach { external ->
             external.forEach { internal ->
                 tempArray.add(internal?.data)
             }
@@ -139,6 +148,8 @@ object LevelManager {
 
     fun positionToHero(to: Vector) {
         hero.data.goal = to
+        slime.data.goal =Vector(to.x+1,to.y)
+
     }
 
     /** */
@@ -171,34 +182,34 @@ object LevelManager {
             when (test.rotation) {
                 0.toByte() -> {
                     featureMatrix[position.y.toInt() + test.hitBoxSize.y.toInt()][position.x.toInt() - test.hitBoxSize.x.toInt()]?.let {
-                        bool=true
+                        bool = true
                     }
                     if (position.x.toInt() - test.hitBoxSize.x + 1 < 0 || position.y.toInt() + test.hitBoxSize.y - 1 > 7) {
-                        bool=true
+                        bool = true
                     }
                 }
                 1.toByte() -> {
                     featureMatrix[position.y.toInt() + test.hitBoxSize.x.toInt()][position.x.toInt() + test.hitBoxSize.y.toInt()]?.let {
-                        bool=true
+                        bool = true
                     }
                     if (position.x.toInt() + test.hitBoxSize.y - 1 > 13 || position.y.toInt() + test.hitBoxSize.x - 1 > 7) {
-                        bool=true
+                        bool = true
                     }
                 }
                 2.toByte() -> {
                     featureMatrix[position.y.toInt() + test.hitBoxSize.y.toInt()][position.x.toInt() + test.hitBoxSize.x.toInt()]?.let {
-                        bool=true
+                        bool = true
                     }
                     if (position.x.toInt() + test.hitBoxSize.x - 1 > 13 || position.y.toInt() - test.hitBoxSize.y + 1 <= 0) {
-                        bool=true
+                        bool = true
                     }
                 }
                 3.toByte() -> {
                     featureMatrix[position.y.toInt() - test.hitBoxSize.x.toInt()][position.x.toInt() - test.hitBoxSize.y.toInt()]?.let {
-                        bool=true
+                        bool = true
                     }
                     if (position.x.toInt() - test.hitBoxSize.y + 1 < 0 || position.y.toInt() - test.hitBoxSize.x + 1 < 0) {
-                        bool=true
+                        bool = true
                     }
                 }
             }
@@ -276,10 +287,6 @@ object LevelManager {
                             featureMatrix[position.y.toInt() - initialiseX][position.x.toInt() + initialiseY]?.data
                     }
                 }
-
             }
-
-
     }
-
 }

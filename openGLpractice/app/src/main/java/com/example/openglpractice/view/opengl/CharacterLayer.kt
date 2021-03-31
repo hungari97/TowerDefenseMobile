@@ -8,6 +8,7 @@ import com.example.openglpractice.logic.Character
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
+import kotlin.math.abs
 
 class CharacterLayer(override val render: LessonFourRenderer) : DrawableLayer {
     var columnCount: Int = 14
@@ -26,9 +27,10 @@ class CharacterLayer(override val render: LessonFourRenderer) : DrawableLayer {
             textureCoordArray = FloatArray(value * columnCount * 2 * 6)
             initialize()
         }
+
     override var rectengleCount: Int = columnCount * rowCount
         private set
-    var matrix: Array<Array<Character<*>?>> = render.presenter.buildCharacterMatrix()
+    var matrix: Array<Array<Character<*>?>> = render.presenter.buildCharacterMatrix()[0]
     override var positionArray = FloatArray(rectengleCount * 2 * 3 * render.mPositionDataSize)
     override var textureCoordArray =
         FloatArray(rectengleCount * 2 * 3 * render.mTextureCoordinateDataSize)
@@ -90,17 +92,16 @@ class CharacterLayer(override val render: LessonFourRenderer) : DrawableLayer {
         for (row in 0 until matrix.size) {
             for (cell in 0 until matrix[row].size) {
                 matrix[row][cell]?.let {
-                    cellTextureWithRotation(row, cell, it).forEachIndexed { index, trapFloat ->
+                    cellTextureWithRotation(row, cell, it).forEachIndexed { _, trapFloat ->
                         textureCoordArray[rectangleStartIndex] = trapFloat
                         rectangleStartIndex++
                     }
-                } ?: TileType.CHARACTER_NOTHING.textureIndexes.forEachIndexed { index, trapFloat ->
+                } ?: TileType.CHARACTER_NOTHING.textureIndexes.forEachIndexed { _, trapFloat ->
                     textureCoordArray[rectangleStartIndex] = trapFloat
                     rectangleStartIndex++
                 }
             }
         }
-
 
         // Initialize feature the buffers.
         mPositions =
@@ -122,8 +123,8 @@ class CharacterLayer(override val render: LessonFourRenderer) : DrawableLayer {
         val oszlop: Int
         val temp: FloatArray
         if (it.data.rotation == 0.toByte() || it.data.rotation == 2.toByte()) {
-            sor = Math.abs(it.data.hitBoxPosition.y.toInt() - row)
-            oszlop = Math.abs(it.data.hitBoxPosition.x.toInt() - cell)
+            sor = abs(it.data.hitBoxPosition.y.toInt() - row)
+            oszlop = abs(it.data.hitBoxPosition.x.toInt() - cell)
             temp =
                 it.data.animationState.textureArray[it.data.currentAnimationProgress * it.data.hitBoxSize.x.toInt() * it.data.hitBoxSize.y.toInt() + sor * it.data.hitBoxSize.x.toInt() + oszlop]
 
@@ -248,7 +249,7 @@ class CharacterLayer(override val render: LessonFourRenderer) : DrawableLayer {
     }
 
     override fun updateMatrix() {
-        matrix = render.presenter.buildCharacterMatrix()
+        matrix = render.presenter.buildCharacterMatrix()[0]
         initialize()
     }
 }

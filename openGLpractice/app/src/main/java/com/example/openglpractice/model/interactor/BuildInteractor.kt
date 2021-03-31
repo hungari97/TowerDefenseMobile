@@ -40,11 +40,11 @@ class BuildInteractor @Inject constructor() {
         levelManager.selectedRotation=arrow.toByte()
     }
 
-    fun getCharacterMatrix(): Array<Array<Character<*>?>> {
-        return levelManager.characterMatrix
+    fun getCharacterMatrix(): Array<Array<Array<Character<*>?>>> {
+        return arrayOf(levelManager.lowCharacterMatrix,levelManager.topCharacterMatrix)
     }
 
-    fun playHeroGoalpositon(to:Vector){
+    fun playHeroGoalPosition(to:Vector){
         levelManager.positionToHero(to)
     }
 

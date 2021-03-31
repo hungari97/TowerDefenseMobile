@@ -32,6 +32,9 @@ data class FeatureData(
                 TrapData.TrapAnimationState.values()[rest.ordinal - 1]
         }
 
+        override val isWalking: Boolean
+            get() = false
+
         fun calculateCurrentState(
             minR: Int,
             minC: Int,

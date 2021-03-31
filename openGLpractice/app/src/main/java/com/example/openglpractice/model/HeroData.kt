@@ -23,16 +23,22 @@ data class HeroData(
             override val textureArray: Array<FloatArray> by lazy {
                 textureArrayInitialise(1,1,1)
             }
+            override val isWalking: Boolean
+                get() = false
         },
         HEROWALK {
             override val textureArray: Array<FloatArray> by lazy {
                 textureArrayInitialise(2,1,2)
             }
+            override val isWalking: Boolean
+                get() = true
         },
         HEROATTACK {
             override val textureArray: Array<FloatArray> by lazy {
                 textureArrayInitialise(2,1,4)
             }
+            override val isWalking: Boolean
+                get() = false
         };
 
         fun calculateCurrentState(
@@ -42,12 +48,12 @@ data class HeroData(
             maxC: Int
         ): FloatArray {
             return floatArrayOf(
-                minC / 16.0f, minR / 6.0f,
-                minC / 16.0f, maxR / 6.0f,
-                maxC / 16.0f, minR / 6.0f,
-                minC / 16.0f, maxR / 6.0f,
-                maxC / 16.0f, maxR / 6.0f,
-                maxC / 16.0f, minR / 6.0f
+                minC / 16.0f, minR / 11.0f,
+                minC / 16.0f, maxR / 11.0f,
+                maxC / 16.0f, minR / 11.0f,
+                minC / 16.0f, maxR / 11.0f,
+                maxC / 16.0f, maxR / 11.0f,
+                maxC / 16.0f, minR / 11.0f
             )
         }
 

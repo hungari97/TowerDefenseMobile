@@ -645,12 +645,12 @@ enum class TileType(val textureIndexes: FloatArray) {
     ),
     CHARACTER_NOTHING(
         floatArrayOf(
-            1/16.0f,0/6.0f,
-            1/16.0f,1/6.0f,
-            0/16.0f,0/6.0f,
-            1/16.0f,1/6.0f,
-            0/16.0f,1/6.0f,
-            0/16.0f,0/6.0f
+            1/16.0f,0/11.0f,
+            1/16.0f,1/11.0f,
+            0/16.0f,0/11.0f,
+            1/16.0f,1/11.0f,
+            0/16.0f,1/11.0f,
+            0/16.0f,0/11.0f
         )
     ),
     TRAP(

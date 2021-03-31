@@ -26,42 +26,47 @@ abstract class Character<T : IFeatureEnum> : Interactable, Animatable {
             temp = checkedList[actualVector]
 
             if (temp.x.toInt() == to.x.toInt() && temp.y.toInt() == to.y.toInt()) break
+
             if (!checkedList.contains(Vector(temp.x, temp.y - 1)) && temp.y - 1 >= 0)
-                if (LevelManager.fieldMatrix[temp.y.toInt() - 1][temp.x.toInt()].data.type == 0) {
-                    tempMatrix[temp.y.toInt() - 1][temp.x.toInt()] = 3
-                    checkedList.add(Vector(temp.x, temp.y - 1))
-                    if (temp.x == to.x && temp.y - 1 == to.y) {
-                        temp = Vector(temp.x, temp.y - 1)
-                        break
+                if (LevelManager.lowCharacterMatrix[temp.y.toInt() - 1][temp.x.toInt()] == null || LevelManager.lowCharacterMatrix[temp.y.toInt() - 1][temp.x.toInt()]!!.data.animationState.isWalking)
+                    if (LevelManager.fieldMatrix[temp.y.toInt() - 1][temp.x.toInt()].data.type == 0) {
+                        tempMatrix[temp.y.toInt() - 1][temp.x.toInt()] = 3
+                        checkedList.add(Vector(temp.x, temp.y - 1))
+                        if (temp.x == to.x && temp.y - 1 == to.y) {
+                            temp = Vector(temp.x, temp.y - 1)
+                            break
+                        }
                     }
-                }
             if (!checkedList.contains(Vector(temp.x + 1, temp.y)) && temp.x + 1 <= 13)
-                if (LevelManager.fieldMatrix[temp.y.toInt()][temp.x.toInt() + 1].data.type == 0) {
-                    tempMatrix[temp.y.toInt()][temp.x.toInt() + 1] = 4
-                    checkedList.add(Vector(temp.x + 1, temp.y))
-                    if (temp.x + 1 == to.x && temp.y == to.y) {
-                        temp = Vector(temp.x + 1, temp.y)
-                        break
+                if (LevelManager.lowCharacterMatrix[temp.y.toInt()][temp.x.toInt() + 1] == null || LevelManager.lowCharacterMatrix[temp.y.toInt()][temp.x.toInt() + 1]!!.data.animationState.isWalking)
+                    if (LevelManager.fieldMatrix[temp.y.toInt()][temp.x.toInt() + 1].data.type == 0) {
+                        tempMatrix[temp.y.toInt()][temp.x.toInt() + 1] = 4
+                        checkedList.add(Vector(temp.x + 1, temp.y))
+                        if (temp.x + 1 == to.x && temp.y == to.y) {
+                            temp = Vector(temp.x + 1, temp.y)
+                            break
+                        }
                     }
-                }
             if (!checkedList.contains(Vector(temp.x, temp.y + 1)) && temp.y + 1 <= 7)
-                if (LevelManager.fieldMatrix[temp.y.toInt() + 1][temp.x.toInt()].data.type == 0) {
-                    tempMatrix[temp.y.toInt() + 1][temp.x.toInt()] = 1
-                    checkedList.add(Vector(temp.x, temp.y + 1))
-                    if (temp.x == to.x && temp.y + 1 == to.y) {
-                        temp = Vector(temp.x, temp.y + 1)
-                        break
+                if (LevelManager.lowCharacterMatrix[temp.y.toInt() + 1][temp.x.toInt()] == null || LevelManager.lowCharacterMatrix[temp.y.toInt() + 1][temp.x.toInt()]!!.data.animationState.isWalking)
+                    if (LevelManager.fieldMatrix[temp.y.toInt() + 1][temp.x.toInt()].data.type == 0) {
+                        tempMatrix[temp.y.toInt() + 1][temp.x.toInt()] = 1
+                        checkedList.add(Vector(temp.x, temp.y + 1))
+                        if (temp.x == to.x && temp.y + 1 == to.y) {
+                            temp = Vector(temp.x, temp.y + 1)
+                            break
+                        }
                     }
-                }
             if (!checkedList.contains(Vector(temp.x - 1, temp.y)) && temp.x - 1 >= 0)
-                if (LevelManager.fieldMatrix[temp.y.toInt()][temp.x.toInt() - 1].data.type == 0) {
-                    tempMatrix[temp.y.toInt()][temp.x.toInt() - 1] = 2
-                    checkedList.add(Vector(temp.x - 1, temp.y))
-                    if (temp.x - 1 == to.x && temp.y == to.y) {
-                        temp = Vector(temp.x - 1, temp.y)
-                        break
+                if (LevelManager.lowCharacterMatrix[temp.y.toInt()][temp.x.toInt() - 1] == null || LevelManager.lowCharacterMatrix[temp.y.toInt()][temp.x.toInt() - 1]!!.data.animationState.isWalking)
+                    if (LevelManager.fieldMatrix[temp.y.toInt()][temp.x.toInt() - 1].data.type == 0) {
+                        tempMatrix[temp.y.toInt()][temp.x.toInt() - 1] = 2
+                        checkedList.add(Vector(temp.x - 1, temp.y))
+                        if (temp.x - 1 == to.x && temp.y == to.y) {
+                            temp = Vector(temp.x - 1, temp.y)
+                            break
+                        }
                     }
-                }
 
             actualVector++
         }
@@ -107,22 +112,25 @@ abstract class Character<T : IFeatureEnum> : Interactable, Animatable {
     }
 
     open fun moveToThick() {
-        data.path?.let {path->
+        data.path?.let { path ->
             if (data.currentAnimationProgress == 0) {
-                data.hitBoxPosition = path[1]
-               // println("a mostani hely ${data.hitBoxPosition.x} x ${data.hitBoxPosition.y} y")
-                data.path = path.drop(1).toTypedArray()
 
+                data.hitBoxPosition = path[1]
+                data.path = path.drop(1).toTypedArray()
                 if (data.path!!.size == 1)
                     data.path = null
+                data.path?.let { newpath-> if (!(LevelManager.lowCharacterMatrix[newpath[1].y.toInt()][newpath[1].x.toInt() - 1] == null ||
+                            LevelManager.lowCharacterMatrix[newpath[1].y.toInt()][newpath[1].x.toInt() - 1]!!.data.animationState.isWalking)
+                ) {
+                    calcMove(newpath[0], data.goal!!)
+                }}
+
 
             }
         }
     }
 
-    open fun changeAnimateState(type: String) {
-
-    }
+    open fun changeAnimateState(type: String) {}
 
     override fun nextAnimationState() {
         data.currentAnimationProgress = (data.currentAnimationProgress + 1) % 16
