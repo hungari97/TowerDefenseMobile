@@ -1589,6 +1589,9 @@ drawable design_snackbar_background
 drawable dungeon_defender_texture
 drawable features_texture
 drawable fieldtexture
+drawable fire
+drawable fire2
+drawable firetrap
 drawable ic_arrow_down_bold_outline
 drawable ic_arrow_left_bold_outline
 drawable ic_arrow_right_bold_outline
@@ -1633,6 +1636,7 @@ drawable player_texture
 drawable player_texture0
 drawable selected_arrow_background
 drawable selected_traplist_item
+drawable spike
 drawable spike_texture
 drawable spritestrip
 drawable test_custom_background
@@ -1829,9 +1833,6 @@ id ibArrowUp
 id ibTrapSelect1
 id ibTrapSelect2
 id ibTrapSelect3
-id ibTrapSelect4
-id ibTrapSelect5
-id ibTrapSelect6
 id ibTrapSelectorItem
 id icon
 id icon_group
@@ -2176,6 +2177,7 @@ layout text_view_with_theme_line_height
 layout text_view_without_line_height
 layout trap_selector_item
 menu menu_main
+mipmap firetrap
 mipmap ic_launcher
 mipmap ic_launcher_round
 mipmap icon

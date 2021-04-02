@@ -1,7 +1,7 @@
 package com.example.openglpractice.model
 
 import com.example.openglpractice.logic.Enemy
-import com.example.openglpractice.logic.Interactable
+import com.example.openglpractice.model.EActionType.*
 
 data class EnemyData(
     override val id: Long,
@@ -16,52 +16,49 @@ data class EnemyData(
     override var rotation: Byte,
     override var functionality: Enemy?,
 ) : CharacterData<EnemyData.EnemyAnimateState>() {
-    enum class EnemyAnimateState : IFeatureEnum {
+    enum class EnemyAnimateState : ICharacterAnimationEnum {
         SLIMEREST {
+            override val action: EActionType= REST
+
             override val textureArray: Array<FloatArray> by lazy {
                 textureArrayInitialise(1, 1, 6)
 
             }
-            override val isWalking: Boolean
-                get() = false
 
         },
         SLIMEWALK {
+            override val action: EActionType=EActionType.WALK
             override val textureArray: Array<FloatArray> by lazy {
                 textureArrayInitialise(2, 1, 7)
 
             }
-            override val isWalking: Boolean
-                get() = true
 
         },
         SLIMEATTACK {
+            override val action: EActionType=EActionType.ATTACK
             override val textureArray: Array<FloatArray> by lazy {
                 textureArrayInitialise(2, 1, 9)
 
             }
-            override val isWalking: Boolean
-                get() = false
-
         };
 
-        fun changeToAction(rest: EnemyAnimateState, toAction: String): EnemyAnimateState {
+        fun changeToAction(rest: EnemyAnimateState, toAction: EActionType): EnemyAnimateState {
             return when (toAction) {
-                "REST" -> {
+                REST -> {
                     when (rest.ordinal % 3) {
                         0 -> values()[rest.ordinal]
                         1 -> values()[rest.ordinal - 1]
                         else -> values()[rest.ordinal - 2]
                     }
                 }
-                "WALK" -> {
+                WALK -> {
                     when (rest.ordinal % 3) {
                         0 -> values()[rest.ordinal + 1]
                         1 -> values()[rest.ordinal]
                         else -> values()[rest.ordinal - 1]
                     }
                 }
-                "ATTACK" -> {
+                ATTACK -> {
                     when {
                         rest.ordinal % 3 == 0 -> values()[rest.ordinal + 2]
                         rest.ordinal % 3 == 1 -> values()[rest.ordinal + 1]

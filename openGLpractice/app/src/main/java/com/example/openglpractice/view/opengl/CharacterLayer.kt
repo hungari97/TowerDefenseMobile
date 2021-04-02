@@ -117,7 +117,7 @@ class CharacterLayer(override val render: LessonFourRenderer) : DrawableLayer {
     fun cellTextureWithRotation(
         row: Int,
         cell: Int,
-        it: Character<*>
+        it: Character<*>,
     ): FloatArray {
         val sor: Int
         val oszlop: Int
@@ -126,13 +126,14 @@ class CharacterLayer(override val render: LessonFourRenderer) : DrawableLayer {
             sor = abs(it.data.hitBoxPosition.y.toInt() - row)
             oszlop = abs(it.data.hitBoxPosition.x.toInt() - cell)
             temp =
-                it.data.animationState.textureArray[it.data.currentAnimationProgress * it.data.hitBoxSize.x.toInt() * it.data.hitBoxSize.y.toInt() + sor * it.data.hitBoxSize.x.toInt() + oszlop]
+                it.data.animationState.textureArray[it.data.currentAnimationProgress * it.data.hitBoxSize.x.toInt() * it.data.hitBoxSize.y.toInt()
+                        + sor * it.data.hitBoxSize.x.toInt() + oszlop]
 
         } else {
             sor = Math.abs(it.data.hitBoxPosition.y.toInt() - row)
             oszlop = Math.abs(it.data.hitBoxPosition.x.toInt() - cell)
             temp =
-                it.data.animationState.textureArray[it.data.currentAnimationProgress * it.data.hitBoxSize.x.toInt() * it.data.hitBoxSize.y.toInt() + sor * it.data.hitBoxSize.y.toInt() +oszlop]
+                it.data.animationState.textureArray[it.data.currentAnimationProgress * it.data.hitBoxSize.x.toInt() * it.data.hitBoxSize.y.toInt() + sor * it.data.hitBoxSize.y.toInt() + oszlop]
         }
 
         when (it.data.rotation) {

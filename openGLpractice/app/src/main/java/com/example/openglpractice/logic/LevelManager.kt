@@ -17,7 +17,7 @@ object LevelManager {
     var selectedTraps: Set<FeatureFactory> = setOf()
     private var idGen: Long = 0
     private var buildPhase: Boolean = true
-    private var slime=EnemyFactory.SLIME.createEnemy(Vector(5.0,5.0),20,2)
+    private var slime: Array<Enemy> = arrayOf()
 
     fun initialise(hero: Hero) {
         collisionManager = CollisionManager()
@@ -35,8 +35,7 @@ object LevelManager {
 
     fun initialise() {
         idGen = 0
-        hero = Hero()
-        hero.data = HeroData(
+        hero = Hero(HeroData(
             2,
             5,
             2,
@@ -46,10 +45,11 @@ object LevelManager {
             0,
             null,
             null,
-            hero,
+            null,
             2,
             setOf(FeatureFactory.SPIKETRAP, FeatureFactory.FIRETRAP)
-        )
+        ))
+        hero.data.functionality = hero
 
         selectedTraps = hero.data.trapTypes
         data = LevelData(
@@ -76,6 +76,11 @@ object LevelManager {
                 )
             }
         }
+        fieldMatrix[2][2].data.type = 1
+        fieldMatrix[1][2].data.type = 1
+        fieldMatrix[0][2].data.type = 1
+        fieldMatrix[2][1].data.type = 1
+        fieldMatrix[2][0].data.type = 1
         val tempArray: MutableList<FieldData> = mutableListOf()
         fieldMatrix.forEach { external ->
             external.forEach { internal ->
@@ -113,7 +118,27 @@ object LevelManager {
             }
         }
         lowCharacterMatrix[0][0] = hero
-        lowCharacterMatrix[5][5] = slime
+        slime = arrayOf(EnemyFactory.SLIME.createEnemy(Vector(5.0, 5.0), 30, 2),
+            EnemyFactory.SLIME.createEnemy(Vector(5.0, 7.0), 31, 2),
+            EnemyFactory.SLIME.createEnemy(Vector(5.0, 6.0), 32, 2),
+            EnemyFactory.SLIME.createEnemy(Vector(4.0, 5.0), 33, 2),
+            EnemyFactory.SLIME.createEnemy(Vector(3.0, 5.0), 34, 2),
+            EnemyFactory.SLIME.createEnemy(Vector(5.0, 4.0), 35, 2),
+            EnemyFactory.SLIME.createEnemy(Vector(5.0, 3.0), 36, 2),
+            EnemyFactory.SLIME.createEnemy(Vector(6.0, 3.0), 37, 2),
+            EnemyFactory.SLIME.createEnemy(Vector(4.0, 7.0), 38, 2),
+            EnemyFactory.SLIME.createEnemy(Vector(3.0, 7.0), 39, 2)
+        )
+        lowCharacterMatrix[5][5] = slime[0]
+        lowCharacterMatrix[7][5] = slime[1]
+        lowCharacterMatrix[6][5] = slime[2]
+        lowCharacterMatrix[5][4] = slime[3]
+        lowCharacterMatrix[5][3] = slime[4]
+        lowCharacterMatrix[4][5] = slime[5]
+        lowCharacterMatrix[3][5] = slime[6]
+        lowCharacterMatrix[3][6] = slime[7]
+        lowCharacterMatrix[7][4] = slime[8]
+        lowCharacterMatrix[7][3] = slime[9]
 
         val tempArray: MutableList<CharacterData<*>?> = mutableListOf()
         lowCharacterMatrix.forEach { external ->
@@ -148,7 +173,14 @@ object LevelManager {
 
     fun positionToHero(to: Vector) {
         hero.data.goal = to
-        slime.data.goal =Vector(to.x+1,to.y)
+        slime.forEachIndexed { index, it ->it.data.goal=to
+           /* when (index % 4) {
+                0 -> it.data.goal = Vector(to.x, to.y + (index / 4) + 1)
+                1 -> it.data.goal = Vector(to.x - (index / 4) - 1, to.y)
+                2 -> it.data.goal = Vector(to.x, to.y - (index / 4) - 1)
+                else -> it.data.goal = Vector(to.x + (index / 4) + 1, to.y)
+            }*/
+        }
 
     }
 
@@ -181,42 +213,47 @@ object LevelManager {
             var bool: Boolean = true
             when (test.rotation) {
                 0.toByte() -> {
-                    featureMatrix[position.y.toInt() + test.hitBoxSize.y.toInt()][position.x.toInt() - test.hitBoxSize.x.toInt()]?.let {
-                        bool = true
-                    }
                     if (position.x.toInt() - test.hitBoxSize.x + 1 < 0 || position.y.toInt() + test.hitBoxSize.y - 1 > 7) {
-                        bool = true
-                    }
+                        bool = false
+                    } else
+                        featureMatrix[position.y.toInt() + test.hitBoxSize.y.toInt()][position.x.toInt() - test.hitBoxSize.x.toInt()]?.let {
+                            bool = false
+                        }
+
                 }
                 1.toByte() -> {
-                    featureMatrix[position.y.toInt() + test.hitBoxSize.x.toInt()][position.x.toInt() + test.hitBoxSize.y.toInt()]?.let {
-                        bool = true
-                    }
                     if (position.x.toInt() + test.hitBoxSize.y - 1 > 13 || position.y.toInt() + test.hitBoxSize.x - 1 > 7) {
-                        bool = true
-                    }
+                        bool = false
+                    } else
+                        featureMatrix[position.y.toInt() + test.hitBoxSize.x.toInt()][position.x.toInt() + test.hitBoxSize.y.toInt()]?.let {
+                            bool = false
+                        }
+
                 }
                 2.toByte() -> {
-                    featureMatrix[position.y.toInt() + test.hitBoxSize.y.toInt()][position.x.toInt() + test.hitBoxSize.x.toInt()]?.let {
-                        bool = true
-                    }
                     if (position.x.toInt() + test.hitBoxSize.x - 1 > 13 || position.y.toInt() - test.hitBoxSize.y + 1 <= 0) {
-                        bool = true
-                    }
+                        bool = false
+                    } else
+                        featureMatrix[position.y.toInt() + test.hitBoxSize.y.toInt()][position.x.toInt() + test.hitBoxSize.x.toInt()]?.let {
+                            bool = false
+                        }
+
                 }
                 3.toByte() -> {
-                    featureMatrix[position.y.toInt() - test.hitBoxSize.x.toInt()][position.x.toInt() - test.hitBoxSize.y.toInt()]?.let {
-                        bool = true
-                    }
                     if (position.x.toInt() - test.hitBoxSize.y + 1 < 0 || position.y.toInt() - test.hitBoxSize.x + 1 < 0) {
-                        bool = true
-                    }
+                        bool = false
+                    } else
+                        featureMatrix[position.y.toInt() - test.hitBoxSize.x.toInt()][position.x.toInt() - test.hitBoxSize.y.toInt()]?.let {
+                            bool = false
+                        }
+
                 }
             }
+            test.functionality!!.death()
             if (!bool) {
-                test.functionality!!.death()
                 return false
             }
+
         }
         return true
     }

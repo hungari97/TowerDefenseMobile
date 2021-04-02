@@ -104,10 +104,10 @@ class GameActivity : AppCompatActivity(), GameScreen {
         ibSelectTraps = arrayOf(
             ibTrapSelect1,
             ibTrapSelect2,
-            ibTrapSelect3,
-            ibTrapSelect4,
+            ibTrapSelect3
+           /* ibTrapSelect4,
             ibTrapSelect5,
-            ibTrapSelect6
+            ibTrapSelect6*/
         )
         ibSelectTraps.forEachIndexed { index, button ->
             //button.setBackgroundResource(gamePresenter.getSelectedTrapList()[index])
@@ -182,7 +182,7 @@ class GameActivity : AppCompatActivity(), GameScreen {
                 v.background = getDrawable(R.drawable.selected_arrow_background)
                 gamePresenter.buildArrowSelected(ibSelectArrow.indexOf(v))
             }
-
+            llRotationArrow.visibility=View.INVISIBLE
 
         } else {
             TODO("VERSION.SDK_INT < LOLLIPOP")

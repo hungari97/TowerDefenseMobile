@@ -1,8 +1,6 @@
 package com.example.openglpractice.model
 
-import com.example.openglpractice.logic.AFeature
 import com.example.openglpractice.logic.Feature
-import com.example.openglpractice.logic.Interactable
 
 data class FeatureData(
     override val id: Long,
@@ -10,13 +8,13 @@ data class FeatureData(
     override val damage: Int,
     override val hitBoxPosition: Vector,
     override val hitBoxSize: Vector,
-    override var animationState: FeatureAnimateState,
+    override var animationState: AnimateAnimateState,
     override var currentAnimationProgress: Int,
     override var rotation: Byte,
     override var functionality: Feature?
 
-) : AFeatureData<FeatureData.FeatureAnimateState>() {
-    enum class FeatureAnimateState : IFeatureEnum {
+) : AFeatureData<FeatureData.AnimateAnimateState>() {
+    enum class AnimateAnimateState : IAnimateEnum {
         CRYSTAL {
             override val textureArray: Array<FloatArray> by lazy {
                 Array(16) { calculateCurrentState(0, 15, 1, 16) }
@@ -31,9 +29,6 @@ data class FeatureData(
             else
                 TrapData.TrapAnimationState.values()[rest.ordinal - 1]
         }
-
-        override val isWalking: Boolean
-            get() = false
 
         fun calculateCurrentState(
             minR: Int,
@@ -54,9 +49,9 @@ data class FeatureData(
         override fun calculateAnimationArray(type: Int, rest: Boolean): Array<FloatArray> {
             when (type) {
                 0 ->
-                    FeatureData.FeatureAnimateState.CRYSTAL.textureArray
+                    FeatureData.AnimateAnimateState.CRYSTAL.textureArray
             }
-            return FeatureData.FeatureAnimateState.CRYSTAL.textureArray
+            return FeatureData.AnimateAnimateState.CRYSTAL.textureArray
         }
 
         fun textureArrayInitialise(

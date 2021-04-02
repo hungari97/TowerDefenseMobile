@@ -15,7 +15,7 @@ data class TrapData(
     val coolDown: Long
 
 ) : AFeatureData<TrapData.TrapAnimationState>() {
-    enum class TrapAnimationState : IFeatureEnum {
+    enum class TrapAnimationState : IAnimateEnum {
         SPIKEREST {
             override val textureArray: Array<FloatArray> by lazy {
                 textureArrayInitialise(1, 1, 1)
@@ -45,8 +45,7 @@ data class TrapData(
                 values()[rest.ordinal - 1]
         }
 
-        override val isWalking: Boolean
-            get() = false
+
         fun calculateCurrentState(
             minR: Int,
             minC: Int,

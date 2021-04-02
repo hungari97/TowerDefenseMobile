@@ -3,7 +3,7 @@ package com.example.openglpractice.logic
 import com.example.openglpractice.model.*
 
 
-abstract class AFeature<T : IFeatureEnum> : Interactable, Animatable {
+abstract class AFeature<T : IAnimateEnum> : Interactable, Animatable {
     abstract override val data: AFeatureData<T>
     protected var triggerd: Boolean = false
     override fun hit(thing: Interactable) {

@@ -3,7 +3,7 @@ package com.example.openglpractice.logic
 import com.example.openglpractice.model.FeatureData
 import com.example.openglpractice.model.Vector
 
-class Feature() : AFeature<FeatureData.FeatureAnimateState>() {
+class Feature() : AFeature<FeatureData.AnimateAnimateState>() {
     override lateinit var data:FeatureData
 
     constructor(row: Double,coloum:Double) : this() {
@@ -13,7 +13,7 @@ class Feature() : AFeature<FeatureData.FeatureAnimateState>() {
             damage = 0,
             hitBoxPosition = Vector(row, coloum),
             hitBoxSize = Vector(1.0, 1.0),
-            animationState = FeatureData.FeatureAnimateState.valueOf("CRYSTAL"),
+            animationState = FeatureData.AnimateAnimateState.valueOf("CRYSTAL"),
             currentAnimationProgress = 1,
             functionality = this,
             rotation =0 )

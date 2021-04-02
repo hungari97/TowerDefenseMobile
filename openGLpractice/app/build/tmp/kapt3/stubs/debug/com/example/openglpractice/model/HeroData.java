@@ -56,6 +56,7 @@ public final class HeroData extends com.example.openglpractice.model.CharacterDa
         return null;
     }
     
+    @java.lang.Override()
     public void setHitBoxSize(@org.jetbrains.annotations.NotNull()
     com.example.openglpractice.model.Vector p0) {
     }
@@ -85,6 +86,7 @@ public final class HeroData extends com.example.openglpractice.model.CharacterDa
         return null;
     }
     
+    @java.lang.Override()
     public void setGoal(@org.jetbrains.annotations.Nullable()
     com.example.openglpractice.model.Vector p0) {
     }
@@ -223,59 +225,68 @@ public final class HeroData extends com.example.openglpractice.model.CharacterDa
         return false;
     }
     
-    @kotlin.Metadata(mv = {1, 4, 1}, bv = {1, 0, 3}, k = 1, d1 = {"\u0000(\n\u0002\u0018\u0002\n\u0002\u0010\u0010\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u0011\n\u0002\u0010\u0014\n\u0000\n\u0002\u0010\b\n\u0000\n\u0002\u0010\u000b\n\u0002\b\u000f\b\u0086\u0001\u0018\u00002\b\u0012\u0004\u0012\u00020\u00000\u00012\u00020\u0002B\u0007\b\u0002\u00a2\u0006\u0002\u0010\u0003J#\u0010\u0004\u001a\b\u0012\u0004\u0012\u00020\u00060\u00052\u0006\u0010\u0007\u001a\u00020\b2\u0006\u0010\t\u001a\u00020\nH\u0016\u00a2\u0006\u0002\u0010\u000bJ&\u0010\f\u001a\u00020\u00062\u0006\u0010\r\u001a\u00020\b2\u0006\u0010\u000e\u001a\u00020\b2\u0006\u0010\u000f\u001a\u00020\b2\u0006\u0010\u0010\u001a\u00020\bJ)\u0010\u0011\u001a\b\u0012\u0004\u0012\u00020\u00060\u00052\u0006\u0010\u0012\u001a\u00020\b2\u0006\u0010\u0013\u001a\u00020\b2\u0006\u0010\u0014\u001a\u00020\b\u00a2\u0006\u0002\u0010\u0015j\u0002\b\u0016j\u0002\b\u0017j\u0002\b\u0018\u00a8\u0006\u0019"}, d2 = {"Lcom/example/openglpractice/model/HeroData$HeroAnimateState;", "", "Lcom/example/openglpractice/model/IFeatureEnum;", "(Ljava/lang/String;I)V", "calculateAnimationArray", "", "", "type", "", "rest", "", "(IZ)[[F", "calculateCurrentState", "minR", "minC", "maxR", "maxC", "textureArrayInitialise", "frameSizeX", "frameSizeY", "startingRow", "(III)[[F", "HEROREST", "HEROWALK", "HEROATTACK", "app_debug"})
-    public static enum HeroAnimateState implements com.example.openglpractice.model.IFeatureEnum {
-        /*public static final*/ HEROREST /* = new @kotlin.Metadata(mv = {1, 4, 1}, bv = {1, 0, 3}, k = 1, d1 = {"\u0000\u001e\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000b\n\u0002\b\u0002\n\u0002\u0010\u0011\n\u0002\u0010\u0014\n\u0002\b\u0005\b\u00c6\u0001\u0018\u00002\u00020\u0001R\u0014\u0010\u0002\u001a\u00020\u00038VX\u0096\u0004\u00a2\u0006\u0006\u001a\u0004\b\u0002\u0010\u0004R!\u0010\u0005\u001a\b\u0012\u0004\u0012\u00020\u00070\u00068VX\u0096\u0084\u0002\u00a2\u0006\f\n\u0004\b\n\u0010\u000b\u001a\u0004\b\b\u0010\t\u00a8\u0006\f"}, d2 = {"Lcom/example/openglpractice/model/HeroData$HeroAnimateState$HEROREST;", "Lcom/example/openglpractice/model/HeroData$HeroAnimateState;", "isWalking", "", "()Z", "textureArray", "", "", "getTextureArray", "()[[F", "textureArray$delegate", "Lkotlin/Lazy;", "app_debug"}) HEROREST(){
+    @kotlin.Metadata(mv = {1, 4, 1}, bv = {1, 0, 3}, k = 1, d1 = {"\u0000(\n\u0002\u0018\u0002\n\u0002\u0010\u0010\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u0011\n\u0002\u0010\u0014\n\u0000\n\u0002\u0010\b\n\u0000\n\u0002\u0010\u000b\n\u0002\b\u000f\b\u0086\u0001\u0018\u00002\b\u0012\u0004\u0012\u00020\u00000\u00012\u00020\u0002B\u0007\b\u0002\u00a2\u0006\u0002\u0010\u0003J#\u0010\u0004\u001a\b\u0012\u0004\u0012\u00020\u00060\u00052\u0006\u0010\u0007\u001a\u00020\b2\u0006\u0010\t\u001a\u00020\nH\u0016\u00a2\u0006\u0002\u0010\u000bJ&\u0010\f\u001a\u00020\u00062\u0006\u0010\r\u001a\u00020\b2\u0006\u0010\u000e\u001a\u00020\b2\u0006\u0010\u000f\u001a\u00020\b2\u0006\u0010\u0010\u001a\u00020\bJ)\u0010\u0011\u001a\b\u0012\u0004\u0012\u00020\u00060\u00052\u0006\u0010\u0012\u001a\u00020\b2\u0006\u0010\u0013\u001a\u00020\b2\u0006\u0010\u0014\u001a\u00020\b\u00a2\u0006\u0002\u0010\u0015j\u0002\b\u0016j\u0002\b\u0017j\u0002\b\u0018\u00a8\u0006\u0019"}, d2 = {"Lcom/example/openglpractice/model/HeroData$HeroAnimateState;", "", "Lcom/example/openglpractice/model/ICharacterAnimationEnum;", "(Ljava/lang/String;I)V", "calculateAnimationArray", "", "", "type", "", "rest", "", "(IZ)[[F", "calculateCurrentState", "minR", "minC", "maxR", "maxC", "textureArrayInitialise", "frameSizeX", "frameSizeY", "startingRow", "(III)[[F", "HEROREST", "HEROWALK", "HEROATTACK", "app_debug"})
+    public static enum HeroAnimateState implements com.example.openglpractice.model.ICharacterAnimationEnum {
+        /*public static final*/ HEROREST /* = new @kotlin.Metadata(mv = {1, 4, 1}, bv = {1, 0, 3}, k = 1, d1 = {"\u0000\u001e\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0010\u0011\n\u0002\u0010\u0014\n\u0002\b\u0005\b\u00c6\u0001\u0018\u00002\u00020\u0001R\u0014\u0010\u0002\u001a\u00020\u0003X\u0096\u0004\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0004\u0010\u0005R!\u0010\u0006\u001a\b\u0012\u0004\u0012\u00020\b0\u00078VX\u0096\u0084\u0002\u00a2\u0006\f\n\u0004\b\u000b\u0010\f\u001a\u0004\b\t\u0010\n\u00a8\u0006\r"}, d2 = {"Lcom/example/openglpractice/model/HeroData$HeroAnimateState$HEROREST;", "Lcom/example/openglpractice/model/HeroData$HeroAnimateState;", "action", "Lcom/example/openglpractice/model/EActionType;", "getAction", "()Lcom/example/openglpractice/model/EActionType;", "textureArray", "", "", "getTextureArray", "()[[F", "textureArray$delegate", "Lkotlin/Lazy;", "app_debug"}) HEROREST(){
+            @org.jetbrains.annotations.NotNull()
+            private final com.example.openglpractice.model.EActionType action = com.example.openglpractice.model.EActionType.REST;
             @org.jetbrains.annotations.NotNull()
             private final kotlin.Lazy textureArray$delegate = null;
             
             @org.jetbrains.annotations.NotNull()
             @java.lang.Override()
-            public float[][] getTextureArray() {
+            public com.example.openglpractice.model.EActionType getAction() {
                 return null;
             }
             
+            @org.jetbrains.annotations.NotNull()
             @java.lang.Override()
-            public boolean isWalking() {
-                return false;
+            public float[][] getTextureArray() {
+                return null;
             }
             
             HEROREST() {
                 super();
             }
         } */,
-        /*public static final*/ HEROWALK /* = new @kotlin.Metadata(mv = {1, 4, 1}, bv = {1, 0, 3}, k = 1, d1 = {"\u0000\u001e\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000b\n\u0002\b\u0002\n\u0002\u0010\u0011\n\u0002\u0010\u0014\n\u0002\b\u0005\b\u00c6\u0001\u0018\u00002\u00020\u0001R\u0014\u0010\u0002\u001a\u00020\u00038VX\u0096\u0004\u00a2\u0006\u0006\u001a\u0004\b\u0002\u0010\u0004R!\u0010\u0005\u001a\b\u0012\u0004\u0012\u00020\u00070\u00068VX\u0096\u0084\u0002\u00a2\u0006\f\n\u0004\b\n\u0010\u000b\u001a\u0004\b\b\u0010\t\u00a8\u0006\f"}, d2 = {"Lcom/example/openglpractice/model/HeroData$HeroAnimateState$HEROWALK;", "Lcom/example/openglpractice/model/HeroData$HeroAnimateState;", "isWalking", "", "()Z", "textureArray", "", "", "getTextureArray", "()[[F", "textureArray$delegate", "Lkotlin/Lazy;", "app_debug"}) HEROWALK(){
+        /*public static final*/ HEROWALK /* = new @kotlin.Metadata(mv = {1, 4, 1}, bv = {1, 0, 3}, k = 1, d1 = {"\u0000\u001e\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0010\u0011\n\u0002\u0010\u0014\n\u0002\b\u0005\b\u00c6\u0001\u0018\u00002\u00020\u0001R\u0014\u0010\u0002\u001a\u00020\u0003X\u0096\u0004\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0004\u0010\u0005R!\u0010\u0006\u001a\b\u0012\u0004\u0012\u00020\b0\u00078VX\u0096\u0084\u0002\u00a2\u0006\f\n\u0004\b\u000b\u0010\f\u001a\u0004\b\t\u0010\n\u00a8\u0006\r"}, d2 = {"Lcom/example/openglpractice/model/HeroData$HeroAnimateState$HEROWALK;", "Lcom/example/openglpractice/model/HeroData$HeroAnimateState;", "action", "Lcom/example/openglpractice/model/EActionType;", "getAction", "()Lcom/example/openglpractice/model/EActionType;", "textureArray", "", "", "getTextureArray", "()[[F", "textureArray$delegate", "Lkotlin/Lazy;", "app_debug"}) HEROWALK(){
+            @org.jetbrains.annotations.NotNull()
+            private final com.example.openglpractice.model.EActionType action = com.example.openglpractice.model.EActionType.WALK;
             @org.jetbrains.annotations.NotNull()
             private final kotlin.Lazy textureArray$delegate = null;
             
             @org.jetbrains.annotations.NotNull()
             @java.lang.Override()
-            public float[][] getTextureArray() {
+            public com.example.openglpractice.model.EActionType getAction() {
                 return null;
             }
             
+            @org.jetbrains.annotations.NotNull()
             @java.lang.Override()
-            public boolean isWalking() {
-                return false;
+            public float[][] getTextureArray() {
+                return null;
             }
             
             HEROWALK() {
                 super();
             }
         } */,
-        /*public static final*/ HEROATTACK /* = new @kotlin.Metadata(mv = {1, 4, 1}, bv = {1, 0, 3}, k = 1, d1 = {"\u0000\u001e\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000b\n\u0002\b\u0002\n\u0002\u0010\u0011\n\u0002\u0010\u0014\n\u0002\b\u0005\b\u00c6\u0001\u0018\u00002\u00020\u0001R\u0014\u0010\u0002\u001a\u00020\u00038VX\u0096\u0004\u00a2\u0006\u0006\u001a\u0004\b\u0002\u0010\u0004R!\u0010\u0005\u001a\b\u0012\u0004\u0012\u00020\u00070\u00068VX\u0096\u0084\u0002\u00a2\u0006\f\n\u0004\b\n\u0010\u000b\u001a\u0004\b\b\u0010\t\u00a8\u0006\f"}, d2 = {"Lcom/example/openglpractice/model/HeroData$HeroAnimateState$HEROATTACK;", "Lcom/example/openglpractice/model/HeroData$HeroAnimateState;", "isWalking", "", "()Z", "textureArray", "", "", "getTextureArray", "()[[F", "textureArray$delegate", "Lkotlin/Lazy;", "app_debug"}) HEROATTACK(){
+        /*public static final*/ HEROATTACK /* = new @kotlin.Metadata(mv = {1, 4, 1}, bv = {1, 0, 3}, k = 1, d1 = {"\u0000\u001e\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0010\u0011\n\u0002\u0010\u0014\n\u0002\b\u0005\b\u00c6\u0001\u0018\u00002\u00020\u0001R\u0014\u0010\u0002\u001a\u00020\u0003X\u0096\u0004\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0004\u0010\u0005R!\u0010\u0006\u001a\b\u0012\u0004\u0012\u00020\b0\u00078VX\u0096\u0084\u0002\u00a2\u0006\f\n\u0004\b\u000b\u0010\f\u001a\u0004\b\t\u0010\n\u00a8\u0006\r"}, d2 = {"Lcom/example/openglpractice/model/HeroData$HeroAnimateState$HEROATTACK;", "Lcom/example/openglpractice/model/HeroData$HeroAnimateState;", "action", "Lcom/example/openglpractice/model/EActionType;", "getAction", "()Lcom/example/openglpractice/model/EActionType;", "textureArray", "", "", "getTextureArray", "()[[F", "textureArray$delegate", "Lkotlin/Lazy;", "app_debug"}) HEROATTACK(){
+            @org.jetbrains.annotations.NotNull()
+            private final com.example.openglpractice.model.EActionType action = com.example.openglpractice.model.EActionType.ATTACK;
             @org.jetbrains.annotations.NotNull()
             private final kotlin.Lazy textureArray$delegate = null;
             
             @org.jetbrains.annotations.NotNull()
             @java.lang.Override()
-            public float[][] getTextureArray() {
+            public com.example.openglpractice.model.EActionType getAction() {
                 return null;
             }
             
+            @org.jetbrains.annotations.NotNull()
             @java.lang.Override()
-            public boolean isWalking() {
-                return false;
+            public float[][] getTextureArray() {
+                return null;
             }
             
             HEROATTACK() {
