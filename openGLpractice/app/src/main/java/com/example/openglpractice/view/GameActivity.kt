@@ -18,12 +18,14 @@ import com.example.openglpractice.presenter.GamePresenter
 import com.example.openglpractice.screen.GameScreen
 import com.example.openglpractice.view.opengl.LessonFourRenderer
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.InputStreamReader
 import javax.inject.Inject
+
 
 class GameActivity : AppCompatActivity(), GameScreen {
     @Inject
     lateinit var gamePresenter: GamePresenter
-
+    val levelFieldList: MutableList<Int> = mutableListOf()
     lateinit var ibSelectTraps: Array<ImageButton>
     lateinit var ibSelectArrow: Array<ImageButton>
     var x: Float = 0.0f
@@ -37,13 +39,12 @@ class GameActivity : AppCompatActivity(), GameScreen {
         injector.inject(this)
 
         setContentView(R.layout.activity_main)
-        gamePresenter.buildInitialise()
+        gamePresenter.buildInitialise(fieldLayer())
         render =
             LessonFourRenderer(
                 this,
                 gamePresenter
             )
-
         swGameView.setEGLConfigChooser(8, 8, 8, 8, 16, 0)
         swGameView.holder.setFormat(PixelFormat.RGBA_8888)
         swGameView.setZOrderOnTop(true)
@@ -95,19 +96,23 @@ class GameActivity : AppCompatActivity(), GameScreen {
         swGameView.setZOrderMediaOverlay(true)
 
         fbPlayStart.setOnClickListener {
-            gamePresenter.buildStartWave()
-            buildMode=false
-            llTraps.visibility=View.GONE
-            llRotationArrow.visibility=View.GONE
+            if (buildMode) {
+                gamePresenter.buildStartWave()
+                buildMode = false
+                llTraps.visibility = View.GONE
+                llRotationArrow.visibility = View.GONE
+            } else {
+                gamePresenter.gameHeroAttack()
+            }
         }
 
         ibSelectTraps = arrayOf(
             ibTrapSelect1,
             ibTrapSelect2,
             ibTrapSelect3
-           /* ibTrapSelect4,
-            ibTrapSelect5,
-            ibTrapSelect6*/
+            /* ibTrapSelect4,
+             ibTrapSelect5,
+             ibTrapSelect6*/
         )
         ibSelectTraps.forEachIndexed { index, button ->
             //button.setBackgroundResource(gamePresenter.getSelectedTrapList()[index])
@@ -124,7 +129,7 @@ class GameActivity : AppCompatActivity(), GameScreen {
 
         llRotationArrow.visibility = View.INVISIBLE
 
-        Timer.subbscribers.plusAssign(::updateScreen)
+        Timer.subscribe(::updateScreen)
 
     }
 
@@ -143,6 +148,16 @@ class GameActivity : AppCompatActivity(), GameScreen {
             else -> super.onOptionsItemSelected(item)
         }
     }*/
+    private fun fieldLayer(): Array<Array<Int>> {
+        val fieldTypeList = mutableListOf<Array<Int>>()
+        val reader = InputStreamReader(resources.openRawResource(R.raw.level_1)).buffered()
+        reader.forEachLine { line ->
+            fieldTypeList.add(line.split(" ".toRegex()).map { splited -> splited.toInt() }
+                .toTypedArray())
+        }
+
+        return fieldTypeList.toTypedArray()
+    }
 
     override fun onResume() {
         super.onResume()
@@ -163,7 +178,7 @@ class GameActivity : AppCompatActivity(), GameScreen {
                 gamePresenter.trapHasBeenSelected(ibSelectTraps.indexOf((v)))
                 llRotationArrow.visibility = View.GONE
             } else {
-                resetTrapBackgound()
+                resetTrapBackground()
                 v.setBackgroundResource(R.drawable.selected_traplist_item)
                 llRotationArrow.visibility = View.VISIBLE
                 gamePresenter.trapHasBeenSelected(ibSelectTraps.indexOf(v))
@@ -182,14 +197,14 @@ class GameActivity : AppCompatActivity(), GameScreen {
                 v.background = getDrawable(R.drawable.selected_arrow_background)
                 gamePresenter.buildArrowSelected(ibSelectArrow.indexOf(v))
             }
-            llRotationArrow.visibility=View.INVISIBLE
+            llRotationArrow.visibility = View.INVISIBLE
 
         } else {
             TODO("VERSION.SDK_INT < LOLLIPOP")
         }
     }
 
-    private fun resetTrapBackgound() {
+    private fun resetTrapBackground() {
         ibSelectTraps.forEach {
             it.setBackgroundResource(R.drawable.not_selected_traplist_item)
         }

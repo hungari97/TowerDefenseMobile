@@ -1,7 +1,12 @@
 package com.example.openglpractice.logic
 
+import com.example.openglpractice.R
+import com.example.openglpractice.logic.FeatureFactory.*
 import com.example.openglpractice.model.*
-import com.example.openglpractice.model.Vector
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
+
 
 object LevelManager {
     var buildMode: Boolean = true
@@ -16,7 +21,6 @@ object LevelManager {
     var topCharacterMatrix: Array<Array<Character<*>?>> = arrayOf()
     var selectedTraps: Set<FeatureFactory> = setOf()
     private var idGen: Long = 0
-    private var buildPhase: Boolean = true
     private var slime: Array<Enemy> = arrayOf()
 
     fun initialise(hero: Hero) {
@@ -33,7 +37,7 @@ object LevelManager {
         TODO("felparamétereznni a megfelelő pályára")
     }
 
-    fun initialise() {
+    fun initialise(fieldTypes:Array<Array<Int>>) {
         idGen = 0
         hero = Hero(HeroData(
             2,
@@ -47,13 +51,13 @@ object LevelManager {
             null,
             null,
             2,
-            setOf(FeatureFactory.SPIKETRAP, FeatureFactory.FIRETRAP)
+            setOf(SPIKETRAP, FIRETRAP)
         ))
         hero.data.functionality = hero
 
         selectedTraps = hero.data.trapTypes
         data = LevelData(
-            initialiseFieldLayer(),
+            initialiseFieldLayer(fieldTypes),
             initialiseFeatureLayer(),
             initialiseCharacterLayer(),
             3,
@@ -65,22 +69,24 @@ object LevelManager {
         Timer.startThread()
     }
 
-    private fun initialiseFieldLayer(): Array<FieldData> {
+
+    private fun initialiseFieldLayer(types:Array<Array<Int>>): Array<FieldData> {
+
         fieldMatrix = Array(8) { row ->
             Array(14) { field ->
                 Field(
                     (row * 14 + field).toLong(),
                     row,
                     field,
-                    0
+                    types[row][field]
                 )
             }
         }
-        fieldMatrix[2][2].data.type = 1
+       /* fieldMatrix[2][2].data.type = 1
         fieldMatrix[1][2].data.type = 1
         fieldMatrix[0][2].data.type = 1
         fieldMatrix[2][1].data.type = 1
-        fieldMatrix[2][0].data.type = 1
+        fieldMatrix[2][0].data.type = 1*/
         val tempArray: MutableList<FieldData> = mutableListOf()
         fieldMatrix.forEach { external ->
             external.forEach { internal ->
@@ -127,7 +133,7 @@ object LevelManager {
             EnemyFactory.SLIME.createEnemy(Vector(5.0, 3.0), 36, 2),
             EnemyFactory.SLIME.createEnemy(Vector(6.0, 3.0), 37, 2),
             EnemyFactory.SLIME.createEnemy(Vector(4.0, 7.0), 38, 2),
-            EnemyFactory.SLIME.createEnemy(Vector(3.0, 7.0), 39, 2)
+            EnemyFactory.SLIME.createEnemy(Vector(1.0, 0.0), 39, 2)
         )
         lowCharacterMatrix[5][5] = slime[0]
         lowCharacterMatrix[7][5] = slime[1]
@@ -138,7 +144,7 @@ object LevelManager {
         lowCharacterMatrix[3][5] = slime[6]
         lowCharacterMatrix[3][6] = slime[7]
         lowCharacterMatrix[7][4] = slime[8]
-        lowCharacterMatrix[7][3] = slime[9]
+        lowCharacterMatrix[0][1] = slime[9]
 
         val tempArray: MutableList<CharacterData<*>?> = mutableListOf()
         lowCharacterMatrix.forEach { external ->
@@ -150,21 +156,19 @@ object LevelManager {
     }
 
     fun selectedFromThePalette(selectedType: Int) {
-        if (selectedType == 4) {
+        if (selectedType == 3) {
             Timer.killTimer()
         } else
             if (selectedTrap == null) {
                 selectedTrap = selectedTraps.elementAt(selectedType)
             } else {
                 selectedTrap?.let {
-                    if (it.ordinal == selectedTraps.elementAt(selectedType).ordinal) {
-                        selectedTrap = null
+                    selectedTrap = if (it.ordinal == selectedTraps.elementAt(selectedType).ordinal) {
+                        null
                     } else
-                        selectedTrap = selectedTraps.elementAt(selectedType)
+                        selectedTraps.elementAt(selectedType)
                 }
             }
-
-        //hero.data.trapTypes.elementAt(selectedType)
     }
 
     private fun idGenerate(type: FeatureFactory): Long {
@@ -173,20 +177,20 @@ object LevelManager {
 
     fun positionToHero(to: Vector) {
         hero.data.goal = to
-        slime.forEachIndexed { index, it ->it.data.goal=to
-           /* when (index % 4) {
-                0 -> it.data.goal = Vector(to.x, to.y + (index / 4) + 1)
-                1 -> it.data.goal = Vector(to.x - (index / 4) - 1, to.y)
-                2 -> it.data.goal = Vector(to.x, to.y - (index / 4) - 1)
-                else -> it.data.goal = Vector(to.x + (index / 4) + 1, to.y)
-            }*/
+        slime.forEachIndexed { index, it ->
+            it.data.goal = to
+            /* when (index % 4) {
+                 0 -> it.data.goal = Vector(to.x, to.y + (index / 4) + 1)
+                 1 -> it.data.goal = Vector(to.x - (index / 4) - 1, to.y)
+                 2 -> it.data.goal = Vector(to.x, to.y - (index / 4) - 1)
+                 else -> it.data.goal = Vector(to.x + (index / 4) + 1, to.y)
+             }*/
         }
 
     }
 
-    /** */
     fun buildTrap(position: Vector) {
-        if (okToPutDown(position)) {
+        if (buildMode && okToPutDown(position)) {
             //ok position
             selectedTrap?.let {
                 addTrapToData(position)
@@ -195,60 +199,55 @@ object LevelManager {
     }
 
     private fun okToPutDown(position: Vector): Boolean {
+        //Van e ott valami
         featureMatrix[position.y.toInt()][position.x.toInt()]?.let {
             activateAnimation(it)
             return false
         }
-        //in field types 1-wall 2-pit 3-water can not be build
-        if (arrayOf(
-                1,
-                2,
-                3
-            ).contains(fieldMatrix[position.y.toInt()][position.x.toInt()].data.type)
-        )
-            return false
 
+        //in field types 0-path 1-wall 2-pit 3-water can not be build
+        when (fieldMatrix[position.y.toInt()][position.x.toInt()].data.type) {
+            0 -> {
+                if (selectedTrap == FIRETRAP) {
+                    return false
+                }
+            }
+            1 -> {
+                if (selectedTrap != FIRETRAP) {
+                    return false
+                }
+            }
+            2, 3 -> {
+                return false
+            }
+        }
+
+        //ha lerakjuk akk fog e felakadni valahol ha nagyobb mint (1;1)
         selectedTrap?.let {
             val test = it.createFeature(position, 0, selectedRotation).data
             var bool: Boolean = true
-            when (test.rotation) {
-                0.toByte() -> {
-                    if (position.x.toInt() - test.hitBoxSize.x + 1 < 0 || position.y.toInt() + test.hitBoxSize.y - 1 > 7) {
-                        bool = false
-                    } else
-                        featureMatrix[position.y.toInt() + test.hitBoxSize.y.toInt()][position.x.toInt() - test.hitBoxSize.x.toInt()]?.let {
-                            bool = false
-                        }
 
-                }
-                1.toByte() -> {
-                    if (position.x.toInt() + test.hitBoxSize.y - 1 > 13 || position.y.toInt() + test.hitBoxSize.x - 1 > 7) {
-                        bool = false
-                    } else
-                        featureMatrix[position.y.toInt() + test.hitBoxSize.x.toInt()][position.x.toInt() + test.hitBoxSize.y.toInt()]?.let {
-                            bool = false
-                        }
+            val direction: Vector = if (test.hitBoxSize != Vector(1.0, 1.0))
+                when (test.rotation) {
+                    0.toByte() -> Vector(-1.0, 0.0)
+                    1.toByte() -> Vector(0.0, 1.0)
+                    2.toByte() -> Vector(1.0, 0.0)
+                    else -> Vector(0.0, -1.0)
+                } else Vector(0.0, 0.0)
 
+            if (position.x.toInt() + direction.x < 0 ||
+                position.x.toInt() + direction.x > 13 ||
+                position.y.toInt() + direction.y > 7 ||
+                position.y.toInt() + direction.y < 0
+            ) {
+                bool = false
+            } else
+                featureMatrix[position.y.toInt() + direction.y.toInt()][position.x.toInt() + direction.x.toInt()]?.let {
+                    bool = false
                 }
-                2.toByte() -> {
-                    if (position.x.toInt() + test.hitBoxSize.x - 1 > 13 || position.y.toInt() - test.hitBoxSize.y + 1 <= 0) {
+                    ?: if (fieldMatrix[position.y.toInt() + direction.y.toInt()][position.x.toInt() + direction.x.toInt()].data.type != 0) {
                         bool = false
-                    } else
-                        featureMatrix[position.y.toInt() + test.hitBoxSize.y.toInt()][position.x.toInt() + test.hitBoxSize.x.toInt()]?.let {
-                            bool = false
-                        }
-
-                }
-                3.toByte() -> {
-                    if (position.x.toInt() - test.hitBoxSize.y + 1 < 0 || position.y.toInt() - test.hitBoxSize.x + 1 < 0) {
-                        bool = false
-                    } else
-                        featureMatrix[position.y.toInt() - test.hitBoxSize.x.toInt()][position.x.toInt() - test.hitBoxSize.y.toInt()]?.let {
-                            bool = false
-                        }
-
-                }
-            }
+                    }
             test.functionality!!.death()
             if (!bool) {
                 return false
@@ -265,7 +264,6 @@ object LevelManager {
     private fun addTrapToData(position: Vector) {
         val temp =
             selectedTrap!!.createFeature(position, idGenerate(selectedTrap!!), selectedRotation)
-
 
         for (initialiseX in 0 until temp.data.hitBoxSize.x.toInt())
             for (initialiseY in 0 until temp.data.hitBoxSize.y.toInt()) {

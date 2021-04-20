@@ -1,5 +1,6 @@
 package com.example.openglpractice.model.interactor
 
+import android.content.Context
 import com.example.openglpractice.logic.AFeature
 import com.example.openglpractice.logic.Character
 import com.example.openglpractice.logic.Field
@@ -18,8 +19,8 @@ class BuildInteractor @Inject constructor() {
         levelManager.selectedFromThePalette(trapIndex)
     }
 
-    fun buildInitialiseManager() {
-        levelManager.initialise()
+    fun buildInitialiseManager(field:Array<Array<Int>>) {
+        levelManager.initialise(field)
     }
 
     fun logicFieldMatrix(): Array<Array<Field>> {
@@ -51,4 +52,13 @@ class BuildInteractor @Inject constructor() {
     fun buildStartWave() {
         LevelManager.buildMode=false
     }
+
+    fun endWave(){
+        LevelManager.buildMode=true
+    }
+
+    fun gameHeroAttack() {
+        LevelManager.hero.attack()
+    }
+
 }

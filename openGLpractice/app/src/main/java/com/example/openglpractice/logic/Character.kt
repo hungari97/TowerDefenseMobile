@@ -7,13 +7,14 @@ import com.example.openglpractice.model.Vector
 
 abstract class Character<T : IAnimateEnum> : Interactable, Animatable {
     abstract override val data: CharacterData<T>
+    protected var attackNext = false
 
     open fun calcMove(from: Vector, to: Vector) {
         val checkedList: MutableList<Vector> = mutableListOf()
-        val pathtemp: MutableList<Vector> = mutableListOf()
+        val pathTemp: MutableList<Vector> = mutableListOf()
         var temp: Vector = from
         val tempMatrix =
-            Array(8) { Array(14) { 0   /*1 left, 2, up, 3 right, 4 down*/ } }
+            Array(8) { Array(14) { 0 } } //1 left, 2, up, 3 right, 4 down
 
         tempMatrix[temp.y.toInt()][temp.x.toInt()] = 0
         checkedList.add(from)
@@ -27,7 +28,7 @@ abstract class Character<T : IAnimateEnum> : Interactable, Animatable {
             if (!checkedList.contains(Vector(temp.x, temp.y - 1)) && temp.y - 1 >= 0)
                 if (LevelManager.lowCharacterMatrix[temp.y.toInt() - 1][temp.x.toInt()] == null || (
                             LevelManager.lowCharacterMatrix[temp.y.toInt() - 1][temp.x.toInt()]!!.data.animationState.action == EActionType.WALK &&
-                                    LevelManager.topCharacterMatrix[temp.y.toInt()][temp.x.toInt()] ==
+                                    LevelManager.topCharacterMatrix[temp.y.toInt() ][temp.x.toInt()] ==
                                     LevelManager.lowCharacterMatrix[temp.y.toInt() - 1][temp.x.toInt()]
                             )
                 )
@@ -95,30 +96,30 @@ abstract class Character<T : IAnimateEnum> : Interactable, Animatable {
         }
 
         if (temp.x.toInt() == to.x.toInt() && temp.y.toInt() == to.y.toInt()) {
-            pathtemp.add(temp)
+            pathTemp.add(temp)
             while (temp.x != from.x || temp.y != from.y) {
                 when (tempMatrix[temp.y.toInt()][temp.x.toInt()]) {
                     0 -> return
                     1 -> {
-                        pathtemp.add(Vector(temp.x, temp.y - 1))
+                        pathTemp.add(Vector(temp.x, temp.y - 1))
                         temp = Vector(temp.x, temp.y - 1)
                     }
                     2 -> {
-                        pathtemp.add(Vector(temp.x + 1, temp.y))
+                        pathTemp.add(Vector(temp.x + 1, temp.y))
                         temp = Vector(temp.x + 1, temp.y)
                     }
                     3 -> {
-                        pathtemp.add(Vector(temp.x, temp.y + 1))
+                        pathTemp.add(Vector(temp.x, temp.y + 1))
                         temp = Vector(temp.x, temp.y + 1)
                     }
                     4 -> {
-                        pathtemp.add(Vector(temp.x - 1, temp.y))
+                        pathTemp.add(Vector(temp.x - 1, temp.y))
                         temp = Vector(temp.x - 1, temp.y)
                     }
                 }
             }
-            if (pathtemp.size > 1) {
-                data.path = pathtemp.reversed().toTypedArray()
+            if (pathTemp.size > 1) {
+                data.path = pathTemp.reversed().toTypedArray()
                 when {
                     data.path!![0].x.toInt() - data.path!![1].x.toInt() == -1 -> data.rotation = 2
                     data.path!![0].x.toInt() - data.path!![1].x.toInt() == 1 -> data.rotation = 0
@@ -128,13 +129,16 @@ abstract class Character<T : IAnimateEnum> : Interactable, Animatable {
             }
         } else {
             data.path = null
-            data.hitBoxSize= Vector(1.0,1.0)
+            data.hitBoxSize = Vector(1.0, 1.0)
             changeAnimateState("REST")
         }
     }
 
-    fun moveToThick() {
+    open fun moveToThick() {
         if (data.currentAnimationProgress == 0) {
+            if (attackNext) {
+                attack()
+            }
             data.path?.also { pathNotNull ->
                 var path = pathNotNull.toMutableList()
                 val before = data.hitBoxPosition
@@ -169,7 +173,7 @@ abstract class Character<T : IAnimateEnum> : Interactable, Animatable {
                     ) {
                         calcMove(data.hitBoxPosition, data.goal!!)
                     }
-                    data.path?.let { pathInner->
+                    data.path?.let { pathInner ->
                         when {
                             data.hitBoxPosition.x.toInt() - pathInner[1].x.toInt() == -1 -> data.rotation =
                                 2
@@ -185,17 +189,53 @@ abstract class Character<T : IAnimateEnum> : Interactable, Animatable {
                     }
                 }
             }
-
-            data.path ?: data.goal?.let { calcMove(data.hitBoxPosition, it) }
         }
-
+        data.path ?: data.goal?.let { calcMove(data.hitBoxPosition, it) }
     }
 
+    open fun attack() {
+        if (data.currentAnimationProgress == 0 && attackNext) {
+            changeAnimateState("ATTACK")
+            data.hitBoxSize = (Vector(2.0, 1.0))
+            attackNext = false
+            val direction: Vector = when (data.rotation) {
+                0.toByte() -> Vector(-1.0, 0.0)
+                1.toByte() -> Vector(0.0, 1.0)
+                2.toByte() -> Vector(1.0, 0.0)
+                else -> Vector(0.0, -1.0)
+            }
+            LevelManager.topCharacterMatrix[data.hitBoxPosition.y.toInt() + direction.y.toInt()][data.hitBoxPosition.x.toInt() + direction.x.toInt()] =
+                this
+            LevelManager.lowCharacterMatrix[data.hitBoxPosition.y.toInt() + direction.y.toInt()][data.hitBoxPosition.x.toInt() + direction.x.toInt()]?.let {
+                it.hit(this)
+
+            }
+        } else {
+            attackNext = true
+        }
+    }
 
     abstract fun changeAnimateState(type: String)
 
     override fun nextAnimationState() {
-        data.currentAnimationProgress = (data.currentAnimationProgress + 1) % 16
+        if ((data.currentAnimationProgress + 1) % 16 == 0 && data.animationState.action == EActionType.ATTACK) {
+            changeAnimateState("REST")
+            data.hitBoxSize = Vector(1.0, 1.0)
 
+            val direction: Vector = when (data.rotation) {
+                0.toByte() -> Vector(-1.0, 0.0)
+                1.toByte() -> Vector(0.0, 1.0)
+                2.toByte() -> Vector(1.0, 0.0)
+                else -> Vector(0.0, -1.0)
+            }
+            LevelManager.topCharacterMatrix[data.hitBoxPosition.y.toInt() + direction.y.toInt()][data.hitBoxPosition.x.toInt() + direction.x.toInt()] =
+                null
+        }
+        data.currentAnimationProgress = (data.currentAnimationProgress + 1) % 16
+    }
+
+    override fun onThick() {
+        nextAnimationState()
+        moveToThick()
     }
 }

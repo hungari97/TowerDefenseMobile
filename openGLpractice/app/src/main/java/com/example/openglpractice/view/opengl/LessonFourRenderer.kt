@@ -5,9 +5,7 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import com.example.openglpractice.R
-import com.example.openglpractice.logic.AFeature
 import com.example.openglpractice.presenter.GamePresenter
-import com.example.openglpractice.view.opengl.TileType.*
 import javax.microedition.khronos.opengles.GL10
 
 class LessonFourRenderer(activityContext: Context, var presenter: GamePresenter) :
@@ -75,7 +73,7 @@ class LessonFourRenderer(activityContext: Context, var presenter: GamePresenter)
         config: javax.microedition.khronos.egl.EGLConfig?
     ) {
         // Set the background clear color to black.
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
+        GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f)
 
         // Use culling to remove back faces.
         GLES20.glDisable(GLES20.GL_CULL_FACE)

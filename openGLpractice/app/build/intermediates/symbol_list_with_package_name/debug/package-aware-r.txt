@@ -1637,6 +1637,7 @@ drawable player_texture0
 drawable selected_arrow_background
 drawable selected_traplist_item
 drawable spike
+drawable spike2
 drawable spike_texture
 drawable spritestrip
 drawable test_custom_background
@@ -2181,8 +2182,10 @@ mipmap firetrap
 mipmap ic_launcher
 mipmap ic_launcher_round
 mipmap icon
+mipmap spike
 navigation nav_graph
 plurals mtrl_badge_content_description
+raw level_1
 raw per_pixel_fragment_shader
 raw per_pixel_vertex_shader
 string abc_action_bar_home_description

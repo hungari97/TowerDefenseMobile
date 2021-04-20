@@ -25,15 +25,19 @@ class Feature() : AFeature<FeatureData.AnimateAnimateState>() {
 
 
     init {
-        Timer.subbscribers.plusAssign(::onThick)
+        Timer.subscribe(::onThick)
     }
     override fun death() {
-        Timer.subbscribers.remove (::onThick )
+        Timer.unSubscribe(::onThick)
 
     }
 
     override fun onThick() {
         //TODO("Not yet implemented")
+    }
+
+    override fun specialAttack() {
+        TODO("Not yet implemented")
     }
 
 }

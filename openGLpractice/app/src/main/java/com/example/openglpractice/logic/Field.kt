@@ -14,6 +14,9 @@ class Field(idGen:Long,row:Int,coloum:Int,type:Int):Interactable {
         type
     )
 
+    override fun specialAttack() {
+        TODO("Not yet implemented")
+    }
 
     override fun hit(thing: Interactable) {
         TODO("Not yet implemented")

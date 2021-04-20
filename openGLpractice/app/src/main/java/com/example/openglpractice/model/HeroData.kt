@@ -5,7 +5,7 @@ import com.example.openglpractice.logic.Hero
 
 data class HeroData(
     override val id: Long,
-    override val health: Int,
+    override var health: Int,
     override val damage: Int,
     override var hitBoxPosition: Vector,
     override var hitBoxSize: Vector,

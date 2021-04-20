@@ -12,7 +12,6 @@ abstract class AFeature<T : IAnimateEnum> : Interactable, Animatable {
 
     override fun nextAnimationState() {
         data.currentAnimationProgress = (data.currentAnimationProgress + 1) % 16
-
     }
 
     open fun triggered() {

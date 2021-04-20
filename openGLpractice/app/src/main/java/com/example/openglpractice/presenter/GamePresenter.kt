@@ -1,5 +1,6 @@
 package com.example.openglpractice.presenter
 
+import android.content.Context
 import com.example.openglpractice.logic.AFeature
 import com.example.openglpractice.logic.Character
 import com.example.openglpractice.logic.Field
@@ -28,8 +29,9 @@ class GamePresenter(private val buildInteractor: BuildInteractor) : Presenter<Ga
         buildInteractor.buildTouchPosition(position)
     }
 
-    fun buildInitialise():Array<Array<Field>>{
-        buildInteractor.buildInitialiseManager()
+    fun buildInitialise(field:Array<Array<Int>>):Array<Array<Field>>{
+        buildInteractor.buildInitialiseManager(field)
+
         return buildInteractor.logicFieldMatrix()
     }
 
@@ -63,6 +65,10 @@ class GamePresenter(private val buildInteractor: BuildInteractor) : Presenter<Ga
 
     fun buildStartWave() {
         buildInteractor.buildStartWave()
+    }
+
+    fun gameHeroAttack() {
+        buildInteractor.gameHeroAttack()
     }
 
 }

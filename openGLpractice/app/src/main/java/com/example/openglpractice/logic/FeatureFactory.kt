@@ -8,20 +8,20 @@ import com.example.openglpractice.model.Vector
 enum class FeatureFactory {
     SPIKETRAP {
         override val iconIndex: Int
-            get() = R.drawable.spike
+            get() = R.mipmap.spike
 
         override fun createFeature(position: Vector, id: Long, rotation: Byte): Trap {
             val data = TrapData(
                 id,
                 3,
-                1,
+                2,
                 position,
                 Vector(1.0, 1.0),
                 TrapData.TrapAnimationState.valueOf("SPIKEREST"),
                 0,
                 null,
                 rotation,
-                3000
+                1500
             )
             val trap = Trap(data)
             trap.data.functionality=trap
@@ -34,7 +34,6 @@ enum class FeatureFactory {
             get() = R.mipmap.firetrap
 
         override fun createFeature(position: Vector, id: Long, rotation: Byte): Trap {
-
             val data = TrapData(
                 id,
                 3,

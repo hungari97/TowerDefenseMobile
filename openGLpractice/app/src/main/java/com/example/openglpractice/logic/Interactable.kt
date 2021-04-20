@@ -8,4 +8,5 @@ interface Interactable {
     fun hit(thing:Interactable)
 
     fun death()
+    fun specialAttack()
 }
