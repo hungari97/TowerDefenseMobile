@@ -1,695 +1,487 @@
 package com.example.openglpractice.view.opengl
 
+import com.example.openglpractice.utility.Vector
 import kotlin.random.Random
 
-enum class TileType(val textureIndexes: FloatArray) {
-    FLOOR_LURD(
-        floatArrayOf(
-            1/16.0f,4/5.0f,
-            1/16.0f,5/5.0f,
-            0/16.0f,4/5.0f,
-            1/16.0f,5/5.0f,
-            0/16.0f,5/5.0f,
-            0/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_XURD(
-        floatArrayOf(
-            2/16.0f,4/5.0f,
-            2/16.0f,5/5.0f,
-            1/16.0f,4/5.0f,
-            2/16.0f,5/5.0f,
-            1/16.0f,5/5.0f,
-            1/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_LXRD(
-        floatArrayOf(
-            3/16.0f,4/5.0f,
-            3/16.0f,5/5.0f,
-            2/16.0f,4/5.0f,
-            3/16.0f,5/5.0f,
-            2/16.0f,5/5.0f,
-            2/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_LUXD(
-        floatArrayOf(
-            4/16.0f,4/5.0f,
-            4/16.0f,5/5.0f,
-            3/16.0f,4/5.0f,
-            4/16.0f,5/5.0f,
-            3/16.0f,5/5.0f,
-            3/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_LURX(
-        floatArrayOf(
-            5/16.0f,4/5.0f,
-            5/16.0f,5/5.0f,
-            4/16.0f,4/5.0f,
-            5/16.0f,5/5.0f,
-            4/16.0f,5/5.0f,
-            4/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_XXRD(
-        floatArrayOf(
-            6/16.0f,4/5.0f,
-            6/16.0f,5/5.0f,
-            5/16.0f,4/5.0f,
-            6/16.0f,5/5.0f,
-            5/16.0f,5/5.0f,
-            5/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_XUXD(
-        floatArrayOf(
-            7/16.0f,4/5.0f,
-            7/16.0f,5/5.0f,
-            6/16.0f,4/5.0f,
-            7/16.0f,5/5.0f,
-            6/16.0f,5/5.0f,
-            6/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_XURX(
-        floatArrayOf(
-            8/16.0f,4/5.0f,
-            8/16.0f,5/5.0f,
-            7/16.0f,4/5.0f,
-            8/16.0f,5/5.0f,
-            7/16.0f,5/5.0f,
-            7/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_LXXD(
-        floatArrayOf(
-            9/16.0f,4/5.0f,
-            9/16.0f,5/5.0f,
-            8/16.0f,4/5.0f,
-            9/16.0f,5/5.0f,
-            8/16.0f,5/5.0f,
-            8/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_LXRX(
-        floatArrayOf(
-            10/16.0f,4/5.0f,
-            10/16.0f,5/5.0f,
-            9/16.0f,4/5.0f,
-            10/16.0f,5/5.0f,
-            9/16.0f,5/5.0f,
-            9/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_LUXX(
-        floatArrayOf(
-            11/16.0f,4/5.0f,
-            11/16.0f,5/5.0f,
-            10/16.0f,4/5.0f,
-            11/16.0f,5/5.0f,
-            10/16.0f,5/5.0f,
-            10/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_LXXX(
-        floatArrayOf(
-            12/16.0f,4/5.0f,
-            12/16.0f,5/5.0f,
-            11/16.0f,4/5.0f,
-            12/16.0f,5/5.0f,
-            11/16.0f,5/5.0f,
-            11/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_XUXX(
-        floatArrayOf(
-            13/16.0f,4/5.0f,
-            13/16.0f,5/5.0f,
-            12/16.0f,4/5.0f,
-            13/16.0f,5/5.0f,
-            12/16.0f,5/5.0f,
-            12/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_XXRX(
-        floatArrayOf(
-            14/16.0f,4/5.0f,
-            14/16.0f,5/5.0f,
-            13/16.0f,4/5.0f,
-            14/16.0f,5/5.0f,
-            13/16.0f,5/5.0f,
-            13/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_XXXD(
-        floatArrayOf(
-            15/16.0f,4/5.0f,
-            15/16.0f,5/5.0f,
-            14/16.0f,4/5.0f,
-            15/16.0f,5/5.0f,
-            14/16.0f,5/5.0f,
-            14/16.0f,4/5.0f
-        )
-    ),
-    FLOOR_XXXX(
-        floatArrayOf(
-            16/16.0f,4/5.0f,
-            16/16.0f,5/5.0f,
-            15/16.0f,4/5.0f,
-            16/16.0f,5/5.0f,
-            15/16.0f,5/5.0f,
-            15/16.0f,4/5.0f
-        )
-    ),
-    WALL_LURD(
-        floatArrayOf(
-            1/16.0f,3/5.0f,
-            1/16.0f,4/5.0f,
-            0/16.0f,3/5.0f,
-            1/16.0f,4/5.0f,
-            0/16.0f,4/5.0f,
-            0/16.0f,3/5.0f
-        )
-    ),
-    WALL_XURD(
-        floatArrayOf(
-            2/16.0f,3/5.0f,
-            2/16.0f,4/5.0f,
-            1/16.0f,3/5.0f,
-            2/16.0f,4/5.0f,
-            1/16.0f,4/5.0f,
-            1/16.0f,3/5.0f
-        )
-    ),
-    WALL_LXRD(
-        floatArrayOf(
-            3/16.0f,3/5.0f,
-            3/16.0f,4/5.0f,
-            2/16.0f,3/5.0f,
-            3/16.0f,4/5.0f,
-            2/16.0f,4/5.0f,
-            2/16.0f,3/5.0f
-        )
-    ),
-    WALL_LUXD(
-        floatArrayOf(
-            4/16.0f,3/5.0f,
-            4/16.0f,4/5.0f,
-            3/16.0f,3/5.0f,
-            4/16.0f,4/5.0f,
-            3/16.0f,4/5.0f,
-            3/16.0f,3/5.0f
-        )
-    ),
-    WALL_LURX(
-        floatArrayOf(
-            5/16.0f,3/5.0f,
-            5/16.0f,4/5.0f,
-            4/16.0f,3/5.0f,
-            5/16.0f,4/5.0f,
-            4/16.0f,4/5.0f,
-            4/16.0f,3/5.0f
-        )
-    ),
-    WALL_XXRD(
-        floatArrayOf(
-            6/16.0f,3/5.0f,
-            6/16.0f,4/5.0f,
-            5/16.0f,3/5.0f,
-            6/16.0f,4/5.0f,
-            5/16.0f,4/5.0f,
-            5/16.0f,3/5.0f
-        )
-    ),
-    WALL_XUXD(
-        floatArrayOf(
-            7/16.0f,3/5.0f,
-            7/16.0f,4/5.0f,
-            6/16.0f,3/5.0f,
-            7/16.0f,4/5.0f,
-            6/16.0f,4/5.0f,
-            6/16.0f,3/5.0f
-        )
-    ),
-    WALL_XURX(
-        floatArrayOf(
-            8/16.0f,3/5.0f,
-            8/16.0f,4/5.0f,
-            7/16.0f,3/5.0f,
-            8/16.0f,4/5.0f,
-            7/16.0f,4/5.0f,
-            7/16.0f,3/5.0f
-        )
-    ),
-    WALL_LXXD(
-        floatArrayOf(
-            9/16.0f,3/5.0f,
-            9/16.0f,4/5.0f,
-            8/16.0f,3/5.0f,
-            9/16.0f,4/5.0f,
-            8/16.0f,4/5.0f,
-            8/16.0f,3/5.0f
-        )
-    ),
-    WALL_LXRX(
-        floatArrayOf(
-            10/16.0f,3/5.0f,
-            10/16.0f,4/5.0f,
-            9/16.0f,3/5.0f,
-            10/16.0f,4/5.0f,
-            9/16.0f,4/5.0f,
-            9/16.0f,3/5.0f
-        )
-    ),
-    WALL_LUXX(
-        floatArrayOf(
-            11/16.0f,3/5.0f,
-            11/16.0f,4/5.0f,
-            10/16.0f,3/5.0f,
-            11/16.0f,4/5.0f,
-            10/16.0f,4/5.0f,
-            10/16.0f,3/5.0f
-        )
-    ),
-    WALL_LXXX(
-        floatArrayOf(
-            12/16.0f,3/5.0f,
-            12/16.0f,4/5.0f,
-            11/16.0f,3/5.0f,
-            12/16.0f,4/5.0f,
-            11/16.0f,4/5.0f,
-            11/16.0f,3/5.0f
-        )
-    ),
-    WALL_XUXX(
-        floatArrayOf(
-            13/16.0f,3/5.0f,
-            13/16.0f,4/5.0f,
-            12/16.0f,3/5.0f,
-            13/16.0f,4/5.0f,
-            12/16.0f,4/5.0f,
-            12/16.0f,3/5.0f
-        )
-    ),
-    WALL_XXRX(
-        floatArrayOf(
-            14/16.0f,3/5.0f,
-            14/16.0f,4/5.0f,
-            13/16.0f,3/5.0f,
-            14/16.0f,4/5.0f,
-            13/16.0f,4/5.0f,
-            13/16.0f,3/5.0f
-        )
-    ),
-    WALL_XXXD(
-        floatArrayOf(
-            15/16.0f,3/5.0f,
-            15/16.0f,4/5.0f,
-            14/16.0f,3/5.0f,
-            15/16.0f,4/5.0f,
-            14/16.0f,4/5.0f,
-            14/16.0f,3/5.0f
-        )
-    ),
-    WALL_XXXX(
-        floatArrayOf(
-            16/16.0f,3/5.0f,
-            16/16.0f,4/5.0f,
-            15/16.0f,3/5.0f,
-            16/16.0f,4/5.0f,
-            15/16.0f,4/5.0f,
-            15/16.0f,3/5.0f
-        )
-    ),
-    PIT_LURD(
-        floatArrayOf(
-            1/16.0f,2/5.0f,
-            1/16.0f,3/5.0f,
-            0/16.0f,2/5.0f,
-            1/16.0f,3/5.0f,
-            0/16.0f,3/5.0f,
-            0/16.0f,2/5.0f
-        )
-    ),
-    PIT_XURD(
-        floatArrayOf(
-            2/16.0f,2/5.0f,
-            2/16.0f,3/5.0f,
-            1/16.0f,2/5.0f,
-            2/16.0f,3/5.0f,
-            1/16.0f,3/5.0f,
-            1/16.0f,2/5.0f
-        )
-    ),
-    PIT_LXRD(
-        floatArrayOf(
-            3/16.0f,2/5.0f,
-            3/16.0f,3/5.0f,
-            2/16.0f,2/5.0f,
-            3/16.0f,3/5.0f,
-            2/16.0f,3/5.0f,
-            2/16.0f,2/5.0f
-        )
-    ),
-    PIT_LUXD(
-        floatArrayOf(
-            4/16.0f,2/5.0f,
-            4/16.0f,3/5.0f,
-            3/16.0f,2/5.0f,
-            4/16.0f,3/5.0f,
-            3/16.0f,3/5.0f,
-            3/16.0f,2/5.0f
-        )
-    ),
-    PIT_LURX(
-        floatArrayOf(
-            5/16.0f,2/5.0f,
-            5/16.0f,3/5.0f,
-            4/16.0f,2/5.0f,
-            5/16.0f,3/5.0f,
-            4/16.0f,3/5.0f,
-            4/16.0f,2/5.0f
-        )
-    ),
-    PIT_XXRD(
-        floatArrayOf(
-            6/16.0f,2/5.0f,
-            6/16.0f,3/5.0f,
-            5/16.0f,2/5.0f,
-            6/16.0f,3/5.0f,
-            5/16.0f,3/5.0f,
-            5/16.0f,2/5.0f
-        )
-    ),
-    PIT_XUXD(
-        floatArrayOf(
-            7/16.0f,2/5.0f,
-            7/16.0f,3/5.0f,
-            6/16.0f,2/5.0f,
-            7/16.0f,3/5.0f,
-            6/16.0f,3/5.0f,
-            6/16.0f,2/5.0f
-        )
-    ),
-    PIT_XURX(
-        floatArrayOf(
-            8/16.0f,2/5.0f,
-            8/16.0f,3/5.0f,
-            7/16.0f,2/5.0f,
-            8/16.0f,3/5.0f,
-            7/16.0f,3/5.0f,
-            7/16.0f,2/5.0f
-        )
-    ),
-    PIT_LXXD(
-        floatArrayOf(
-            9/16.0f,2/5.0f,
-            9/16.0f,3/5.0f,
-            8/16.0f,2/5.0f,
-            9/16.0f,3/5.0f,
-            8/16.0f,3/5.0f,
-            8/16.0f,2/5.0f
-        )
-    ),
-    PIT_LXRX(
-        floatArrayOf(
-            10/16.0f,2/5.0f,
-            10/16.0f,3/5.0f,
-            9/16.0f,2/5.0f,
-            10/16.0f,3/5.0f,
-            9/16.0f,3/5.0f,
-            9/16.0f,2/5.0f
-        )
-    ),
-    PIT_LUXX(
-        floatArrayOf(
-            11/16.0f,2/5.0f,
-            11/16.0f,3/5.0f,
-            10/16.0f,2/5.0f,
-            11/16.0f,3/5.0f,
-            10/16.0f,3/5.0f,
-            10/16.0f,2/5.0f
-        )
-    ),
-    PIT_LXXX(
-        floatArrayOf(
-            12/16.0f,2/5.0f,
-            12/16.0f,3/5.0f,
-            11/16.0f,2/5.0f,
-            12/16.0f,3/5.0f,
-            11/16.0f,3/5.0f,
-            11/16.0f,2/5.0f
-        )
-    ),
-    PIT_XUXX(
-        floatArrayOf(
-            13/16.0f,2/5.0f,
-            13/16.0f,3/5.0f,
-            12/16.0f,2/5.0f,
-            13/16.0f,3/5.0f,
-            12/16.0f,3/5.0f,
-            12/16.0f,2/5.0f
-        )
-    ),
-    PIT_XXRX(
-        floatArrayOf(
-            14/16.0f,2/5.0f,
-            14/16.0f,3/5.0f,
-            13/16.0f,2/5.0f,
-            14/16.0f,3/5.0f,
-            13/16.0f,3/5.0f,
-            13/16.0f,2/5.0f
-        )
-    ),
-    PIT_XXXD(
-        floatArrayOf(
-            15/16.0f,2/5.0f,
-            15/16.0f,3/5.0f,
-            14/16.0f,2/5.0f,
-            15/16.0f,3/5.0f,
-            14/16.0f,3/5.0f,
-            14/16.0f,2/5.0f
-        )
-    ),
-    PIT_XXXX(
-        floatArrayOf(
-            16/16.0f,2/5.0f,
-            16/16.0f,3/5.0f,
-            15/16.0f,2/5.0f,
-            16/16.0f,3/5.0f,
-            15/16.0f,3/5.0f,
-            15/16.0f,2/5.0f
-        )
-    ),
-    WATER_LURD(
-        floatArrayOf(
-            1/16.0f,1/5.0f,
-            1/16.0f,2/5.0f,
-            0/16.0f,1/5.0f,
-            1/16.0f,2/5.0f,
-            0/16.0f,2/5.0f,
-            0/16.0f,1/5.0f
-        )
-    ),
-    WATER_XURD(
-        floatArrayOf(
-            2/16.0f,1/5.0f,
-            2/16.0f,2/5.0f,
-            1/16.0f,1/5.0f,
-            2/16.0f,2/5.0f,
-            1/16.0f,2/5.0f,
-            1/16.0f,1/5.0f
-        )
-    ),
-    WATER_LXRD(
-        floatArrayOf(
-            3/16.0f,1/5.0f,
-            3/16.0f,2/5.0f,
-            2/16.0f,1/5.0f,
-            3/16.0f,2/5.0f,
-            2/16.0f,2/5.0f,
-            2/16.0f,1/5.0f
-        )
-    ),
-    WATER_LUXD(
-        floatArrayOf(
-            4/16.0f,1/5.0f,
-            4/16.0f,2/5.0f,
-            3/16.0f,1/5.0f,
-            4/16.0f,2/5.0f,
-            3/16.0f,2/5.0f,
-            3/16.0f,1/5.0f
-        )
-    ),
-    WATER_LURX(
-        floatArrayOf(
-            5/16.0f,1/5.0f,
-            5/16.0f,2/5.0f,
-            4/16.0f,1/5.0f,
-            5/16.0f,2/5.0f,
-            4/16.0f,2/5.0f,
-            4/16.0f,1/5.0f
-        )
-    ),
-    WATER_XXRD(
-        floatArrayOf(
-            6/16.0f,1/5.0f,
-            6/16.0f,2/5.0f,
-            5/16.0f,1/5.0f,
-            6/16.0f,2/5.0f,
-            5/16.0f,2/5.0f,
-            5/16.0f,1/5.0f
-        )
-    ),
-    WATER_XUXD(
-        floatArrayOf(
-            7/16.0f,1/5.0f,
-            7/16.0f,2/5.0f,
-            6/16.0f,1/5.0f,
-            7/16.0f,2/5.0f,
-            6/16.0f,2/5.0f,
-            6/16.0f,1/5.0f
-        )
-    ),
-    WATER_XURX(
-        floatArrayOf(
-            8/16.0f,1/5.0f,
-            8/16.0f,2/5.0f,
-            7/16.0f,1/5.0f,
-            8/16.0f,2/5.0f,
-            7/16.0f,2/5.0f,
-            7/16.0f,1/5.0f
-        )
-    ),
-    WATER_LXXD(
-        floatArrayOf(
-            9/16.0f,1/5.0f,
-            9/16.0f,2/5.0f,
-            8/16.0f,1/5.0f,
-            9/16.0f,2/5.0f,
-            8/16.0f,2/5.0f,
-            8/16.0f,1/5.0f
-        )
-    ),
-    WATER_LXRX(
-        floatArrayOf(
-            10/16.0f,1/5.0f,
-            10/16.0f,2/5.0f,
-            9/16.0f,1/5.0f,
-            10/16.0f,2/5.0f,
-            9/16.0f,2/5.0f,
-            9/16.0f,1/5.0f
-        )
-    ),
-    WATER_LUXX(
-        floatArrayOf(
-            11/16.0f,1/5.0f,
-            11/16.0f,2/5.0f,
-            10/16.0f,1/5.0f,
-            11/16.0f,2/5.0f,
-            10/16.0f,2/5.0f,
-            10/16.0f,1/5.0f
-        )
-    ),
-    WATER_LXXX(
-        floatArrayOf(
-            12/16.0f,1/5.0f,
-            12/16.0f,2/5.0f,
-            11/16.0f,1/5.0f,
-            12/16.0f,2/5.0f,
-            11/16.0f,2/5.0f,
-            11/16.0f,1/5.0f
-        )
-    ),
-    WATER_XUXX(
-        floatArrayOf(
-            13/16.0f,1/5.0f,
-            13/16.0f,2/5.0f,
-            12/16.0f,1/5.0f,
-            13/16.0f,2/5.0f,
-            12/16.0f,2/5.0f,
-            12/16.0f,1/5.0f
-        )
-    ),
-    WATER_XXRX(
-        floatArrayOf(
-            14/16.0f,1/5.0f,
-            14/16.0f,2/5.0f,
-            13/16.0f,1/5.0f,
-            14/16.0f,2/5.0f,
-            13/16.0f,2/5.0f,
-            13/16.0f,1/5.0f
-        )
-    ),
-    WATER_XXXD(
-        floatArrayOf(
-            15/16.0f,1/5.0f,
-            15/16.0f,2/5.0f,
-            14/16.0f,1/5.0f,
-            15/16.0f,2/5.0f,
-            14/16.0f,2/5.0f,
-            14/16.0f,1/5.0f
-        )
-    ),
-    WATER_XXXX(
-        floatArrayOf(
-            16/16.0f,1/5.0f,
-            16/16.0f,2/5.0f,
-            15/16.0f,1/5.0f,
-            16/16.0f,2/5.0f,
-            15/16.0f,2/5.0f,
-            15/16.0f,1/5.0f
-        )
-    ),
-    CHARACTER_NOTHING(
-        floatArrayOf(
-            1/16.0f,0/11.0f,
-            1/16.0f,1/11.0f,
-            0/16.0f,0/11.0f,
-            1/16.0f,1/11.0f,
-            0/16.0f,1/11.0f,
-            0/16.0f,0/11.0f
-        )
-    ),
-    TRAP(
-        floatArrayOf(
-            1/16.0f,1/7.0f,
-            1/16.0f,2/7.0f,
-            0/16.0f,1/7.0f,
-            1/16.0f,2/7.0f,
-            0/16.0f,2/7.0f,
-            0/16.0f,1/7.0f
-        )
-    ),
-    TRAP_NOTHING(
-        floatArrayOf(
-            1 / 16.0f, 0 / 7.0f,
-            1 / 16.0f, 1 / 7.0f,
-            0 / 16.0f, 0 / 7.0f,
-            1 / 16.0f, 1 / 7.0f,
-            0 / 16.0f, 1 / 7.0f,
-            0 / 16.0f, 0 / 7.0f
-        )
-    );
-
-    public fun giveOneRandomItem(): FloatArray {
-        val rand = Random.nextInt(5)
-
-        return when (rand) {
-            0 -> FLOOR_LURD.textureIndexes
-            1 -> WALL_LURD.textureIndexes
-            2 -> CHARACTER_NOTHING.textureIndexes
-            3 -> TRAP.textureIndexes
-            4 -> PIT_LURD.textureIndexes
-            else -> FLOOR_LURD.textureIndexes
+enum class TileType {
+    FLOOR_LURD {
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(0, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
         }
+    },
+    FLOOR_XURD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(1, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    FLOOR_LXRD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(2, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    FLOOR_LUXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(3, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    FLOOR_LURX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(4, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    FLOOR_XXRD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(5, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    FLOOR_XUXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(6, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    FLOOR_XURX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(7, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    FLOOR_LXXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(8, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    FLOOR_LXRX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(9, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    FLOOR_LUXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(10, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    FLOOR_LXXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(11, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    FLOOR_XUXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(12, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    FLOOR_XXRX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(13, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    FLOOR_XXXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(14, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    FLOOR_XXXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(15, 4)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_LURD {
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(0, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_XURD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(1, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_LXRD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(2, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_LUXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(3, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_LURX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(4, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_XXRD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(5, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_XUXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(6, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_XURX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(7, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_LXXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(8, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_LXRX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(9, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_LUXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(10, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_LXXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(11, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_XUXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(12, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_XXRX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(13, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_XXXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(14, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WALL_XXXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(15, 3)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_LURD {
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(0, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_XURD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(1, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_LXRD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(2, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_LUXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(3, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_LURX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(4, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_XXRD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(5, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_XUXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(6, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_XURX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(7, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_LXXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(8, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_LXRX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(9, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_LUXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(10, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_LXXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(11, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_XUXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(12, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_XXRX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(13, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_XXXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(14, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    PIT_XXXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(15, 2)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_LURD {
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(0, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_XURD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(1, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_LXRD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(2, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_LUXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(3, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_LURX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(4, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_XXRD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(5, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_XUXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(6, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_XURX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(7, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_LXXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(8, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_LXRX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(9, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_LUXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(10, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_LXXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(11, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_XUXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(12, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_XXRX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(13, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_XXXD{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(14, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    WATER_XXXX{
+        override val textureSize: Vector<Int> = Vector(16, 5)
+        override val tilePosition: Vector<Int> = Vector(15, 1)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    CHARACTER_NOTHING{
+        override val textureSize: Vector<Int> = Vector(16, 11)
+        override val tilePosition: Vector<Int> = Vector(0, 0)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    },
+    TRAP_NOTHING{
+        override val textureSize: Vector<Int> = Vector(16, 7)
+        override val tilePosition: Vector<Int> = Vector(0, 0)
+        override val textureIndexes: FloatArray by lazy {
+            generateTextureIndexes()
+        }
+    };
 
-    }
-
-    /*fun giveAllRandomItem(size:Int):FloatArray{
-        var result=FloatArray(2*6*size)
-
-    }*/
+    abstract val textureSize: Vector<Int>
+    abstract val tilePosition: Vector<Int>
+    abstract val textureIndexes: FloatArray
+    protected fun generateTextureIndexes() = floatArrayOf(
+        (tilePosition.x + 1) / textureSize.x.toFloat(),
+        tilePosition.y / textureSize.y.toFloat(),
+        (tilePosition.x + 1) / textureSize.x.toFloat(),
+        (tilePosition.y + 1) / textureSize.y.toFloat(),
+        tilePosition.x / textureSize.x.toFloat(),
+        tilePosition.y / textureSize.y.toFloat(),
+        (tilePosition.x + 1) / textureSize.x.toFloat(),
+        (tilePosition.y + 1) / textureSize.y.toFloat(),
+        tilePosition.x / textureSize.x.toFloat(),
+        (tilePosition.y + 1) / textureSize.y.toFloat(),
+        tilePosition.x / textureSize.x.toFloat(),
+        tilePosition.y / textureSize.y.toFloat()
+    )
 }

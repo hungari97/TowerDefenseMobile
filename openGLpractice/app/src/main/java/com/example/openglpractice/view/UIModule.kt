@@ -1,7 +1,6 @@
 package com.example.openglpractice.view
 
 import android.content.Context
-import com.example.openglpractice.logic.LevelManager
 import com.example.openglpractice.model.interactor.BuildInteractor
 import com.example.openglpractice.presenter.GamePresenter
 import dagger.Module

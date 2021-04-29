@@ -1,17 +1,17 @@
 package com.example.openglpractice.model.interactor
 
-import android.content.Context
-import com.example.openglpractice.logic.AFeature
-import com.example.openglpractice.logic.Character
+import com.example.openglpractice.logic.feature.AFeature
+import com.example.openglpractice.logic.character.ACharacter
 import com.example.openglpractice.logic.Field
-import com.example.openglpractice.logic.LevelManager
-import com.example.openglpractice.model.Vector
+import com.example.openglpractice.logic.OLevelManager
+import com.example.openglpractice.utility.EDirection
+import com.example.openglpractice.utility.Vector
 import javax.inject.Inject
 
 class BuildInteractor @Inject constructor() {
-    private val levelManager = com.example.openglpractice.logic.LevelManager
+    private val levelManager = OLevelManager
 
-    fun buildTouchPosition(position: Vector) {
+    fun buildTouchPosition(position: Vector<Int>) {
         levelManager.buildTrap(position)
     }
 
@@ -19,46 +19,45 @@ class BuildInteractor @Inject constructor() {
         levelManager.selectedFromThePalette(trapIndex)
     }
 
-    fun buildInitialiseManager(field:Array<Array<Int>>) {
+    fun buildInitialiseManager(field: Array<Array<Int>>) {
         levelManager.initialise(field)
     }
 
-    fun logicFieldMatrix(): Array<Array<Field>> {
-        return levelManager.fieldMatrix
+    fun buildArrowSelected(arrow: Int) {
+        levelManager.selectedRotation = EDirection.values()[arrow]
+    }
+
+    fun buildStartWave() {
+        OLevelManager.buildMode = false
     }
 
     fun logicFeatureMatrix(): Array<Array<AFeature<*>?>> {
         return levelManager.featureMatrix
     }
 
-    fun getSelectedTrapList(): Array<Int> {
+    fun logicGetSelectedTrapList(): Array<Int> {
         return Array(levelManager.selectedTraps.size) {
             levelManager.selectedTraps.elementAt(it).iconIndex
         }
     }
 
-    fun buildArrowSelected(arrow: Int) {
-        levelManager.selectedRotation=arrow.toByte()
+    fun logicFieldMatrix(): Array<Array<Field>> {
+        return levelManager.fieldMatrix
     }
 
-    fun getCharacterMatrix(): Array<Array<Array<Character<*>?>>> {
-        return arrayOf(levelManager.lowCharacterMatrix,levelManager.topCharacterMatrix)
+    fun logicGetCharacterMatrix(): Array<Array<Array<ACharacter<*>?>>> {
+        return arrayOf(levelManager.lowCharacterMatrix, levelManager.topCharacterMatrix)
     }
 
-    fun playHeroGoalPosition(to:Vector){
+    fun gameHeroGoalPosition(to: Vector<Int>) {
         levelManager.positionToHero(to)
     }
 
-    fun buildStartWave() {
-        LevelManager.buildMode=false
-    }
-
-    fun endWave(){
-        LevelManager.buildMode=true
+    fun gameEndWave() {
+        OLevelManager.buildMode = true
     }
 
     fun gameHeroAttack() {
-        LevelManager.hero.attack()
+        OLevelManager.hero.attack()
     }
-
 }

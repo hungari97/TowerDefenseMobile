@@ -12,39 +12,38 @@ import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.example.openglpractice.R
 import com.example.openglpractice.injector
-import com.example.openglpractice.logic.Timer
-import com.example.openglpractice.model.Vector
+import com.example.openglpractice.logic.OTimer
+import com.example.openglpractice.utility.Vector
 import com.example.openglpractice.presenter.GamePresenter
 import com.example.openglpractice.screen.GameScreen
-import com.example.openglpractice.view.opengl.LessonFourRenderer
+import com.example.openglpractice.view.opengl.Renderer
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.InputStreamReader
 import javax.inject.Inject
 
-
 class GameActivity : AppCompatActivity(), GameScreen {
+
     @Inject
     lateinit var gamePresenter: GamePresenter
-    val levelFieldList: MutableList<Int> = mutableListOf()
-    lateinit var ibSelectTraps: Array<ImageButton>
-    lateinit var ibSelectArrow: Array<ImageButton>
-    var x: Float = 0.0f
-    var y: Float = 0.0f
-    lateinit var render: LessonFourRenderer
-    var buildMode: Boolean = true
+    private lateinit var ibSelectTraps: Array<ImageButton>
+    private lateinit var ibSelectArrow: Array<ImageButton>
+    /*private var x: Float = 0.0f
+    private var y: Float = 0.0f*/
+    private lateinit var render: Renderer
+    private var buildMode: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         injector.inject(this)
-
         setContentView(R.layout.activity_main)
+
         gamePresenter.buildInitialise(fieldLayer())
         render =
-            LessonFourRenderer(
+            Renderer(
                 this,
                 gamePresenter
             )
+
         swGameView.setEGLConfigChooser(8, 8, 8, 8, 16, 0)
         swGameView.holder.setFormat(PixelFormat.RGBA_8888)
         swGameView.setZOrderOnTop(true)
@@ -52,11 +51,11 @@ class GameActivity : AppCompatActivity(), GameScreen {
         // Check if the system supports OpenGL ES 2.0.
         val activityManager: ActivityManager =
             getSystemService(Context.ACTIVITY_SERVICE) as (ActivityManager)
-        val configurationInfo: ConfigurationInfo = activityManager.getDeviceConfigurationInfo();
+        val configurationInfo: ConfigurationInfo = activityManager.deviceConfigurationInfo
         val supportsEs2: Boolean = configurationInfo.reqGlEsVersion >= 0x20000;
 
         if (supportsEs2) {   // Request an OpenGL ES 2.0 compatible context.
-            swGameView.setEGLContextClientVersion(2);
+            swGameView.setEGLContextClientVersion(2)
             // Set the renderer to our demo renderer, defined below.
             swGameView.setRenderer(render)
         } else {
@@ -67,12 +66,9 @@ class GameActivity : AppCompatActivity(), GameScreen {
 
         swGameView.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View, m: MotionEvent): Boolean {
-                if (m.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Perform tasks here
-                    x = m.x * 8 / swGameView.height
-                    y = 8 - (m.y * 8 / swGameView.height)
-                    //println("x:${x} y:${y}")
-
+                if (m.action == MotionEvent.ACTION_DOWN) {
+                    var x = m.x * 8 / swGameView.height
+                    var y = 8 - (m.y * 8 / swGameView.height)
                     if (y >= 8.0f) {
                         y = 7.9f
                     }
@@ -81,12 +77,9 @@ class GameActivity : AppCompatActivity(), GameScreen {
                     }
                     if (buildMode)
                         gamePresenter.buildTouch(
-                            Vector(
-                                x.toDouble(),
-                                y.toDouble()
-                            )
+                            Vector(x.toInt(),y.toInt())
                         ) else
-                        gamePresenter.playHeroGoalPosition(Vector(x.toDouble(), y.toDouble()))
+                        gamePresenter.gameHeroGoalPosition(Vector(x.toInt(),y.toInt()))
                     render.featureUpdate()
                 }
                 return true
@@ -110,17 +103,13 @@ class GameActivity : AppCompatActivity(), GameScreen {
             ibTrapSelect1,
             ibTrapSelect2,
             ibTrapSelect3
-            /* ibTrapSelect4,
-             ibTrapSelect5,
-             ibTrapSelect6*/
         )
-        ibSelectTraps.forEachIndexed { index, button ->
-            //button.setBackgroundResource(gamePresenter.getSelectedTrapList()[index])
+        ibSelectTraps.forEachIndexed { _, button ->
             button.setOnClickListener { trapSelectOnClick(button) }
         }
 
-        ibSelectTraps[0].setImageResource(gamePresenter.getSelectedTrapList()[0])
-        ibSelectTraps[1].setImageResource(gamePresenter.getSelectedTrapList()[1])
+        ibSelectTraps[0].setImageResource(gamePresenter.logicGetSelectedTrapList()[0])
+        ibSelectTraps[1].setImageResource(gamePresenter.logicGetSelectedTrapList()[1])
 
         ibSelectArrow = arrayOf(ibArrowLeft, ibArrowUp, ibArrowRight, ibArrowDown)
         ibSelectArrow.forEach { button ->
@@ -129,7 +118,7 @@ class GameActivity : AppCompatActivity(), GameScreen {
 
         llRotationArrow.visibility = View.INVISIBLE
 
-        Timer.subscribe(::updateScreen)
+        OTimer.subscribe(::updateScreen)
 
     }
 
@@ -148,9 +137,10 @@ class GameActivity : AppCompatActivity(), GameScreen {
             else -> super.onOptionsItemSelected(item)
         }
     }*/
+
     private fun fieldLayer(): Array<Array<Int>> {
         val fieldTypeList = mutableListOf<Array<Int>>()
-        val reader = InputStreamReader(resources.openRawResource(R.raw.level_1)).buffered()
+        val reader = InputStreamReader(resources.openRawResource(R.raw.level_2)).buffered()
         reader.forEachLine { line ->
             fieldTypeList.add(line.split(" ".toRegex()).map { splited -> splited.toInt() }
                 .toTypedArray())
@@ -171,24 +161,26 @@ class GameActivity : AppCompatActivity(), GameScreen {
         swGameView.onPause()
     }
 
-    fun trapSelectOnClick(v: ImageButton) {
+    private fun trapSelectOnClick(v: ImageButton) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (v.background.constantState == getDrawable(R.drawable.selected_traplist_item)!!.constantState) {
                 v.setBackgroundResource(R.drawable.not_selected_traplist_item)
-                gamePresenter.trapHasBeenSelected(ibSelectTraps.indexOf((v)))
                 llRotationArrow.visibility = View.GONE
             } else {
-                resetTrapBackground()
+                ibSelectTraps.forEach {
+                    it.setBackgroundResource(R.drawable.not_selected_traplist_item)
+                }
                 v.setBackgroundResource(R.drawable.selected_traplist_item)
                 llRotationArrow.visibility = View.VISIBLE
-                gamePresenter.trapHasBeenSelected(ibSelectTraps.indexOf(v))
             }
+            gamePresenter.buildTrapHasBeenSelected(ibSelectTraps.indexOf(v))
+
         } else {
             TODO("VERSION.SDK_INT < LOLLIPOP")
         }
     }
 
-    fun arrowSelectOnClick(v: ImageButton) {
+    private fun arrowSelectOnClick(v: ImageButton) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (v.background.constantState == getDrawable(R.drawable.selected_arrow_background)!!.constantState) {
                 gamePresenter.buildArrowSelected(ibSelectArrow.indexOf(v))
@@ -204,16 +196,9 @@ class GameActivity : AppCompatActivity(), GameScreen {
         }
     }
 
-    private fun resetTrapBackground() {
-        ibSelectTraps.forEach {
-            it.setBackgroundResource(R.drawable.not_selected_traplist_item)
-        }
-    }
-
     override fun updateScreen() {
         render.featureUpdate()
         render.characterUpdate()
     }
-
 
 }

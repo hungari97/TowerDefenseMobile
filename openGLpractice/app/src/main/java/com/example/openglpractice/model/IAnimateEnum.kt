@@ -1,9 +1,8 @@
 package com.example.openglpractice.model
 
+import com.example.openglpractice.utility.Vector
+
 interface IAnimateEnum {
     val textureArray: Array<FloatArray>
-    //val isWalking:Boolean
-
-    fun calculateAnimationArray(type:Int,rest:Boolean):Array<FloatArray>
-
+    val frameSize: Vector<Int>
 }

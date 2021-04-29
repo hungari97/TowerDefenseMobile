@@ -1,70 +1,56 @@
 package com.example.openglpractice.presenter
 
-import android.content.Context
-import com.example.openglpractice.logic.AFeature
-import com.example.openglpractice.logic.Character
+import com.example.openglpractice.logic.feature.AFeature
+import com.example.openglpractice.logic.character.ACharacter
 import com.example.openglpractice.logic.Field
-import com.example.openglpractice.model.Vector
+import com.example.openglpractice.utility.Vector
 import com.example.openglpractice.model.interactor.BuildInteractor
 import com.example.openglpractice.screen.GameScreen
 
 class GamePresenter(private val buildInteractor: BuildInteractor) : Presenter<GameScreen>() {
-    override fun attachScreen(_screen: GameScreen) {
-        this.screen = _screen
+    override fun attachScreen(screen: GameScreen) {
+        this.screen = screen
     }
 
-    override fun detachScreen() {
-        this.screen = null
-    }
-
-    fun getSelectedTrapList(): Array<Int> {
-        return buildInteractor.getSelectedTrapList()
-    }
-
-    fun trapHasBeenSelected(trap: Int) {
+    fun buildTrapHasBeenSelected(trap: Int) {
         buildInteractor.buildTrapSelect(trap)
     }
 
-    fun buildTouch(position: Vector) {
+    fun buildTouch(position: Vector<Int>) {
         buildInteractor.buildTouchPosition(position)
     }
 
-    fun buildInitialise(field:Array<Array<Int>>):Array<Array<Field>>{
+    fun buildInitialise(field: Array<Array<Int>>): Array<Array<Field>> {
         buildInteractor.buildInitialiseManager(field)
-
         return buildInteractor.logicFieldMatrix()
-    }
-
-    fun logicFieldMatrix():Array<Array<Field>>{
-        return buildInteractor.logicFieldMatrix()
-    }
-
-    fun buildFeatureMatrix():Array<Array<AFeature<*>?>>{
-        return buildInteractor.logicFeatureMatrix()
-    }
-
-    fun buildSelectedTraps():Array<Int>{
-        return buildInteractor.getSelectedTrapList()
     }
 
     fun buildArrowSelected(arrow: Int) {
         buildInteractor.buildArrowSelected(arrow)
     }
 
-    fun buildCharacterMatrix():Array<Array<Array<Character<*>?>>>{
-        return buildInteractor.getCharacterMatrix()
-    }
-
-    fun logicUpdateScreen() {
-        screen?.updateScreen()
-    }
-
-    fun playHeroGoalPosition(to:Vector){
-        buildInteractor.playHeroGoalPosition(to)
-    }
-
     fun buildStartWave() {
         buildInteractor.buildStartWave()
+    }
+
+    fun logicGetSelectedTrapList(): Array<Int> {
+        return buildInteractor.logicGetSelectedTrapList()
+    }
+
+    fun logicFieldMatrix(): Array<Array<Field>> {
+        return buildInteractor.logicFieldMatrix()
+    }
+
+    fun logicFeatureMatrix(): Array<Array<AFeature<*>?>> {
+        return buildInteractor.logicFeatureMatrix()
+    }
+
+    fun logicCharacterMatrix(): Array<Array<Array<ACharacter<*>?>>> {
+        return buildInteractor.logicGetCharacterMatrix()
+    }
+
+    fun gameHeroGoalPosition(to: Vector<Int>) {
+        buildInteractor.gameHeroGoalPosition(to)
     }
 
     fun gameHeroAttack() {
