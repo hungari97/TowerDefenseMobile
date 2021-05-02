@@ -129,14 +129,14 @@ class CharacterLayer(override val render: Renderer) : IDrawableLayer {
             sor = abs(it.data.hitBoxPosition.y - row)
             oszlop = abs(it.data.hitBoxPosition.x - cell)
             temp =
-                it.data.animationState.textureArray[it.data.currentAnimationProgress * it.data.hitBoxSize.x * it.data.hitBoxSize.y
+                it.data.animationState.textureArray[it.data.animationProgress * it.data.hitBoxSize.x * it.data.hitBoxSize.y
                         + sor * it.data.hitBoxSize.x + oszlop]
 
         } else {
             sor = abs(it.data.hitBoxPosition.y - row)
             oszlop = abs(it.data.hitBoxPosition.x - cell)
             temp =
-                it.data.animationState.textureArray[it.data.currentAnimationProgress * it.data.hitBoxSize.x * it.data.hitBoxSize.y + sor * it.data.hitBoxSize.y + oszlop]
+                it.data.animationState.textureArray[it.data.animationProgress * it.data.hitBoxSize.x * it.data.hitBoxSize.y + sor * it.data.hitBoxSize.y + oszlop]
         }
 
         when (it.data.rotation) {

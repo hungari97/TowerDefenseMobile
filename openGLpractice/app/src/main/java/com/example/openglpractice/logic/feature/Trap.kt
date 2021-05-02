@@ -35,7 +35,7 @@ open class Trap(override var data: TrapData) : AFeature<TrapData.TrapAnimationSt
     override fun nextAnimationState() {
         super.nextAnimationState()
         if (triggerd) {
-            if ((data.currentAnimationProgress + 1) % 16 == 0) {
+            if ((data.animationProgress + 1) % 16 == 0) {
                 data.animationState = data.animationState.changeToAttack(data.animationState)
                 triggerd = false
             }
@@ -44,45 +44,45 @@ open class Trap(override var data: TrapData) : AFeature<TrapData.TrapAnimationSt
 
     override fun triggered() {
         if (available) {
-            OLevelManager.lowCharacterMatrix[data.hitBoxPosition.y][data.hitBoxPosition.x]?.let {
+            OLevelManager.characterPositionMatrix[data.hitBoxPosition.y][data.hitBoxPosition.x]?.let {
                 if (it is Enemy) {
                     super.triggered()
                     it.hit(this)
                     data.animationState = data.animationState.changeToAttack(data.animationState)
-                    data.currentAnimationProgress = 0
+                    data.animationProgress = 0
                     used()
                 }
             }
-            OLevelManager.topCharacterMatrix[data.hitBoxPosition.y][data.hitBoxPosition.x]?.let {
+            OLevelManager.characterTargetMatrix[data.hitBoxPosition.y][data.hitBoxPosition.x]?.let {
                 if (it is Enemy) {
                     super.triggered()
                     it.hit(this)
                     data.animationState =
                         data.animationState.changeToAttack(data.animationState)
-                    data.currentAnimationProgress = 0
+                    data.animationProgress = 0
                     used()
                 }
             }
             if (data.hitBoxSize == Vector(2, 1)) {
                 val direction = data.rotation.vector
-                OLevelManager.lowCharacterMatrix[data.hitBoxPosition.y + direction.y][data.hitBoxPosition.x + direction.x]?.let {
+                OLevelManager.characterPositionMatrix[data.hitBoxPosition.y + direction.y][data.hitBoxPosition.x + direction.x]?.let {
                     if (it is Enemy) {
                         super.triggered()
                         it.hit(this)
                         data.animationState =
                             data.animationState.changeToAttack(data.animationState)
-                        data.currentAnimationProgress = 0
+                        data.animationProgress = 0
                         used()
                     }
 
                 }
-                OLevelManager.topCharacterMatrix[data.hitBoxPosition.y + direction.y][data.hitBoxPosition.x + direction.x]?.let {
+                OLevelManager.characterTargetMatrix[data.hitBoxPosition.y + direction.y][data.hitBoxPosition.x + direction.x]?.let {
                     if (it is Enemy) {
                         super.triggered()
                         it.hit(this)
                         data.animationState =
                             data.animationState.changeToAttack(data.animationState)
-                        data.currentAnimationProgress = 0
+                        data.animationProgress = 0
                         used()
                     }
                 }

@@ -12,7 +12,7 @@ data class FeatureData(
     override val hitBoxPosition: Vector<Int>,
     override val hitBoxSize: Vector<Int>,
     override var animationState: FeatureAnimateState,
-    override var currentAnimationProgress: Int,
+    override var animationProgress: Int,
     override var rotation: EDirection,
     override var functionality: Feature?,
 

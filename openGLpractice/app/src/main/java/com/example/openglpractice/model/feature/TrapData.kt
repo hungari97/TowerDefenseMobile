@@ -12,7 +12,7 @@ data class TrapData(
     override val hitBoxPosition: Vector<Int>,
     override val hitBoxSize: Vector<Int>,
     override var animationState: TrapAnimationState,
-    override var currentAnimationProgress: Int,
+    override var animationProgress: Int,
     override var functionality: Trap?,
     override var rotation: EDirection, //0-left, 1 -up, 2-rigth, 3, down
     val coolDown: Long

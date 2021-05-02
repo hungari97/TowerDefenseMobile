@@ -46,7 +46,7 @@ class BuildInteractor @Inject constructor() {
     }
 
     fun logicGetCharacterMatrix(): Array<Array<Array<ACharacter<*>?>>> {
-        return arrayOf(levelManager.lowCharacterMatrix, levelManager.topCharacterMatrix)
+        return arrayOf(levelManager.characterPositionMatrix, levelManager.characterTargetMatrix)
     }
 
     fun gameHeroGoalPosition(to: Vector<Int>) {
@@ -58,6 +58,6 @@ class BuildInteractor @Inject constructor() {
     }
 
     fun gameHeroAttack() {
-        OLevelManager.hero.attack()
+        OLevelManager.hero.requestAttack()
     }
 }

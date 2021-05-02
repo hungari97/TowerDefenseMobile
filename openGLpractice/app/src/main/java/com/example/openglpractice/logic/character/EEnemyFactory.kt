@@ -14,7 +14,7 @@ enum class EEnemyFactory {
                 hitBoxPosition = position,
                 hitBoxSize= Vector(1,1),
                 animationState= EnemyData.EnemyAnimateState.SLIMEREST,
-                currentAnimationProgress = 0,
+                animationProgress = 0,
                 goal=null,
                 path = null,
                 rotation= rotation,

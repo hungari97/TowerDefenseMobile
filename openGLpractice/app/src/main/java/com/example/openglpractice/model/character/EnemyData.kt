@@ -12,7 +12,7 @@ data class EnemyData(
     override var hitBoxPosition: Vector<Int>,
     override var hitBoxSize: Vector<Int>,
     override var animationState: EnemyAnimateState,
-    override var currentAnimationProgress: Int,
+    override var animationProgress: Int,
     override var goal: Vector<Int>?,
     override var path: Array<Vector<Int>>?,
     override var rotation: EDirection,

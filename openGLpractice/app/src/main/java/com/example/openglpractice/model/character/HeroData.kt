@@ -12,7 +12,7 @@ data class HeroData(
     override var hitBoxPosition: Vector<Int>,
     override var hitBoxSize: Vector<Int>,
     override var animationState: HeroAnimateState,
-    override var currentAnimationProgress: Int,
+    override var animationProgress: Int,
     override var goal: Vector<Int>?,
     override var path: Array<Vector<Int>>?,
     override var functionality: Hero?,

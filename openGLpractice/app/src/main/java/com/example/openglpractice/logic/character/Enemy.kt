@@ -5,8 +5,7 @@ import com.example.openglpractice.logic.OLevelManager
 import com.example.openglpractice.logic.OTimer
 import com.example.openglpractice.model.character.EActionType
 import com.example.openglpractice.model.character.EnemyData
-import com.example.openglpractice.utility.EDirection
-import com.example.openglpractice.utility.Vector
+import com.example.openglpractice.utility.*
 
 open class Enemy(_data: EnemyData) : ACharacter<EnemyData.EnemyAnimateState>() {
     override var data: EnemyData = _data
@@ -15,41 +14,23 @@ open class Enemy(_data: EnemyData) : ACharacter<EnemyData.EnemyAnimateState>() {
         OTimer.subscribe(::onThick)
     }
 
-    override fun calcMove(from: Vector<Int>, to: Vector<Int>) {
-        super.calcMove(from, to)
-       /* data.path?.let {
-            if (data.animationState.action == EActionType.REST) {
-                data.currentAnimationProgress = 0
-                changeAnimateState("WALK")
-                data.hitBoxSize = Vector(2.0, 1.0)
-                LevelManager.topCharacterMatrix[data.path!![1].y][data.path!![1].x] =
-                    this
-            }
-        }*/
-    }
-
-    override fun attack() {
-        if (attackNext) {
-            super.attack()
+    override fun requestAttack() {
+        if (attackRequested) {
+            super.requestAttack()
         }else
         for (i in 0 until 4) {
             val direction = EDirection.values()[i].vector
             if (data.hitBoxSize.x + direction.x in 1..12 &&
                 data.hitBoxSize.y + direction.y in 1..6
             ) {
-                OLevelManager.lowCharacterMatrix[data.hitBoxPosition.y + direction.y][data.hitBoxPosition.x + direction.x]?.let {
+                OLevelManager.characterPositionMatrix[data.hitBoxPosition.y + direction.y][data.hitBoxPosition.x + direction.x]?.let {
                     if (it is Hero) {
                         data.rotation = EDirection.values()[i]
-                        attackNext = true
+                        attackRequested = true
                     }
                 }
             }
         }
-    }
-
-    override fun moveToThick() {
-       // attack()
-        super.moveToThick()
     }
 
     override fun hit(thing: IInteractable) {
@@ -63,14 +44,13 @@ open class Enemy(_data: EnemyData) : ACharacter<EnemyData.EnemyAnimateState>() {
 
     override fun death() {
         OTimer.unSubscribe(::onThick)
+        println("Enemy.kt: STUFFFFFFFFFF")
 
-        OLevelManager.lowCharacterMatrix[data.hitBoxPosition.y][data.hitBoxPosition.x] =
-            null
+        OLevelManager.characterPositionMatrix[data.hitBoxPosition]= null
         if (data.animationState.action == EActionType.ATTACK || data.animationState.action == EActionType.WALK) {
             val direction = data.rotation.vector
-            OLevelManager.topCharacterMatrix[data.hitBoxPosition.y + direction.y][data.hitBoxPosition.x + direction.x]?.let {
-                OLevelManager.topCharacterMatrix[data.hitBoxPosition.y + direction.y][data.hitBoxPosition.x + direction.x] =
-                    null
+            OLevelManager.characterTargetMatrix[data.hitBoxPosition + direction]?.let {
+                OLevelManager.characterTargetMatrix[data.hitBoxPosition + direction] = null
             }
         }
     }
@@ -79,7 +59,7 @@ open class Enemy(_data: EnemyData) : ACharacter<EnemyData.EnemyAnimateState>() {
         TODO("Not yet implemented")
     }
 
-    override fun changeAnimateState(type: EActionType) {
+     override fun changeAnimateState(type: EActionType) {
         data.animationState = EnemyData.EnemyAnimateState.values().first { it.action == type }
         data.hitBoxSize = data.animationState.frameSize
     }

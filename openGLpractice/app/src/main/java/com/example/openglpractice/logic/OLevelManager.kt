@@ -24,8 +24,8 @@ object OLevelManager {
     lateinit var hero: Hero
     var featureMatrix: Array<Array<AFeature<*>?>> = arrayOf()
     var fieldMatrix: Array<Array<Field>> = arrayOf()
-    var lowCharacterMatrix: Array<Array<ACharacter<*>?>> = arrayOf()
-    var topCharacterMatrix: Array<Array<ACharacter<*>?>> = arrayOf()
+    var characterPositionMatrix: Array<Array<ACharacter<*>?>> = arrayOf()
+    var characterTargetMatrix: Array<Array<ACharacter<*>?>> = arrayOf()
     var selectedTraps: Set<EFeatureFactory> = setOf()
     private var idGen: Long = 0
     private var slimes: Array<Enemy> = arrayOf()
@@ -95,22 +95,22 @@ object OLevelManager {
     }
 
     private fun initialiseCharacterLayer(): Array<CharacterData<*>?> {
-        lowCharacterMatrix = Array(8) { Array(14) { null } }
-        topCharacterMatrix = Array(8) { Array(14) { null } }
-        lowCharacterMatrix[3][7] = hero
+        characterPositionMatrix = Array(8) { Array(14) { null } }
+        characterTargetMatrix = Array(8) { Array(14) { null } }
+        characterPositionMatrix[3][7] = hero
         slimes = arrayOf(
             EEnemyFactory.SLIME.createEnemy(Vector(13, 5), 36, EDirection.LEFT),
             EEnemyFactory.SLIME.createEnemy(Vector(13, 6), 37, EDirection.LEFT),
             EEnemyFactory.SLIME.createEnemy(Vector(0, 2), 38, EDirection.RIGHT),
             EEnemyFactory.SLIME.createEnemy(Vector(0, 1), 39, EDirection.RIGHT)
         )
-        lowCharacterMatrix[5][13] = slimes[0]
-        lowCharacterMatrix[6][13] = slimes[1]
-        lowCharacterMatrix[2][0] = slimes[2]
-        lowCharacterMatrix[1][0] = slimes[3]
+        characterPositionMatrix[5][13] = slimes[0]
+        characterPositionMatrix[6][13] = slimes[1]
+        characterPositionMatrix[2][0] = slimes[2]
+        characterPositionMatrix[1][0] = slimes[3]
 
         val tempArray: MutableList<CharacterData<*>?> = mutableListOf()
-        lowCharacterMatrix.forEach { external ->
+        characterPositionMatrix.forEach { external ->
             external.forEach { internal ->
                 tempArray.add(internal?.data)
             }

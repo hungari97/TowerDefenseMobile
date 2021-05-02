@@ -1,5 +1,6 @@
 package com.example.openglpractice.view
 
+import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Context
 import android.content.pm.ConfigurationInfo
@@ -161,25 +162,28 @@ class GameActivity : AppCompatActivity(), GameScreen {
         swGameView.onPause()
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun trapSelectOnClick(v: ImageButton) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (v.background.constantState == getDrawable(R.drawable.selected_traplist_item)!!.constantState) {
                 v.setBackgroundResource(R.drawable.not_selected_traplist_item)
                 llRotationArrow.visibility = View.GONE
+                gamePresenter.buildTrapHasBeenSelected(ibSelectTraps.indexOf(v))
             } else {
                 ibSelectTraps.forEach {
                     it.setBackgroundResource(R.drawable.not_selected_traplist_item)
                 }
                 v.setBackgroundResource(R.drawable.selected_traplist_item)
+                gamePresenter.buildTrapHasBeenSelected(ibSelectTraps.indexOf(v))
                 llRotationArrow.visibility = View.VISIBLE
             }
-            gamePresenter.buildTrapHasBeenSelected(ibSelectTraps.indexOf(v))
 
         } else {
             TODO("VERSION.SDK_INT < LOLLIPOP")
         }
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun arrowSelectOnClick(v: ImageButton) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (v.background.constantState == getDrawable(R.drawable.selected_arrow_background)!!.constantState) {

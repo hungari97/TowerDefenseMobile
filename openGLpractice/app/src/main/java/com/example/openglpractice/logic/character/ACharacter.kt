@@ -7,253 +7,200 @@ import com.example.openglpractice.model.character.CharacterData
 import com.example.openglpractice.model.character.EActionType
 import com.example.openglpractice.model.character.EActionType.*
 import com.example.openglpractice.model.IAnimateEnum
-import com.example.openglpractice.utility.EDirection
-import com.example.openglpractice.utility.Vector
+import com.example.openglpractice.utility.*
 
 abstract class ACharacter<T : IAnimateEnum> : IInteractable, IAnimatable {
     abstract override val data: CharacterData<T>
-    protected var attackNext = false
+    protected var attackRequested = false
 
-    open fun calcMove(from: Vector<Int>, to: Vector<Int>) {
-        val checkedList: MutableList<Vector<Int>> = mutableListOf()
-        val pathTemp: MutableList<Vector<Int>> = mutableListOf()
-        var temp: Vector<Int> = from
-        val tempMatrix =
-            Array(8) { Array(14) { 0 } } //1 left, 2, up, 3 right, 4 down
+    open fun calcPathBetween(
+        from: Vector<Int>,
+        to: Vector<Int>,
+    ) {
+        val knownPositions: MutableList<Vector<Int>> = mutableListOf(from)
+        val reversedPath: MutableList<Vector<Int>> = mutableListOf()
+        var actualPosition: Vector<Int> = from
+        val directionMatrix = Array(8) { Array<EDirection?>(14) { null } }
 
-        tempMatrix[temp.y][temp.x] = 0
-        checkedList.add(from)
+        var actualPositionIndex = 0
+        mainCycle@ while (actualPositionIndex < knownPositions.size) {
 
-        var actualVector = 0
-        while (actualVector < checkedList.size) {
-            temp = checkedList[actualVector]
-
-            if (temp.x == to.x && temp.y == to.y) break
-
-            if (!checkedList.contains(Vector(temp.x, temp.y - 1)) && temp.y - 1 >= 0)
-                if (OLevelManager.lowCharacterMatrix[temp.y - 1][temp.x] == null || (
-                            OLevelManager.lowCharacterMatrix[temp.y - 1][temp.x]!!.data.animationState.action == WALK &&
-                                    OLevelManager.topCharacterMatrix[temp.y][temp.x] ==
-                                    OLevelManager.lowCharacterMatrix[temp.y - 1][temp.x]
-                            )
-                )
-                    if (OLevelManager.topCharacterMatrix[temp.y - 1][temp.x] == null)
-                        if (OLevelManager.fieldMatrix[temp.y - 1][temp.x].data.type == 0) {
-                            tempMatrix[temp.y - 1][temp.x] = 3
-                            checkedList.add(Vector(temp.x, temp.y - 1))
-                            if (temp.x == to.x && temp.y - 1 == to.y) {
-                                temp = Vector(temp.x, temp.y - 1)
-                                break
-                            }
-                        }
-            if (!checkedList.contains(Vector(temp.x + 1, temp.y)) && temp.x + 1 <= 13)
-                if (OLevelManager.lowCharacterMatrix[temp.y][temp.x + 1] == null || (
-                            OLevelManager.lowCharacterMatrix[temp.y][temp.x + 1]!!.data.animationState.action == WALK &&
-                                    OLevelManager.topCharacterMatrix[temp.y][temp.x] ==
-                                    OLevelManager.lowCharacterMatrix[temp.y][temp.x + 1]
-                            )
-                )
-                    if (OLevelManager.topCharacterMatrix[temp.y][temp.x + 1] == null
-                    )
-                        if (OLevelManager.fieldMatrix[temp.y][temp.x + 1].data.type == 0) {
-                            tempMatrix[temp.y][temp.x + 1] = 4
-                            checkedList.add(Vector(temp.x + 1, temp.y))
-                            if (temp.x + 1 == to.x && temp.y == to.y) {
-                                temp = Vector(temp.x + 1, temp.y)
-                                break
-                            }
-                        }
-            if (!checkedList.contains(Vector(temp.x, temp.y + 1)) && temp.y + 1 <= 7)
-                if (OLevelManager.lowCharacterMatrix[temp.y + 1][temp.x] == null || (
-                            OLevelManager.lowCharacterMatrix[temp.y + 1][temp.x]!!.data.animationState.action == WALK &&
-                                    OLevelManager.topCharacterMatrix[temp.y][temp.x] ==
-                                    OLevelManager.lowCharacterMatrix[temp.y + 1][temp.x]
-                            )
-                )
-                    if (OLevelManager.topCharacterMatrix[temp.y + 1][temp.x] == null
-                    )
-                        if (OLevelManager.fieldMatrix[temp.y + 1][temp.x].data.type == 0) {
-                            tempMatrix[temp.y + 1][temp.x] = 1
-                            checkedList.add(Vector(temp.x, temp.y + 1))
-                            if (temp.x == to.x && temp.y + 1 == to.y) {
-                                temp = Vector(temp.x, temp.y + 1)
-                                break
-                            }
-                        }
-            if (!checkedList.contains(Vector(temp.x - 1, temp.y)) && temp.x - 1 >= 0)
-                if (OLevelManager.lowCharacterMatrix[temp.y][temp.x - 1] == null || (
-                            OLevelManager.lowCharacterMatrix[temp.y][temp.x - 1]!!.data.animationState.action == WALK &&
-                                    OLevelManager.topCharacterMatrix[temp.y][temp.x] ==
-                                    OLevelManager.lowCharacterMatrix[temp.y][temp.x - 1]
-                            )
-                ) if (OLevelManager.topCharacterMatrix[temp.y][temp.x - 1] == null
-                )
-                    if (OLevelManager.fieldMatrix[temp.y][temp.x - 1].data.type == 0) {
-                        tempMatrix[temp.y][temp.x - 1] = 2
-                        checkedList.add(Vector(temp.x - 1, temp.y))
-                        if (temp.x - 1 == to.x && temp.y == to.y) {
-                            temp = Vector(temp.x - 1, temp.y)
-                            break
-                        }
-                    }
-
-            actualVector++
-        }
-
-        if (temp.x == to.x && temp.y == to.y) {
-            pathTemp.add(temp)
-            while (temp.x != from.x || temp.y != from.y) {
-                when (tempMatrix[temp.y][temp.x]) {
-                    0 -> return
-                    1 -> {
-                        pathTemp.add(Vector(temp.x, temp.y - 1))
-                        temp = Vector(temp.x, temp.y - 1)
-                    }
-                    2 -> {
-                        pathTemp.add(Vector(temp.x + 1, temp.y))
-                        temp = Vector(temp.x + 1, temp.y)
-                    }
-                    3 -> {
-                        pathTemp.add(Vector(temp.x, temp.y + 1))
-                        temp = Vector(temp.x, temp.y + 1)
-                    }
-                    4 -> {
-                        pathTemp.add(Vector(temp.x - 1, temp.y))
-                        temp = Vector(temp.x - 1, temp.y)
-                    }
-                }
-            }
-            if (pathTemp.size > 1) {
-                data.path = pathTemp.reversed().toTypedArray()
-                when {
-                    data.path!![0].x - data.path!![1].x == -1 -> data.rotation = EDirection.RIGHT
-                    data.path!![0].x - data.path!![1].x == 1 -> data.rotation = EDirection.LEFT
-                    data.path!![0].y - data.path!![1].y == -1 -> data.rotation = EDirection.UP
-                    data.path!![0].y - data.path!![1].y == 1 -> data.rotation = EDirection.DOWN
-                }
-            }
-        } else {
-            data.path = null
-            changeAnimateState(REST)
-
-        }
-        data.path?.let {
-            if (data.animationState.action == REST) {
-                data.currentAnimationProgress = 0
-                changeAnimateState(WALK)
-
-                OLevelManager.topCharacterMatrix[data.path!![1].y][data.path!![1].x] =
-                    this
-            }
-        }
-    }
-
-    open fun moveToThick() {
-        if (data.currentAnimationProgress == 0) {
-            if (attackNext) {
-                attack()
-            } else {
-                data.path?.also { pathNotNull ->
-                    var path = pathNotNull.toMutableList()
-                    if (data.animationState.action == REST) {
-                        changeAnimateState(WALK)
-
-                    }
-                    val before = data.hitBoxPosition
-                    data.hitBoxPosition = path[1]
-                    path.removeAt(0)
-                    data.path = pathNotNull.drop(1).toTypedArray()
-
-                    OLevelManager.lowCharacterMatrix[data.hitBoxPosition.y][data.hitBoxPosition.x] =
-                        this
-                    OLevelManager.topCharacterMatrix[data.hitBoxPosition.y][data.hitBoxPosition.x] =
-                        null
-                    OLevelManager.lowCharacterMatrix[before.y][before.x] = null
-
-                    if (data.goal!!.x != path.last().x || data.goal!!.y != path.last().y) {
-                        calcMove(data.hitBoxPosition, data.goal!!)
-                        path = data.path?.toMutableList() ?: mutableListOf(data.hitBoxPosition)
-                    }
-
-                    if (path.size == 1) {
-                        changeAnimateState(REST)
-
-                        data.path = null
-                        data.goal = null
-
-                    } else {
-                        if (OLevelManager.topCharacterMatrix[path[1].y][path[1].x] != null ||
-                            (OLevelManager.lowCharacterMatrix[path[1].y][path[1].x] != null && (
-                                    OLevelManager.lowCharacterMatrix[path[1].y][path[1].x]!!.data.animationState.action != WALK ||
-                                            OLevelManager.topCharacterMatrix[data.hitBoxPosition.y][data.hitBoxPosition.x] ==
-                                            OLevelManager.lowCharacterMatrix[path[1].y][path[1].x]
-                                    ))
-                        ) {
-                            calcMove(data.hitBoxPosition, data.goal!!)
-                        }
-                        data.path?.let { pathInner ->
-                            when {
-                                data.hitBoxPosition.x - pathInner[1].x == -1 -> data.rotation =
-                                    EDirection.RIGHT
-                                data.hitBoxPosition.x - pathInner[1].x == 1 -> data.rotation =
-                                    EDirection.LEFT
-                                data.hitBoxPosition.y - pathInner[1].y == -1 -> data.rotation =
-                                    EDirection.UP
-                                data.hitBoxPosition.y - pathInner[1].y == 1 -> data.rotation =
-                                    EDirection.DOWN
-                            }
-                            OLevelManager.topCharacterMatrix[pathInner[1].y][pathInner[1].x] =
-                                this
+            //bejárás aktuális pozíciója
+            actualPosition = knownPositions[actualPositionIndex]
+            //ha az aktuális pozíció a keresett pozíció, akkor leállunk
+            if (actualPosition == to) break
+            //végig iterálunk a négy fő irányban lévő szomszédokon
+            for (direction in EDirection.values()) {
+                //szomszédos pozíció
+                val neighbourPosition = actualPosition + direction.vector
+                //ha nem jártunk még az adott pozíción
+                //és az adott pozíció a pályán belülre esik
+                //akkor megvizsgáluk
+                if (!knownPositions.contains(neighbourPosition)
+                    && neighbourPosition.y in directionMatrix.indices
+                    && neighbourPosition.x in directionMatrix[0].indices
+                ) {
+                    //( ha az adott pozícióban nincs karakter
+                    //vagy ( az adott pozíciót elhagyni készül
+                    //és nem az aktuális pozícióba tart ) )
+                    //és más nem vette még célba az aktuális pozíciót
+                    //és az aktuális pozíció út
+                    //akkor járható és felvesszük következő pozíciónak az útkeresésbe
+                    if ((
+                                OLevelManager.characterPositionMatrix[neighbourPosition] == null || (
+                                        OLevelManager.characterPositionMatrix[neighbourPosition]!!.data.animationState.action == WALK &&
+                                                OLevelManager.characterTargetMatrix[actualPosition] ==
+                                                OLevelManager.characterPositionMatrix[neighbourPosition]
+                                        )
+                                ) && OLevelManager.characterTargetMatrix[neighbourPosition] == null
+                        && OLevelManager.fieldMatrix[neighbourPosition].data.type == 0
+                    ) {
+                        //felvesszük a szomszédos pozícióba a vissza vezető irányt
+                        directionMatrix[neighbourPosition] = direction.invers
+                        //hozzáadjuk a szomszédot az ismert pozíciókhoz
+                        knownPositions.add(neighbourPosition)
+                        //ha a szomszéd maga a keresett pozíció, akkor végeztük
+                        if (actualPosition == to) {
+                            //aktuális pozíciónak beállítjuk a pozíciót
+                            actualPosition = neighbourPosition
+                            break@mainCycle
                         }
                     }
                 }
             }
+            //tovább lépünk a következő ismert pozícióra
+            actualPositionIndex++
         }
-        data.path ?: data.goal?.let { it -> calcMove(data.hitBoxPosition, it) }
-    }
 
-    open fun attack() {
-        if (data.currentAnimationProgress == 0 && attackNext) {
-            if (data.animationState.action == WALK) {
-                val before = data.hitBoxPosition
-                data.hitBoxPosition = data.path!![1]
-                OLevelManager.lowCharacterMatrix[data.hitBoxPosition.y][data.hitBoxPosition.x] =
-                    this
-                OLevelManager.topCharacterMatrix[data.hitBoxPosition.y][data.hitBoxPosition.x] =
-                    null
-                OLevelManager.lowCharacterMatrix[before.y][before.x] = null
+        //ha megtaláltuk a cél pozíciót
+        if (actualPosition == to) {
+            //akkor vissza keressük az utat a cél pozícióból a kiindulási pozícióba
+            reversedPath.add(actualPosition)
+            while (actualPosition != from) {
+                actualPosition += directionMatrix[actualPosition]!!.vector
+                reversedPath.add(actualPosition)
+            }
+            if (reversedPath.size > 1) {
+                data.path = reversedPath.reversed().toTypedArray()
+                data.path?.let { path ->
+                    data.rotation = EDirection.values().first { it.vector == path[1] - path[0] }
+                }
+            } else
                 data.path = null
-                data.goal = null
+        } else //TODO: Keressen a célhelyszíntől visszafele az első ismert pozícióig
+            data.path = null
+    }
+
+    protected open fun onWalk() {
+        // ha egy animációs ciklus véget ért
+        if (data.animationProgress == 15) {
+            //és támadás lett kérve, akkor támadjon
+            //ha van út, akkor kövesse
+            data.path?.toMutableList()?.also { localPath ->
+                //tároljuk el az aktuális pozíciót és léptessük a karaktert
+                val before = localPath.removeAt(0)
+                data.hitBoxPosition = localPath[0]
+                data.path = localPath.toTypedArray()
+
+                //a léptetést vegyük fel a logikai táblákba
+                OLevelManager.characterPositionMatrix[data.hitBoxPosition] = this
+                OLevelManager.characterPositionMatrix[before] = null
+                if(data.hitBoxPosition == data.goal){
+                    data.goal = null
+                    data.path = null
+                }
             }
-            changeAnimateState(ATTACK)
 
+        } else if (data.animationProgress == 0) {
+            data.path?.let { localPath ->
+                //ha az út már nem a célhelyszínre vezet
+                //vagy a következő pozíciót valaki már célbavette
+                //vagy (a pozícióban más tartózkodik
+                //, aki nem készül azt elhagyni
+                //vagy éppen az aktuális karakter pozícióját vette célba)
+                //akkor új utat számítunk.
+                if (data.goal != localPath.last() ||
+                    OLevelManager.characterTargetMatrix[localPath[1]] != null ||
+                    (OLevelManager.characterPositionMatrix[localPath[1]] != null && (
+                            OLevelManager.characterPositionMatrix[localPath[1]]!!.data.animationState.action != WALK ||
+                                    OLevelManager.characterTargetMatrix[data.hitBoxPosition] ==
+                                    OLevelManager.characterPositionMatrix[localPath[1]]
+                            ))
 
-            attackNext = false
-
-            val direction = data.rotation.vector
-            OLevelManager.topCharacterMatrix[data.hitBoxPosition.y + direction.y][data.hitBoxPosition.x + direction.x] =
-                this
-            OLevelManager.lowCharacterMatrix[data.hitBoxPosition.y + direction.y][data.hitBoxPosition.x + direction.x]?.hit(
-                this)
-        } else {
-            attackNext = true
+                ) {
+                    calcPathBetween(data.hitBoxPosition, data.goal!!)
+                }
+            }
+            data.path?.let { localPath ->
+                data.rotation = EDirection.values()
+                    .first { it.vector == localPath[1] - data.hitBoxPosition }
+                OLevelManager.characterTargetMatrix[data.hitBoxPosition] = null
+                OLevelManager.characterTargetMatrix[localPath[1]] = this
+            }
         }
     }
 
-    abstract fun changeAnimateState(type: EActionType)
+    open fun requestAttack() {
+        attackRequested = true
+    }
+
+    protected open fun onAttack() {
+        if (data.animationProgress == 0) {
+            val direction = data.rotation.vector
+            OLevelManager.characterTargetMatrix[data.hitBoxPosition + direction] = this
+            OLevelManager.characterPositionMatrix[data.hitBoxPosition + direction]?.hit(this)
+        }
+    }
+
+    protected abstract fun changeAnimateState(type: EActionType)
+
+    open fun doAction() =
+        when (data.animationState.action) {
+            REST -> {
+            }
+            WALK -> onWalk()
+            ATTACK -> onAttack()
+        }
+
 
     override fun nextAnimationState() {
-        if ((data.currentAnimationProgress + 1) % 16 == 0 && data.animationState.action == ATTACK) {
-            changeAnimateState(REST)
-            val direction = data.rotation.vector
-            OLevelManager.topCharacterMatrix[data.hitBoxPosition.y + direction.y][data.hitBoxPosition.x + direction.x] =
-                null
+        data.animationProgress = (data.animationProgress + 1) % 16
+        when (data.animationState.action) {
+            REST -> {
+                if (attackRequested) {
+                    data.animationProgress = 0
+                    changeAnimateState(ATTACK)
+                    attackRequested = false
+                } else data.goal?.let { goal ->
+                    calcPathBetween(data.hitBoxPosition, goal)
+                    data.path?.let {
+                        data.animationProgress = 0
+                        changeAnimateState(WALK)
+                    }
+                }
+            }
+            WALK -> {
+                if (attackRequested && data.animationProgress == 0) {
+                    changeAnimateState(ATTACK)
+                    attackRequested = false
+                    data.path = null
+                    data.goal = null
+                } else if (data.path == null) {
+                    changeAnimateState(REST)
+                }
+            }
+            ATTACK -> {
+                if (data.animationProgress == 0) {
+                    changeAnimateState(REST)
+                    OLevelManager.characterTargetMatrix[data.hitBoxPosition + data.rotation.vector] =
+                        null
+                }
+            }
         }
-        data.currentAnimationProgress = (data.currentAnimationProgress + 1) % 16
     }
 
     override fun onThick() {
+        doAction()
         nextAnimationState()
-        moveToThick()
     }
 }

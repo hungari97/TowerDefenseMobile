@@ -1,7 +1,6 @@
 package com.example.openglpractice.view.opengl.layer
 
 import android.opengl.GLES20
-import android.opengl.Matrix
 import android.renderscript.Matrix4f
 import com.example.openglpractice.R
 import com.example.openglpractice.logic.feature.AFeature
@@ -142,13 +141,13 @@ class FeatureLayer(
             sor = abs(it.data.hitBoxPosition.y - row)
             oszlop = abs(it.data.hitBoxPosition.x - cell)
             temp =
-                it.data.animationState.textureArray[it.data.currentAnimationProgress * it.data.hitBoxSize.x * it.data.hitBoxSize.y + sor * it.data.hitBoxSize.x + oszlop]
+                it.data.animationState.textureArray[it.data.animationProgress * it.data.hitBoxSize.x * it.data.hitBoxSize.y + sor * it.data.hitBoxSize.x + oszlop]
 
         } else {
             sor = abs(it.data.hitBoxPosition.y - row)
             oszlop = abs(it.data.hitBoxPosition.x - cell)
             temp =
-                it.data.animationState.textureArray[it.data.currentAnimationProgress * it.data.hitBoxSize.x * it.data.hitBoxSize.y + sor * it.data.hitBoxSize.y + oszlop]
+                it.data.animationState.textureArray[it.data.animationProgress * it.data.hitBoxSize.x * it.data.hitBoxSize.y + sor * it.data.hitBoxSize.y + oszlop]
         }
 
         when (it.data.rotation) {

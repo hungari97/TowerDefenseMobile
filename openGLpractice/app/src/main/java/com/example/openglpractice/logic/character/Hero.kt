@@ -23,7 +23,7 @@ class Hero() : ACharacter<HeroData.HeroAnimateState>() {
             hitBoxPosition = Vector(1, 1),
             hitBoxSize = Vector(1, 1),
             animationState = HeroData.HeroAnimateState.valueOf("HEROREST"),
-            currentAnimationProgress = 0,
+            animationProgress = 0,
             goal = null,
             path = null,
             functionality = this,
@@ -50,8 +50,8 @@ class Hero() : ACharacter<HeroData.HeroAnimateState>() {
         TODO("Not yet implemented")
     }
 
-    override fun calcMove(from: Vector<Int>, to: Vector<Int>) {
-        super.calcMove(from, to)
+    override fun calcPathBetween(from: Vector<Int>, to: Vector<Int>) {
+        super.calcPathBetween(from, to)
         /*data.path?.let {
             if (data.animationState.name.equals("HEROREST")) {
                 data.currentAnimationProgress = 0
