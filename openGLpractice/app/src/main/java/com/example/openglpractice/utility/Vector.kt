@@ -13,8 +13,8 @@ data class Vector<T : Number>(var x: T, var y: T) {
 
 }
 
-operator fun Vector<Int>.plus(other: Vector<Int>) = Vector(x+other.x,y+other.y)
-operator fun Vector<Int>.minus(other: Vector<Int>) = Vector(x-other.x,y-other.y)
+operator fun Vector<Int>.plus(other: Vector<Int>) = Vector(x + other.x, y + other.y)
+operator fun Vector<Int>.minus(other: Vector<Int>) = Vector(x - other.x, y - other.y)
 operator fun <T> Array<Array<T>>.get(position: Vector<Int>) = this[position.y][position.x]
 operator fun <T> Array<Array<T>>.set(position: Vector<Int>, value: T) {
     this[position.y][position.x] = value

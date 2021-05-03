@@ -3,6 +3,7 @@ package com.example.openglpractice.view
 import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ConfigurationInfo
 import android.graphics.PixelFormat
 import android.os.Build
@@ -142,7 +143,7 @@ class GameActivity : AppCompatActivity(), GameScreen {
     private fun fieldLayer(): Array<Array<Int>> {
         val fieldTypeList = mutableListOf<Array<Int>>()
         val reader = InputStreamReader(resources.openRawResource(R.raw.level_2)).buffered()
-        reader.forEachLine { line ->
+        reader.forEachLine {line ->
             fieldTypeList.add(line.split(" ".toRegex()).map { splited -> splited.toInt() }
                 .toTypedArray())
         }
@@ -198,6 +199,11 @@ class GameActivity : AppCompatActivity(), GameScreen {
         } else {
             TODO("VERSION.SDK_INT < LOLLIPOP")
         }
+    }
+
+    override fun LevelEnded() {
+        val intent = Intent(this, LevelEndActivity::class.java)
+        startActivity(intent)
     }
 
     override fun updateScreen() {

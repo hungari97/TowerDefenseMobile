@@ -4,12 +4,20 @@ import com.example.openglpractice.logic.feature.AFeature
 import com.example.openglpractice.logic.character.ACharacter
 import com.example.openglpractice.logic.Field
 import com.example.openglpractice.logic.OLevelManager
+import com.example.openglpractice.presenter.GamePresenter
+import com.example.openglpractice.presenter.Presenter
 import com.example.openglpractice.utility.EDirection
 import com.example.openglpractice.utility.Vector
 import javax.inject.Inject
 
 class BuildInteractor @Inject constructor() {
     private val levelManager = OLevelManager
+
+    lateinit var gamePresenter: GamePresenter
+
+    init {
+        OLevelManager.interactor = this
+    }
 
     fun buildTouchPosition(position: Vector<Int>) {
         levelManager.buildTrap(position)
@@ -59,5 +67,9 @@ class BuildInteractor @Inject constructor() {
 
     fun gameHeroAttack() {
         OLevelManager.hero.requestAttack()
+    }
+
+    fun notifyUIAboutGameEnd() {
+        gamePresenter.notifyUIAboutGameEnd()
     }
 }

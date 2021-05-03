@@ -60,7 +60,7 @@ enum class EFeatureFactory {
 
             val data = FeatureData(
                 id,
-                10,
+                20,
                 0,
                 position,
                 Vector(1, 1),

@@ -8,6 +8,10 @@ import com.example.openglpractice.model.interactor.BuildInteractor
 import com.example.openglpractice.screen.GameScreen
 
 class GamePresenter(private val buildInteractor: BuildInteractor) : Presenter<GameScreen>() {
+    init {
+        buildInteractor.gamePresenter = this
+    }
+
     override fun attachScreen(screen: GameScreen) {
         this.screen = screen
     }
@@ -55,6 +59,12 @@ class GamePresenter(private val buildInteractor: BuildInteractor) : Presenter<Ga
 
     fun gameHeroAttack() {
         buildInteractor.gameHeroAttack()
+    }
+
+
+
+    fun notifyUIAboutGameEnd() {
+        screen?.LevelEnded()
     }
 
 }

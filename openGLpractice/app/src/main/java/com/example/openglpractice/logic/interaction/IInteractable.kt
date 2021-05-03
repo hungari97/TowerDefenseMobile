@@ -6,7 +6,4 @@ interface IInteractable {
     val data: InteractableData
 
     fun hit(thing: IInteractable)
-
-    fun death()
-    fun specialAttack()
 }

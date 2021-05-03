@@ -12,8 +12,11 @@ import com.example.openglpractice.model.*
 import com.example.openglpractice.model.character.CharacterData
 import com.example.openglpractice.model.character.HeroData
 import com.example.openglpractice.model.feature.AFeatureData
-import com.example.openglpractice.utility.EDirection
-import com.example.openglpractice.utility.Vector
+import com.example.openglpractice.model.interactor.BuildInteractor
+import com.example.openglpractice.presenter.GamePresenter
+import com.example.openglpractice.utility.*
+import javax.inject.Inject
+import kotlin.random.Random
 
 
 object OLevelManager {
@@ -28,15 +31,15 @@ object OLevelManager {
     var characterTargetMatrix: Array<Array<ACharacter<*>?>> = arrayOf()
     var selectedTraps: Set<EFeatureFactory> = setOf()
     private var idGen: Long = 0
-    private var slimes: Array<Enemy> = arrayOf()
+    var interactor : BuildInteractor? = null
 
-    fun initialise(fieldTypes: Array<Array<Int>>) {
+    fun initialise(levelLayout: Array<Array<Int>>) {
         idGen = 0
         hero = Hero(HeroData(
             2,
             5,
             2,
-            Vector(7, 3),
+            Vector(levelLayout[1][0], levelLayout[1][1]),
             Vector(1, 1),
             HeroData.HeroAnimateState.HEROREST,
             0,
@@ -50,15 +53,30 @@ object OLevelManager {
 
         selectedTraps = hero.data.trapTypes
         data = LevelData(
-            initialiseFieldLayer(fieldTypes),
-            initialiseFeatureLayer(),
-            initialiseCharacterLayer(),
-            3,
+            arrayOf(),
+            arrayOf(),
+            arrayOf(),
+            levelLayout[2],
             14,
             0,
-            3
+            3,
+            Vector(levelLayout[0][0], levelLayout[0][1]),
         )
 
+        val layout = levelLayout.toMutableList()
+        layout.removeAt(0)
+        layout.removeAt(0)
+        layout.removeAt(0)
+        val fields = initialiseFieldLayer(layout.toTypedArray())
+        val features = initialiseFeatureLayer()
+        val characters = initialiseCharacterLayer()
+
+        data.fieldLayer = fields
+        data.featureLayer = features
+        data.characterLayer = characters
+
+        OTimer.subscribe(::spawn)
+        OTimer.subscribe(::checkIfLevelEnded)
         OTimer.startThread()
     }
 
@@ -84,7 +102,8 @@ object OLevelManager {
 
     private fun initialiseFeatureLayer(): Array<AFeatureData<*>?> {
         featureMatrix = Array(8) { Array(14) { null } }
-        featureMatrix[4][6] = EFeatureFactory.CRYSTAL.createFeature(Vector(6, 4), 1, EDirection.LEFT)
+        featureMatrix[4][6] =
+            EFeatureFactory.CRYSTAL.createFeature(Vector(6, 4), 1, EDirection.LEFT)
         val tempArray: MutableList<AFeatureData<*>?> = mutableListOf()
         featureMatrix.forEach { external ->
             external.forEach { internal ->
@@ -97,25 +116,88 @@ object OLevelManager {
     private fun initialiseCharacterLayer(): Array<CharacterData<*>?> {
         characterPositionMatrix = Array(8) { Array(14) { null } }
         characterTargetMatrix = Array(8) { Array(14) { null } }
-        characterPositionMatrix[3][7] = hero
-        slimes = arrayOf(
-            EEnemyFactory.SLIME.createEnemy(Vector(13, 5), 36, EDirection.LEFT),
-            EEnemyFactory.SLIME.createEnemy(Vector(13, 6), 37, EDirection.LEFT),
-            EEnemyFactory.SLIME.createEnemy(Vector(0, 2), 38, EDirection.RIGHT),
-            EEnemyFactory.SLIME.createEnemy(Vector(0, 1), 39, EDirection.RIGHT)
-        )
-        characterPositionMatrix[5][13] = slimes[0]
-        characterPositionMatrix[6][13] = slimes[1]
-        characterPositionMatrix[2][0] = slimes[2]
-        characterPositionMatrix[1][0] = slimes[3]
+        characterPositionMatrix[hero.data.hitBoxPosition] = hero
 
         val tempArray: MutableList<CharacterData<*>?> = mutableListOf()
         characterPositionMatrix.forEach { external ->
-            external.forEach { internal ->
-                tempArray.add(internal?.data)
-            }
+            tempArray.addAll(external.map { it?.data })
         }
         return tempArray.toTypedArray()
+    }
+
+    fun spawn() {
+        if (buildMode || data.enemyToSpawnCount[0] == 0) return
+        characterPositionMatrix.first().forEachIndexed { index: Int, it: ACharacter<*>? ->
+            if (data.enemyToSpawnCount[0] != 0
+                && it == null
+                && fieldMatrix.first()[index].data.type == 0
+            ) {
+                characterPositionMatrix.first()[index] =
+                    EEnemyFactory.SLIME.createEnemy(
+                        id = Random.nextLong(),
+                        rotation = EDirection.UP,
+                        position = Vector(index, 0)
+                    )
+                data.enemyToSpawnCount[0]--
+            }
+        }
+        characterPositionMatrix.last().forEachIndexed { index: Int, it: ACharacter<*>? ->
+            if (data.enemyToSpawnCount[0] != 0 && it == null
+                && fieldMatrix.last()[index].data.type == 0
+            ) {
+                characterPositionMatrix.last()[index] =
+                    EEnemyFactory.SLIME.createEnemy(
+                        id = Random.nextLong(),
+                        rotation = EDirection.DOWN,
+                        position = Vector(index, characterPositionMatrix.lastIndex)
+                    )
+                data.enemyToSpawnCount[0]--
+            }
+        }
+        characterPositionMatrix.forEachIndexed { index: Int, it: Array<ACharacter<*>?> ->
+            it.first()
+            it.last()
+            if (data.enemyToSpawnCount[0] != 0
+                && characterPositionMatrix[index].first() == null
+                && fieldMatrix[index].first().data.type == 0
+            ) {
+                characterPositionMatrix[index][0] =
+                    EEnemyFactory.SLIME.createEnemy(
+                        id = Random.nextLong(),
+                        rotation = EDirection.RIGHT,
+                        position = Vector(0, index)
+                    )
+                data.enemyToSpawnCount[0]--
+            }
+            if (data.enemyToSpawnCount[0] != 0
+                && characterPositionMatrix[index].last() == null
+                && fieldMatrix[index].last().data.type == 0
+            ) {
+                characterPositionMatrix[index][characterPositionMatrix[index].lastIndex] =
+                    EEnemyFactory.SLIME.createEnemy(
+                        id = Random.nextLong(),
+                        rotation = EDirection.LEFT,
+                        position = Vector(characterPositionMatrix[index].lastIndex, index)
+                    )
+                data.enemyToSpawnCount[0]--
+            }
+        }
+    }
+
+    fun checkIfLevelEnded() {
+        //TODO("Az aktuális wave elfogyása csak a fázist zárja")
+        if (data.enemyToSpawnCount[0] == 0
+            && !characterPositionMatrix.any { line -> line.any { it is Enemy } }
+            || featureMatrix[data.crystalPosition] == null
+            || hero.data.health <= 0
+        ) {
+            interactor?.notifyUIAboutGameEnd()
+        }
+    }
+
+    fun nextWave() {
+        data.enemyToSpawnCount =
+            data.enemyToSpawnCount.toMutableList().also { it.removeAt(0) }.toTypedArray()
     }
 
     fun selectedFromThePalette(selectedType: Int) {
@@ -142,17 +224,18 @@ object OLevelManager {
         return type.ordinal * 100 + idGen++
     }
 
+
     fun positionToHero(to: Vector<Int>) {
         hero.data.goal = to
-        slimes.forEachIndexed { _, it ->
+        /* slimes.forEachIndexed { _, it ->
             it.data.goal = to
-            /* when (index % 4) {
+            when (index % 4) {
                  0 -> it.data.goal = Vector(to.x, to.y + (index / 4) + 1)
                  1 -> it.data.goal = Vector(to.x - (index / 4) - 1, to.y)
                  2 -> it.data.goal = Vector(to.x, to.y - (index / 4) - 1)
                  else -> it.data.goal = Vector(to.x + (index / 4) + 1, to.y)
-             }*/
-        }
+             }
+        }*/
 
     }
 
@@ -212,7 +295,7 @@ object OLevelManager {
                     ?: if (fieldMatrix[position.y + direction.y][position.x + direction.x].data.type != 0) {
                         bool = false
                     }
-            test.functionality!!.death()
+            test.functionality!!.remove()
             if (!bool) {
                 return false
             }
@@ -270,19 +353,19 @@ object OLevelManager {
             for (initialiseY in 0 until temp.data.hitBoxSize.y) {
                 when (temp.data.rotation) {
                     EDirection.LEFT -> {
-                        data.AFeatureLayer[(position.y - initialiseY) * data.columnNumber + (position.x - initialiseX)] =
+                        data.featureLayer[(position.y - initialiseY) * data.columnNumber + (position.x - initialiseX)] =
                             featureMatrix[position.y - initialiseY][position.x - initialiseX]?.data
                     }
                     EDirection.UP -> {
-                        data.AFeatureLayer[(position.y + initialiseX) * data.columnNumber + (position.x + initialiseY)] =
+                        data.featureLayer[(position.y + initialiseX) * data.columnNumber + (position.x + initialiseY)] =
                             featureMatrix[position.y + initialiseX][position.x - initialiseY]?.data
                     }
                     EDirection.RIGHT -> {
-                        data.AFeatureLayer[(position.y + initialiseY) * data.columnNumber + (position.x + initialiseX)] =
+                        data.featureLayer[(position.y + initialiseY) * data.columnNumber + (position.x + initialiseX)] =
                             featureMatrix[position.y + initialiseY][position.x + initialiseX]?.data
                     }
                     EDirection.DOWN -> {
-                        data.AFeatureLayer[(position.y - initialiseX) * data.columnNumber + (position.x + initialiseY)] =
+                        data.featureLayer[(position.y - initialiseX) * data.columnNumber + (position.x + initialiseY)] =
                             featureMatrix[position.y - initialiseX][position.x + initialiseY]?.data
                     }
                 }

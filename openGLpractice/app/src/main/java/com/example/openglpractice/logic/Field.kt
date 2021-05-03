@@ -15,15 +15,7 @@ class Field(idGen:Long,row:Int,coloum:Int,type:Int): IInteractable {
         type
     )
 
-    override fun specialAttack() {
-        TODO("Not yet implemented")
-    }
-
     override fun hit(thing: IInteractable) {
-        TODO("Not yet implemented")
-    }
-
-    override fun death() {
         TODO("Not yet implemented")
     }
 
