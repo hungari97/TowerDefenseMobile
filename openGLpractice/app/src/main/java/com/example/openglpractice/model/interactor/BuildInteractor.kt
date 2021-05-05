@@ -5,7 +5,6 @@ import com.example.openglpractice.logic.character.ACharacter
 import com.example.openglpractice.logic.Field
 import com.example.openglpractice.logic.OLevelManager
 import com.example.openglpractice.presenter.GamePresenter
-import com.example.openglpractice.presenter.Presenter
 import com.example.openglpractice.utility.EDirection
 import com.example.openglpractice.utility.Vector
 import javax.inject.Inject
@@ -69,7 +68,12 @@ class BuildInteractor @Inject constructor() {
         OLevelManager.hero.requestAttack()
     }
 
-    fun notifyUIAboutGameEnd() {
+    fun gameNotifyUIAboutGameEnd() {
         gamePresenter.notifyUIAboutGameEnd()
     }
+
+    fun logicTrapCount(index: Int): Int = OLevelManager.getTrapCount(index)
+
+    fun buildRemoveTouch(vector: Vector<Int>) = OLevelManager.removeTrapFromData(vector)
+    fun gameNotifyUIAboutTrapLimitChange() = gamePresenter.notifyUIAboutTrapLimitChange()
 }

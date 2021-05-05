@@ -67,4 +67,10 @@ class GamePresenter(private val buildInteractor: BuildInteractor) : Presenter<Ga
         screen?.LevelEnded()
     }
 
+    fun getTrapCount(index: Int): Int = buildInteractor.logicTrapCount(index)
+
+    fun removeTouch(vector: Vector<Int>) = buildInteractor.buildRemoveTouch(vector)
+
+    fun notifyUIAboutTrapLimitChange() = screen?.updateTrapLimits()
+
 }

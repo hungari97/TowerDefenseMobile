@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.openglpractice.R
 import com.example.openglpractice.injector
@@ -29,11 +30,14 @@ class GameActivity : AppCompatActivity(), GameScreen {
     lateinit var gamePresenter: GamePresenter
     private lateinit var ibSelectTraps: Array<ImageButton>
     private lateinit var ibSelectArrow: Array<ImageButton>
+
     /*private var x: Float = 0.0f
     private var y: Float = 0.0f*/
     private lateinit var render: Renderer
     private var buildMode: Boolean = true
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    @SuppressLint("ClickableViewAccessibility", "UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injector.inject(this)
@@ -66,28 +70,35 @@ class GameActivity : AppCompatActivity(), GameScreen {
             return;
         }
 
-        swGameView.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View, m: MotionEvent): Boolean {
-                if (m.action == MotionEvent.ACTION_DOWN) {
-                    var x = m.x * 8 / swGameView.height
-                    var y = 8 - (m.y * 8 / swGameView.height)
-                    if (y >= 8.0f) {
-                        y = 7.9f
-                    }
-                    if (x >= 14.0f) {
-                        x = 13.9f
-                    }
-                    if (buildMode)
-                        gamePresenter.buildTouch(
-                            Vector(x.toInt(),y.toInt())
-                        ) else
-                        gamePresenter.gameHeroGoalPosition(Vector(x.toInt(),y.toInt()))
-                    render.featureUpdate()
+        swGameView.setOnTouchListener { _, motionEvent ->
+            if (motionEvent.action == MotionEvent.ACTION_DOWN) {
+                var x = motionEvent.x * 8 / swGameView.height
+                var y = 8 - (motionEvent.y * 8 / swGameView.height)
+                if (y >= 8.0f) {
+                    y = 7.9f
                 }
-                return true
+                if (x >= 14.0f) {
+                    x = 13.9f
+                }
+                if (buildMode) {
+                    if (!ibSelectTraps.any {
+                            it.background.constantState == getDrawable(R.drawable.selected_traplist_item)!!.constantState
+                        } && buildMode) {
+                        gamePresenter.removeTouch(
+                            Vector(x.toInt(), y.toInt())
+                        )
+                        return@setOnTouchListener false
+                    } else {
+                        gamePresenter.buildTouch(
+                            Vector(x.toInt(), y.toInt())
+                        )
+                    }
+                } else
+                    gamePresenter.gameHeroGoalPosition(Vector(x.toInt(), y.toInt()))
+                render.featureUpdate()
             }
-        })
-
+            true
+        }
         swGameView.setZOrderMediaOverlay(true)
 
         fbPlayStart.setOnClickListener {
@@ -104,10 +115,19 @@ class GameActivity : AppCompatActivity(), GameScreen {
         ibSelectTraps = arrayOf(
             ibTrapSelect1,
             ibTrapSelect2,
-            ibTrapSelect3
+            //ibTrapSelect3
         )
-        ibSelectTraps.forEachIndexed { _, button ->
+        ibSelectTraps.forEach { button ->
             button.setOnClickListener { trapSelectOnClick(button) }
+        }
+
+        val tvTrapCount = arrayOf(
+            tvTrapCount1,
+            tvTrapCount2,
+            //tvTrapCount3
+        )
+        tvTrapCount.forEachIndexed { index, textView ->
+            textView.text = gamePresenter.getTrapCount(index).toString()
         }
 
         ibSelectTraps[0].setImageResource(gamePresenter.logicGetSelectedTrapList()[0])
@@ -122,6 +142,17 @@ class GameActivity : AppCompatActivity(), GameScreen {
 
         OTimer.subscribe(::updateScreen)
 
+    }
+
+    override fun updateTrapLimits() {
+        val tvTrapCount = arrayOf(
+            tvTrapCount1,
+            tvTrapCount2,
+            //tvTrapCount3
+        )
+        tvTrapCount.forEachIndexed { index, textView ->
+            textView.text = gamePresenter.getTrapCount(index).toString()
+        }
     }
 
     /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -143,7 +174,7 @@ class GameActivity : AppCompatActivity(), GameScreen {
     private fun fieldLayer(): Array<Array<Int>> {
         val fieldTypeList = mutableListOf<Array<Int>>()
         val reader = InputStreamReader(resources.openRawResource(R.raw.level_2)).buffered()
-        reader.forEachLine {line ->
+        reader.forEachLine { line ->
             fieldTypeList.add(line.split(" ".toRegex()).map { splited -> splited.toInt() }
                 .toTypedArray())
         }

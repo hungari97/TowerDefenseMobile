@@ -25,9 +25,12 @@ enum class EFeatureFactory {
                 1500
             )
             val trap = Trap(data)
-            trap.data.functionality=trap
+            trap.data.functionality = trap
             return trap
         }
+
+        override fun isProducedType(instance: AFeature<*>): Boolean =
+            instance is Trap && instance.data.animationState.name.contains("SPIKE")
 
     },
     FIRETRAP {
@@ -51,6 +54,9 @@ enum class EFeatureFactory {
             trap.data.functionality = trap
             return trap
         }
+
+        override fun isProducedType(instance: AFeature<*>): Boolean =
+            instance is Trap && instance.data.animationState.name.contains("FIRE")
     },
     CRYSTAL {
         override val iconIndex: Int
@@ -73,9 +79,13 @@ enum class EFeatureFactory {
             crystal.data.functionality = crystal
             return crystal
         }
+
+        override fun isProducedType(instance: AFeature<*>): Boolean =
+            instance is Feature && instance.data.animationState.name.contains("CRYSTAl")
     };
 
     abstract fun createFeature(position: Vector<Int>, id: Long, rotation: EDirection): AFeature<*>
+    abstract fun isProducedType(instance: AFeature<*>): Boolean
     abstract val iconIndex: Int
 
 }

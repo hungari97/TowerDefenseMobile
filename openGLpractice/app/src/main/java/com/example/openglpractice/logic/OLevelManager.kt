@@ -13,9 +13,7 @@ import com.example.openglpractice.model.character.CharacterData
 import com.example.openglpractice.model.character.HeroData
 import com.example.openglpractice.model.feature.AFeatureData
 import com.example.openglpractice.model.interactor.BuildInteractor
-import com.example.openglpractice.presenter.GamePresenter
 import com.example.openglpractice.utility.*
-import javax.inject.Inject
 import kotlin.random.Random
 
 
@@ -31,7 +29,7 @@ object OLevelManager {
     var characterTargetMatrix: Array<Array<ACharacter<*>?>> = arrayOf()
     var selectedTraps: Set<EFeatureFactory> = setOf()
     private var idGen: Long = 0
-    var interactor : BuildInteractor? = null
+    var interactor: BuildInteractor? = null
 
     fun initialise(levelLayout: Array<Array<Int>>) {
         idGen = 0
@@ -57,6 +55,7 @@ object OLevelManager {
             arrayOf(),
             arrayOf(),
             levelLayout[2],
+            levelLayout[3],
             14,
             0,
             3,
@@ -64,9 +63,9 @@ object OLevelManager {
         )
 
         val layout = levelLayout.toMutableList()
-        layout.removeAt(0)
-        layout.removeAt(0)
-        layout.removeAt(0)
+        repeat(4) {
+            layout.removeAt(0)
+        }
         val fields = initialiseFieldLayer(layout.toTypedArray())
         val features = initialiseFeatureLayer()
         val characters = initialiseCharacterLayer()
@@ -191,7 +190,7 @@ object OLevelManager {
             || featureMatrix[data.crystalPosition] == null
             || hero.data.health <= 0
         ) {
-            interactor?.notifyUIAboutGameEnd()
+            interactor?.gameNotifyUIAboutGameEnd()
         }
     }
 
@@ -200,21 +199,21 @@ object OLevelManager {
             data.enemyToSpawnCount.toMutableList().also { it.removeAt(0) }.toTypedArray()
     }
 
-    fun selectedFromThePalette(selectedType: Int) {
+    fun selectedFromThePalette(selectedTypeIndex: Int) {
         when {
-            selectedType == 3 -> {
+            selectedTypeIndex == 3 -> {
                 OTimer.killTimer()
             }
             selectedTrap == null -> {
-                selectedTrap = selectedTraps.elementAt(selectedType)
+                selectedTrap = selectedTraps.elementAt(selectedTypeIndex)
             }
             else -> {
                 selectedTrap?.let {
                     selectedTrap =
-                        if (it.ordinal == selectedTraps.elementAt(selectedType).ordinal) {
+                        if (it.ordinal == selectedTraps.elementAt(selectedTypeIndex).ordinal) {
                             null
                         } else
-                            selectedTraps.elementAt(selectedType)
+                            selectedTraps.elementAt(selectedTypeIndex)
                 }
             }
         }
@@ -249,14 +248,17 @@ object OLevelManager {
     }
 
     private fun okToPutDown(position: Vector<Int>): Boolean {
+        val indexOfTrapType = selectedTraps.indexOf(selectedTrap)
+        if (data.trapLimits[indexOfTrapType] == 0)
+            return false
         //Van e ott valami
-        featureMatrix[position.y][position.x]?.let {
+        featureMatrix[position]?.let {
             activateAnimation(it)
             return false
         }
 
         //in field types 0-path 1-wall 2-pit 3-water can not be build
-        when (fieldMatrix[position.y][position.x].data.type) {
+        when (fieldMatrix[position].data.type) {
             0 -> {
                 if (selectedTrap == FIRETRAP) {
                     return false
@@ -275,31 +277,15 @@ object OLevelManager {
         //ha lerakjuk akk fog e felakadni valahol ha nagyobb mint (1;1)
         selectedTrap?.let {
             val test = it.createFeature(position, 0, selectedRotation).data
-            var bool = true
-
             val direction =
                 if (test.hitBoxSize != Vector(1, 1))
                     test.rotation.vector
                 else Vector(0, 0)
-
-            if (position.x + direction.x < 0 ||
-                position.x + direction.x > 13 ||
-                position.y + direction.y > 7 ||
-                position.y + direction.y < 0
-            ) {
-                bool = false
-            } else
-                featureMatrix[position.y + direction.y][position.x + direction.x]?.let {
-                    bool = false
-                }
-                    ?: if (fieldMatrix[position.y + direction.y][position.x + direction.x].data.type != 0) {
-                        bool = false
-                    }
             test.functionality!!.remove()
-            if (!bool) {
-                return false
-            }
-
+            return position.x + direction.x in 0..13 &&
+                    position.y + direction.y in 0..7 &&
+                    featureMatrix[position + direction] == null &&
+                    fieldMatrix[position + direction].data.type == 0
         }
         return true
     }
@@ -308,67 +294,47 @@ object OLevelManager {
         feature.triggered()
     }
 
+    fun removeTrapFromData(position: Vector<Int>) {
+        if (featureMatrix[position] == null || selectedTrap != null)
+            return
+        val trap = featureMatrix[position]
+        EDirection.values().forEach {
+            if (
+                position.x + it.vector.x in 0..13 &&
+                position.y + it.vector.y in 0..7 &&
+                featureMatrix[position + it.vector] == trap
+            )
+                featureMatrix[position + it.vector] = null
+        }
+        featureMatrix[position] = null
+
+        trap?.let { trap ->
+            trap.remove()
+            data.trapLimits[EFeatureFactory.values().indexOfFirst { it.isProducedType(trap) }]++
+        }
+        interactor?.gameNotifyUIAboutTrapLimitChange()
+    }
+
     private fun addTrapToData(position: Vector<Int>) {
+        val indexOfTrapType = selectedTraps.indexOf(selectedTrap)
+        data.trapLimits[indexOfTrapType]--
+        interactor?.gameNotifyUIAboutTrapLimitChange()
         val temp =
             selectedTrap!!.createFeature(position, idGenerate(selectedTrap!!), selectedRotation)
 
         for (initialiseX in 0 until temp.data.hitBoxSize.x)
             for (initialiseY in 0 until temp.data.hitBoxSize.y) {
-                when (temp.data.rotation) {
-                    EDirection.LEFT -> {
-                        if ((position.y + initialiseY) == temp.data.hitBoxPosition.y && position.x + initialiseX == temp.data.hitBoxPosition.x) {
-                            featureMatrix[position.y + initialiseY][position.x + initialiseX] =
-                                temp
-                        } else {
-                            featureMatrix[position.y - initialiseY][position.x - initialiseX] =
-                                temp
-                        }
-                    }
-                    EDirection.UP -> {
-                        if ((position.y + initialiseY) == temp.data.hitBoxPosition.y && position.x + initialiseX == temp.data.hitBoxPosition.x) {
-                            featureMatrix[position.y + initialiseY][position.x + initialiseX] =
-                                temp
-                        } else {
-                            featureMatrix[position.y + initialiseX][position.x - initialiseY] =
-                                temp
-                        }
-                    }
-                    EDirection.RIGHT -> {
-                        featureMatrix[position.y + initialiseY][position.x + initialiseX] =
-                            temp
-                    }
-                    EDirection.DOWN -> {
-                        if ((position.y + initialiseY) == temp.data.hitBoxPosition.y && position.x + initialiseX == temp.data.hitBoxPosition.x) {
-                            featureMatrix[position.y + initialiseY][position.x + initialiseX] =
-                                temp
-                        } else {
-                            featureMatrix[position.y - initialiseX][position.x + initialiseY] =
-                                temp
-                        }
-                    }
+                val initialization = when (temp.data.rotation) {
+                    EDirection.LEFT -> Vector(-initialiseX, -initialiseY)
+                    EDirection.UP -> Vector(-initialiseY, initialiseX)
+                    EDirection.RIGHT -> Vector(initialiseX, initialiseY)
+                    EDirection.DOWN -> Vector(initialiseY, -initialiseX)
                 }
-            }
-
-        for (initialiseX in 0 until temp.data.hitBoxSize.x)
-            for (initialiseY in 0 until temp.data.hitBoxSize.y) {
-                when (temp.data.rotation) {
-                    EDirection.LEFT -> {
-                        data.featureLayer[(position.y - initialiseY) * data.columnNumber + (position.x - initialiseX)] =
-                            featureMatrix[position.y - initialiseY][position.x - initialiseX]?.data
-                    }
-                    EDirection.UP -> {
-                        data.featureLayer[(position.y + initialiseX) * data.columnNumber + (position.x + initialiseY)] =
-                            featureMatrix[position.y + initialiseX][position.x - initialiseY]?.data
-                    }
-                    EDirection.RIGHT -> {
-                        data.featureLayer[(position.y + initialiseY) * data.columnNumber + (position.x + initialiseX)] =
-                            featureMatrix[position.y + initialiseY][position.x + initialiseX]?.data
-                    }
-                    EDirection.DOWN -> {
-                        data.featureLayer[(position.y - initialiseX) * data.columnNumber + (position.x + initialiseY)] =
-                            featureMatrix[position.y - initialiseX][position.x + initialiseY]?.data
-                    }
-                }
+                featureMatrix[position + initialization] = temp
+                data.featureLayer[(position.y + initialization.y) * data.columnNumber + (position.x + initialization.x)] =
+                    featureMatrix[position + initialization]?.data
             }
     }
+
+    fun getTrapCount(index: Int): Int = data.trapLimits[index]
 }

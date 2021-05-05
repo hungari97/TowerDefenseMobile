@@ -38,8 +38,6 @@ abstract class ACharacter<T : IAnimateEnum> : IInteractable, IAnimatable {
                     data.path = calcPathBetween(data.hitBoxPosition, goal)
                     data.path?.let { path ->
                         data.rotation = EDirection.values().first { it.vector == path[1] - path[0] }
-                    }
-                    data.path?.let {
                         data.animationProgress = 0
                         changeAnimateState(WALK)
                     }

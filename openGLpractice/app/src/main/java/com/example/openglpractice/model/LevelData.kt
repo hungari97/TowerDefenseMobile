@@ -9,6 +9,7 @@ data class LevelData(
     var featureLayer: Array<AFeatureData<*>?>,
     var characterLayer: Array<CharacterData<*>?>,
     var enemyToSpawnCount: Array<Int>,
+    var trapLimits: Array<Int>,
     val columnNumber:Int,
     var coin:Int,
     var buildLimit:Int,
