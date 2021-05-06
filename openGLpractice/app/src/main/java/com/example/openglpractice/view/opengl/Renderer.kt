@@ -57,7 +57,7 @@ class Renderer(activityContext: Context, var presenter: GamePresenter) :
         FieldLayer(this),
         FeatureLayer(this),
         CharacterLayer(this),
-        TopCharacterLayer(this)
+       // TopCharacterLayer(this)
     )
 
     private val vertexShader: String by lazy {
@@ -184,7 +184,7 @@ class Renderer(activityContext: Context, var presenter: GamePresenter) :
     fun characterUpdate() {
         characterMatrix = presenter.logicCharacterMatrix()
         layers[2].updateMatrix()
-        layers[3].updateMatrix()
+        //layers[3].updateMatrix()
     }
 
     fun featureUpdate() {

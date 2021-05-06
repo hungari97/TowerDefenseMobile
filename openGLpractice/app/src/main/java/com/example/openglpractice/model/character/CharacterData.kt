@@ -1,5 +1,7 @@
 package com.example.openglpractice.model.character
 
+import com.example.openglpractice.logic.character.ACharacter
+import com.example.openglpractice.logic.interaction.IInteractable
 import com.example.openglpractice.model.AnimatableData
 import com.example.openglpractice.model.IAnimateEnum
 import com.example.openglpractice.model.interaction.InteractableData
@@ -10,6 +12,7 @@ abstract class CharacterData<T : IAnimateEnum> : InteractableData, AnimatableDat
     abstract var path: Array<Vector<Int>>?
     abstract override var hitBoxPosition: Vector<Int>
     abstract override var hitBoxSize: Vector<Int>
+    abstract override val functionality: ACharacter<T>?
 
     abstract override val animationState: ICharacterAnimationEnum
 

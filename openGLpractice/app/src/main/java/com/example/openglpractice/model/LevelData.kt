@@ -7,7 +7,6 @@ import com.example.openglpractice.utility.Vector
 data class LevelData(
     var fieldLayer:Array<FieldData>,
     var featureLayer: Array<AFeatureData<*>?>,
-    var characterLayer: Array<CharacterData<*>?>,
     var enemyToSpawnCount: Array<Int>,
     var trapLimits: Array<Int>,
     val columnNumber:Int,

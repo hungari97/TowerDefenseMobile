@@ -4,39 +4,21 @@ import android.opengl.GLES20
 import android.opengl.Matrix
 import android.renderscript.Matrix4f
 import com.example.openglpractice.R
+import com.example.openglpractice.logic.OLevelManager
 import com.example.openglpractice.logic.character.ACharacter
-import com.example.openglpractice.utility.EDirection
+import com.example.openglpractice.utility.EDirection.*
+import com.example.openglpractice.utility.Vector
+import com.example.openglpractice.utility.div
 import com.example.openglpractice.view.opengl.Renderer
-import com.example.openglpractice.view.opengl.TileType
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
-import kotlin.math.abs
 
 class CharacterLayer(override val render: Renderer) : IDrawableLayer {
-    private var columnCount: Int = 14
-        set(value) {
-            field = value
-            rectengleCount = value * rowCount
-            positionArray = FloatArray(value * rowCount * 2 * 3 * 3)
-            textureCoordArray = FloatArray(value * rowCount * 2 * 6)
-            initialize()
-        }
-    private var rowCount: Int = 8
-        set(value) {
-            field = value
-            rectengleCount = columnCount * value
-            positionArray = FloatArray(value * columnCount * 2 * 3 * 3)
-            textureCoordArray = FloatArray(value * columnCount * 2 * 6)
-            initialize()
-        }
-
-    override var rectengleCount: Int = columnCount * rowCount
-        private set
+    override var rectengleCount: Int = 0
     var matrix: Array<Array<ACharacter<*>?>> = render.presenter.logicCharacterMatrix()[0]
-    override var positionArray = FloatArray(rectengleCount * 2 * 3 * render.mPositionDataSize)
-    override var textureCoordArray =
-        FloatArray(rectengleCount * 2 * 3 * render.mTextureCoordinateDataSize)
+    override var positionArray = FloatArray(rectengleCount * 3 * 6) { 0.0f }
+    override var textureCoordArray = FloatArray(rectengleCount * 2 * 6) { 0.0f }
 
     override lateinit var mPositions: FloatBuffer
     override lateinit var mTextureCoordinates: FloatBuffer
@@ -51,58 +33,87 @@ class CharacterLayer(override val render: Renderer) : IDrawableLayer {
 
     override val textureFile: Int
         get() = R.drawable.character_texture
-    override var mModelMatrix = Matrix4f( FloatArray(16))
+    override var mModelMatrix = Matrix4f(FloatArray(16))
         private set
     override var mMVPMatrix = Matrix4f(FloatArray(16))
         private set
 
     override fun initialize() {
-        for (column in 0 until columnCount) {
-            for (row in 0 until rowCount) {
-                positionArray[row * 18 * columnCount + column * 18] = (column.toFloat() / 2)
-                positionArray[row * 18 * columnCount + column * 18 + 1] = (row.toFloat() / 2 + 0.5f)
-                positionArray[row * 18 * columnCount + column * 18 + 2] = 0.0f
+        val characters = OLevelManager.characterPositionMatrix.reduce { left, right ->
+            val newArray = Array(left.size + right.size) {
+                if (it < left.size)
+                    left[it]
+                else
+                    right[it - left.size]
+            }
+            newArray
+        }.filterNotNull().toSet().map { it.data }
+        rectengleCount = characters.size
+        positionArray = FloatArray(rectengleCount * 3 * 6) { 0.0f }
+        textureCoordArray = FloatArray(rectengleCount * 2 * 6) { 0.0f }
+        characters.forEachIndexed { index, characterData ->
+            val size: Vector<Float>
+            val position: Vector<Float>
+            when (characterData.rotation) {
+                UP -> {
+                    size = Vector(characterData.hitBoxSize.y, characterData.hitBoxSize.x) / 2.0f
+                    position = characterData.hitBoxPosition.copy() / 2.0f
+                }
+                LEFT -> {
+                    size = characterData.hitBoxSize.copy() / 2.0f
+                    position = characterData.hitBoxPosition
+                        .copy(x = characterData.hitBoxPosition.x + 1 - (size.x * 2).toInt()) / 2.0f
+                }
+                DOWN -> {
+                    size = Vector(characterData.hitBoxSize.y, characterData.hitBoxSize.x) / 2.0f
+                    position = characterData.hitBoxPosition
+                        .copy(
+                            x = characterData.hitBoxPosition.x + 1 - (size.x * 2).toInt(),
+                            y = characterData.hitBoxPosition.y + 1 - (size.y * 2).toInt()
+                        ) / 2.0f
+                }
+                RIGHT -> {
+                    size = characterData.hitBoxSize.copy() / 2.0f
+                    position = characterData.hitBoxPosition
+                        .copy(y = characterData.hitBoxPosition.y + 1 - (size.y * 2).toInt()) / 2.0f
+                }
+            }
+            val left = position.x
+            val up = position.y + size.y
+            val right = position.x + size.x
+            val down = position.y
 
-                positionArray[row * 18 * columnCount + column * 18 + 3] = (column.toFloat() / 2)
-                positionArray[row * 18 * columnCount + column * 18 + 4] = (row.toFloat() / 2)
-                positionArray[row * 18 * columnCount + column * 18 + 5] = 0.0f
+            positionArray[index * 18] = left
+            positionArray[index * 18 + 1] = up
 
-                positionArray[row * 18 * columnCount + column * 18 + 6] =
-                    (column.toFloat() / 2 + 0.5f)
-                positionArray[row * 18 * columnCount + column * 18 + 7] = (row.toFloat() / 2 + 0.5f)
-                positionArray[row * 18 * columnCount + column * 18 + 8] = 0.0f
+            positionArray[index * 18 + 3] = left
+            positionArray[index * 18 + 4] = down
 
-                positionArray[row * 18 * columnCount + column * 18 + 9] = column.toFloat() / 2
-                positionArray[row * 18 * columnCount + column * 18 + 10] = (row.toFloat() / 2)
-                positionArray[row * 18 * columnCount + column * 18 + 11] = 0.0f
+            positionArray[index * 18 + 6] = right
+            positionArray[index * 18 + 7] = up
 
-                positionArray[row * 18 * columnCount + column * 18 + 12] =
-                    (column.toFloat() / 2 + 0.5f)
-                positionArray[row * 18 * columnCount + column * 18 + 13] = (row.toFloat() / 2)
-                positionArray[row * 18 * columnCount + column * 18 + 14] = 0.0f
+            positionArray[index * 18 + 9] = left
+            positionArray[index * 18 + 10] = down
 
-                positionArray[row * 18 * columnCount + column * 18 + 15] =
-                    (column.toFloat() / 2 + 0.5f)
-                positionArray[row * 18 * columnCount + column * 18 + 16] =
-                    (row.toFloat() / 2 + 0.5f)
-                positionArray[row * 18 * columnCount + column * 18 + 17] = 0.0f
+            positionArray[index * 18 + 12] = right
+            positionArray[index * 18 + 13] = down
 
+            positionArray[index * 18 + 15] = right
+            positionArray[index * 18 + 16] = up
+
+            (0..5).forEach {
+                positionArray[index * 18 + 2 + it * 3] = 0.0f
             }
         }
 
         //The points texture position initialise
-        var rectangleStartIndex = 0
-        for (row in matrix.indices) {
-            for (cell in matrix[row].indices) {
-                matrix[row][cell]?.let {
-                    cellTextureWithRotation(row, cell, it).forEachIndexed { _, trapFloat ->
-                        textureCoordArray[rectangleStartIndex] = trapFloat
-                        rectangleStartIndex++
+        characters.forEachIndexed { characterIndex, characterData ->
+            characterData.functionality?.let { character ->
+                cellTextureWithRotation(character)
+                    .forEachIndexed { index, trapFloat ->
+                        textureCoordArray[characterIndex * 2 * 6 + index] = trapFloat
                     }
-                } ?: TileType.CHARACTER_NOTHING.textureIndexes.forEachIndexed { _, trapFloat ->
-                    textureCoordArray[rectangleStartIndex] = trapFloat
-                    rectangleStartIndex++
-                }
+
             }
         }
 
@@ -118,29 +129,12 @@ class CharacterLayer(override val render: Renderer) : IDrawableLayer {
     }
 
     private fun cellTextureWithRotation(
-        row: Int,
-        cell: Int,
         it: ACharacter<*>,
     ): FloatArray {
-        val sor: Int
-        val oszlop: Int
-        val temp: FloatArray
-        if (it.data.rotation == EDirection.LEFT || it.data.rotation == EDirection.RIGHT) {
-            sor = abs(it.data.hitBoxPosition.y - row)
-            oszlop = abs(it.data.hitBoxPosition.x - cell)
-            temp =
-                it.data.animationState.textureArray[it.data.animationProgress * it.data.hitBoxSize.x * it.data.hitBoxSize.y
-                        + sor * it.data.hitBoxSize.x + oszlop]
-
-        } else {
-            sor = abs(it.data.hitBoxPosition.y - row)
-            oszlop = abs(it.data.hitBoxPosition.x - cell)
-            temp =
-                it.data.animationState.textureArray[it.data.animationProgress * it.data.hitBoxSize.x * it.data.hitBoxSize.y + sor * it.data.hitBoxSize.y + oszlop]
-        }
+        val temp: FloatArray = it.data.animationState.textureArray[it.data.animationProgress]
 
         when (it.data.rotation) {
-            EDirection.LEFT -> {
+            LEFT -> {
                 return floatArrayOf(
                     temp[8],
                     temp[9],
@@ -157,7 +151,7 @@ class CharacterLayer(override val render: Renderer) : IDrawableLayer {
                 )
             }
 
-            EDirection.UP -> {
+            UP -> {
                 return floatArrayOf(
                     temp[4],
                     temp[5],
@@ -174,11 +168,11 @@ class CharacterLayer(override val render: Renderer) : IDrawableLayer {
                 )
             }
 
-            EDirection.RIGHT -> {
+            RIGHT -> {
                 return temp
             }
 
-            EDirection.DOWN -> {
+            DOWN -> {
                 return floatArrayOf(
                     temp[2],
                     temp[3],

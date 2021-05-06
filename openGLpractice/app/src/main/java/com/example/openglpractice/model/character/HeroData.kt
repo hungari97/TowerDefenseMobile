@@ -17,27 +17,27 @@ data class HeroData(
     override var path: Array<Vector<Int>>?,
     override var functionality: Hero?,
     override var rotation: EDirection,
-    var trapTypes: Set<EFeatureFactory>
+    var trapTypes: Set<EFeatureFactory>,
 
-) : CharacterData<HeroData.HeroAnimateState>() {
+    ) : CharacterData<HeroData.HeroAnimateState>() {
     enum class HeroAnimateState : ICharacterAnimationEnum {
         HEROREST {
             override val action: EActionType = EActionType.REST
-            override val frameSize: Vector<Int> = Vector(1,1)
+            override val frameSize: Vector<Int> = Vector(1, 1)
             override val textureArray: Array<FloatArray> by lazy {
                 textureArrayInitialise(frameSize.x, frameSize.y, 1)
             }
         },
         HEROWALK {
             override val action: EActionType = EActionType.WALK
-            override val frameSize: Vector<Int> = Vector(2,1)
+            override val frameSize: Vector<Int> = Vector(2, 1)
             override val textureArray: Array<FloatArray> by lazy {
                 textureArrayInitialise(frameSize.x, frameSize.y, 2)
             }
         },
         HEROATTACK {
             override val action: EActionType = EActionType.ATTACK
-            override val frameSize: Vector<Int> = Vector(2,1)
+            override val frameSize: Vector<Int> = Vector(2, 1)
             override val textureArray: Array<FloatArray> by lazy {
                 textureArrayInitialise(frameSize.x, frameSize.y, 4)
             }
@@ -47,7 +47,7 @@ data class HeroData(
             minR: Int,
             minC: Int,
             maxR: Int,
-            maxC: Int
+            maxC: Int,
         ): FloatArray {
             return floatArrayOf(
                 minC / 16.0f, minR / 11.0f,
@@ -69,27 +69,22 @@ data class HeroData(
             return HEROREST.textureArray
         }*/
 
+
         fun textureArrayInitialise(
             frameSizeX: Int,
             frameSizeY: Int,
-            startingRow: Int
+            startingRow: Int,
         ): Array<FloatArray> {
-            val output = Array<FloatArray>(16 * frameSizeX * frameSizeY) { floatArrayOf(0.0f) }
+            val output = Array(16) { floatArrayOf(0.0f) }
 
             for (frameIndex in 0 until 16)
-                for (frameX in 0 until frameSizeX) {
-                    for (frameY in 0 until frameSizeY) {
-
-                        output[frameIndex * frameSizeX * frameSizeY + frameY * frameSizeX + frameX] =
-                            calculateCurrentState(
-                                (startingRow + (((frameIndex ) * frameSizeX / (16 - (16 % frameSizeX))) * frameSizeY)) + frameY,
-                                (frameIndex * frameSizeX) % (16 - (16 % frameSizeX)) + frameX,
-                                (startingRow + (((frameIndex ) * frameSizeX / (16 - (16 % frameSizeX))) * frameSizeY)) + frameY +1,
-                                (frameIndex * frameSizeX) % (16 - (16 % frameSizeX)) + frameX + 1
-                            )
-
-                    }
-                }
+                output[frameIndex] =
+                    calculateCurrentState(
+                        (startingRow + (((frameIndex) * frameSizeX / (16 - (16 % frameSizeX))) * frameSizeY)),
+                        (frameIndex * frameSizeX) % (16 - (16 % frameSizeX)),
+                        (startingRow + (((frameIndex) * frameSizeX / (16 - (16 % frameSizeX))) * frameSizeY)) + frameSizeY,
+                        (frameIndex * frameSizeX) % (16 - (16 % frameSizeX)) + frameSizeX
+                    )
             return output
         }
     }

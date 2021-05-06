@@ -53,7 +53,6 @@ object OLevelManager {
         data = LevelData(
             arrayOf(),
             arrayOf(),
-            arrayOf(),
             levelLayout[2],
             levelLayout[3],
             14,
@@ -68,11 +67,10 @@ object OLevelManager {
         }
         val fields = initialiseFieldLayer(layout.toTypedArray())
         val features = initialiseFeatureLayer()
-        val characters = initialiseCharacterLayer()
+        initialiseCharacterLayer()
 
         data.fieldLayer = fields
         data.featureLayer = features
-        data.characterLayer = characters
 
         OTimer.subscribe(::spawn)
         OTimer.subscribe(::checkIfLevelEnded)
@@ -178,6 +176,7 @@ object OLevelManager {
                         rotation = EDirection.LEFT,
                         position = Vector(characterPositionMatrix[index].lastIndex, index)
                     )
+
                 data.enemyToSpawnCount[0]--
             }
         }
