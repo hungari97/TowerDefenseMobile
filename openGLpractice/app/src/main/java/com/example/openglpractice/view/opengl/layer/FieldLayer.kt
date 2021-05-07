@@ -3,7 +3,9 @@ package com.example.openglpractice.view.opengl.layer
 import android.opengl.GLES20
 import android.renderscript.Matrix4f
 import com.example.openglpractice.R
+import com.example.openglpractice.logic.OLevelManager
 import com.example.openglpractice.utility.EDirection
+import com.example.openglpractice.utility.Vector
 import com.example.openglpractice.view.opengl.Renderer
 import com.example.openglpractice.view.opengl.TileType
 import java.nio.ByteBuffer
@@ -13,22 +15,16 @@ import java.nio.FloatBuffer
 class FieldLayer(override val render: Renderer) :
     IDrawableLayer {
 
-    var columnCount: Int = 14
+    private var size: Vector<Int> = OLevelManager.levelSize
         set(value) {
             field = value
-            positionArray = FloatArray(value * rowCount * 2 * 3 * 3)
-            textureCoordArray = FloatArray(value * rowCount * 2 * 6)
+            positionArray = FloatArray(value.x * value.y * 2 * 3 * 3)
+            textureCoordArray = FloatArray(value.x * value.y * 2 * 6)
             initialize()
         }
-    var rowCount: Int = 8
-        set(value) {
-            field = value
-            positionArray = FloatArray(value * columnCount * 2 * 3 * 3)
-            textureCoordArray = FloatArray(value * columnCount * 2 * 6)
-            initialize()
-        }
+    
     override val rectengleCount: Int
-        get() = columnCount * rowCount
+        get() = size.x * size.y
 
     override var positionArray: FloatArray = FloatArray(rectengleCount * 2 * 3 * 3)
         private set
@@ -55,35 +51,35 @@ class FieldLayer(override val render: Renderer) :
     override val textureFile: Int
         get() = R.drawable.fieldtexture
     private fun loadGridToPositionArray(){
-        for (column in 0 until columnCount) {
-            for (row in 0 until rowCount) {
-                positionArray[row * 18 * columnCount + column * 18] = (column.toFloat() / 2)
-                positionArray[row * 18 * columnCount + column * 18 + 1] = (row.toFloat() / 2 + 0.5f)
-                positionArray[row * 18 * columnCount + column * 18 + 2] = 0.0f
+        for (column in 0 until size.x) {
+            for (row in 0 until size.y) {
+                positionArray[row * 18 * size.x + column * 18] = (column.toFloat() / 2)
+                positionArray[row * 18 * size.x + column * 18 + 1] = (row.toFloat() / 2 + 0.5f)
+                positionArray[row * 18 * size.x + column * 18 + 2] = 0.0f
 
-                positionArray[row * 18 * columnCount + column * 18 + 3] = (column.toFloat() / 2)
-                positionArray[row * 18 * columnCount + column * 18 + 4] = (row.toFloat() / 2)
-                positionArray[row * 18 * columnCount + column * 18 + 5] = 0.0f
+                positionArray[row * 18 * size.x + column * 18 + 3] = (column.toFloat() / 2)
+                positionArray[row * 18 * size.x + column * 18 + 4] = (row.toFloat() / 2)
+                positionArray[row * 18 * size.x + column * 18 + 5] = 0.0f
 
-                positionArray[row * 18 * columnCount + column * 18 + 6] =
+                positionArray[row * 18 * size.x + column * 18 + 6] =
                     (column.toFloat() / 2 + 0.5f)
-                positionArray[row * 18 * columnCount + column * 18 + 7] = (row.toFloat() / 2 + 0.5f)
-                positionArray[row * 18 * columnCount + column * 18 + 8] = 0.0f
+                positionArray[row * 18 * size.x + column * 18 + 7] = (row.toFloat() / 2 + 0.5f)
+                positionArray[row * 18 * size.x + column * 18 + 8] = 0.0f
 
-                positionArray[row * 18 * columnCount + column * 18 + 9] = column.toFloat() / 2
-                positionArray[row * 18 * columnCount + column * 18 + 10] = (row.toFloat() / 2)
-                positionArray[row * 18 * columnCount + column * 18 + 11] = 0.0f
+                positionArray[row * 18 * size.x + column * 18 + 9] = column.toFloat() / 2
+                positionArray[row * 18 * size.x + column * 18 + 10] = (row.toFloat() / 2)
+                positionArray[row * 18 * size.x + column * 18 + 11] = 0.0f
 
-                positionArray[row * 18 * columnCount + column * 18 + 12] =
+                positionArray[row * 18 * size.x + column * 18 + 12] =
                     (column.toFloat() / 2 + 0.5f)
-                positionArray[row * 18 * columnCount + column * 18 + 13] = (row.toFloat() / 2)
-                positionArray[row * 18 * columnCount + column * 18 + 14] = 0.0f
+                positionArray[row * 18 * size.x + column * 18 + 13] = (row.toFloat() / 2)
+                positionArray[row * 18 * size.x + column * 18 + 14] = 0.0f
 
-                positionArray[row * 18 * columnCount + column * 18 + 15] =
+                positionArray[row * 18 * size.x + column * 18 + 15] =
                     (column.toFloat() / 2 + 0.5f)
-                positionArray[row * 18 * columnCount + column * 18 + 16] =
+                positionArray[row * 18 * size.x + column * 18 + 16] =
                     (row.toFloat() / 2 + 0.5f)
-                positionArray[row * 18 * columnCount + column * 18 + 17] = 0.0f
+                positionArray[row * 18 * size.x + column * 18 + 17] = 0.0f
 
             }
         }

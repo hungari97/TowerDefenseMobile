@@ -69,20 +69,6 @@ data class TrapData(
             )
         }
 
-       /* override fun calculateAnimationArray(type: Int, rest: Boolean): Array<FloatArray> {
-            when (type) {
-                0 -> if (rest) {
-                    SPIKEREST.textureArray
-                } else
-                    SPIKEATTACK.textureArray
-                1 -> if (rest) {
-                    FIREREST.textureArray
-                } else
-                    FIREATTACK.textureArray
-            }
-            return SPIKEREST.textureArray
-        }*/
-
         fun textureArrayInitialise(
             frameSizeX: Int,
             frameSizeY: Int,
@@ -101,7 +87,6 @@ data class TrapData(
                                 (startingRow + (((frameIndex) * frameSizeX / (16 - (16 % frameSizeX))) * frameSizeY)) + frameY + 1,
                                 (frameIndex * frameSizeX) % (16 - (16 % frameSizeX)) + frameX + 1
                             )
-
                     }
                 }
             return output

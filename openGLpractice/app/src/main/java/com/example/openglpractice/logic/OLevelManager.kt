@@ -18,18 +18,23 @@ import kotlin.random.Random
 
 
 object OLevelManager {
-    var buildMode: Boolean = true
-    var selectedRotation: EDirection = EDirection.LEFT
     lateinit var data: LevelData
-    var selectedTrap: EFeatureFactory? = null//index
+    var interactor: BuildInteractor? = null
+    var buildMode: Boolean = true
+        set(value) {
+            field = value
+            interactor?.gameNotifyUIAboutBuildModeUpdate(value)
+        }
+    var selectedRotation: EDirection = EDirection.LEFT
+    var selectedTraps: Set<EFeatureFactory> = setOf()
+    var selectedTrap: EFeatureFactory? = null
     lateinit var hero: Hero
     var featureMatrix: Array<Array<AFeature<*>?>> = arrayOf()
     var fieldMatrix: Array<Array<Field>> = arrayOf()
     var characterPositionMatrix: Array<Array<ACharacter<*>?>> = arrayOf()
     var characterTargetMatrix: Array<Array<ACharacter<*>?>> = arrayOf()
-    var selectedTraps: Set<EFeatureFactory> = setOf()
     private var idGen: Long = 0
-    var interactor: BuildInteractor? = null
+    val levelSize = Vector(14, 8)
 
     fun initialise(levelLayout: Array<Array<Int>>) {
         idGen = 0
@@ -55,10 +60,7 @@ object OLevelManager {
             arrayOf(),
             levelLayout[2],
             levelLayout[3],
-            14,
-            0,
-            3,
-            Vector(levelLayout[0][0], levelLayout[0][1]),
+            Vector(levelLayout[0][0], levelLayout[0][1])
         )
 
         val layout = levelLayout.toMutableList()
@@ -73,15 +75,16 @@ object OLevelManager {
         data.featureLayer = features
 
         OTimer.subscribe(::spawn)
+        OTimer.subscribe(::checkIfWaveEnded)
         OTimer.subscribe(::checkIfLevelEnded)
         OTimer.startThread()
     }
 
     private fun initialiseFieldLayer(types: Array<Array<Int>>): Array<FieldData> {
-        fieldMatrix = Array(8) { row ->
-            Array(14) { field ->
+        fieldMatrix = Array(levelSize.y) { row ->
+            Array(levelSize.x) { field ->
                 Field(
-                    (row * 14 + field).toLong(),
+                    (row * levelSize.x + field).toLong(),
                     row,
                     field,
                     types[row][field]
@@ -98,9 +101,9 @@ object OLevelManager {
     }
 
     private fun initialiseFeatureLayer(): Array<AFeatureData<*>?> {
-        featureMatrix = Array(8) { Array(14) { null } }
-        featureMatrix[4][6] =
-            EFeatureFactory.CRYSTAL.createFeature(Vector(6, 4), 1, EDirection.LEFT)
+        featureMatrix = Array(levelSize.y) { Array(levelSize.x) { null } }
+        featureMatrix[data.crystalPosition] =
+            EFeatureFactory.CRYSTAL.createFeature(data.crystalPosition, 1, EDirection.LEFT)
         val tempArray: MutableList<AFeatureData<*>?> = mutableListOf()
         featureMatrix.forEach { external ->
             external.forEach { internal ->
@@ -111,8 +114,8 @@ object OLevelManager {
     }
 
     private fun initialiseCharacterLayer(): Array<CharacterData<*>?> {
-        characterPositionMatrix = Array(8) { Array(14) { null } }
-        characterTargetMatrix = Array(8) { Array(14) { null } }
+        characterPositionMatrix = Array(levelSize.y) { Array(levelSize.x) { null } }
+        characterTargetMatrix = Array(levelSize.y) { Array(levelSize.x) { null } }
         characterPositionMatrix[hero.data.hitBoxPosition] = hero
 
         val tempArray: MutableList<CharacterData<*>?> = mutableListOf()
@@ -122,7 +125,7 @@ object OLevelManager {
         return tempArray.toTypedArray()
     }
 
-    fun spawn() {
+    private fun spawn() {
         if (buildMode || data.enemyToSpawnCount[0] == 0) return
         characterPositionMatrix.first().forEachIndexed { index: Int, it: ACharacter<*>? ->
             if (data.enemyToSpawnCount[0] != 0
@@ -182,10 +185,20 @@ object OLevelManager {
         }
     }
 
-    fun checkIfLevelEnded() {
-        //TODO("Az aktuális wave elfogyása csak a fázist zárja")
+    private fun checkIfWaveEnded() {
         if (data.enemyToSpawnCount[0] == 0
             && !characterPositionMatrix.any { line -> line.any { it is Enemy } }
+            || featureMatrix[data.crystalPosition] == null
+            || hero.data.health <= 0
+        ) {
+            buildMode = true
+            data.enemyToSpawnCount =
+                data.enemyToSpawnCount.copyOfRange(1, data.enemyToSpawnCount.size)
+        }
+    }
+
+    private fun checkIfLevelEnded() {
+        if (data.enemyToSpawnCount.isEmpty()
             || featureMatrix[data.crystalPosition] == null
             || hero.data.health <= 0
         ) {
@@ -222,19 +235,8 @@ object OLevelManager {
         return type.ordinal * 100 + idGen++
     }
 
-
     fun positionToHero(to: Vector<Int>) {
         hero.data.goal = to
-        /* slimes.forEachIndexed { _, it ->
-            it.data.goal = to
-            when (index % 4) {
-                 0 -> it.data.goal = Vector(to.x, to.y + (index / 4) + 1)
-                 1 -> it.data.goal = Vector(to.x - (index / 4) - 1, to.y)
-                 2 -> it.data.goal = Vector(to.x, to.y - (index / 4) - 1)
-                 else -> it.data.goal = Vector(to.x + (index / 4) + 1, to.y)
-             }
-        }*/
-
     }
 
     fun buildTrap(position: Vector<Int>) {
@@ -252,22 +254,15 @@ object OLevelManager {
             return false
         //Van e ott valami
         featureMatrix[position]?.let {
-            activateAnimation(it)
             return false
         }
 
         //in field types 0-path 1-wall 2-pit 3-water can not be build
         when (fieldMatrix[position].data.type) {
-            0 -> {
-                if (selectedTrap == FIRETRAP) {
-                    return false
-                }
-            }
-            1 -> {
-                if (selectedTrap != FIRETRAP) {
-                    return false
-                }
-            }
+            0 -> if (selectedTrap == FIRETRAP)
+                return false
+            1 -> if (selectedTrap != FIRETRAP)
+                return false
             2, 3 -> {
                 return false
             }
@@ -281,16 +276,12 @@ object OLevelManager {
                     test.rotation.vector
                 else Vector(0, 0)
             test.functionality!!.remove()
-            return position.x + direction.x in 0..13 &&
-                    position.y + direction.y in 0..7 &&
+            return position.x + direction.x in 0 until levelSize.x &&
+                    position.y + direction.y in 0 until levelSize.y &&
                     featureMatrix[position + direction] == null &&
                     fieldMatrix[position + direction].data.type == 0
         }
         return true
-    }
-
-    private fun activateAnimation(feature: AFeature<*>) {
-        feature.triggered()
     }
 
     fun removeTrapFromData(position: Vector<Int>) {
@@ -299,17 +290,18 @@ object OLevelManager {
         val trap = featureMatrix[position]
         EDirection.values().forEach {
             if (
-                position.x + it.vector.x in 0..13 &&
-                position.y + it.vector.y in 0..7 &&
+                position.x + it.vector.x in 0 until levelSize.x &&
+                position.y + it.vector.y in 0 until levelSize.y &&
                 featureMatrix[position + it.vector] == trap
             )
                 featureMatrix[position + it.vector] = null
         }
         featureMatrix[position] = null
 
-        trap?.let { trap ->
-            trap.remove()
-            data.trapLimits[EFeatureFactory.values().indexOfFirst { it.isProducedType(trap) }]++
+        trap?.let { trapNotNull ->
+            trapNotNull.remove()
+            data.trapLimits[EFeatureFactory.values()
+                .indexOfFirst { it.isProducedType(trapNotNull) }]++
         }
         interactor?.gameNotifyUIAboutTrapLimitChange()
     }
@@ -330,7 +322,7 @@ object OLevelManager {
                     EDirection.DOWN -> Vector(initialiseY, -initialiseX)
                 }
                 featureMatrix[position + initialization] = temp
-                data.featureLayer[(position.y + initialization.y) * data.columnNumber + (position.x + initialization.x)] =
+                data.featureLayer[(position.y + initialization.y) * levelSize.x + (position.x + initialization.x)] =
                     featureMatrix[position + initialization]?.data
             }
     }

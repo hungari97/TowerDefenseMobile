@@ -104,9 +104,8 @@ class GameActivity : AppCompatActivity(), GameScreen {
         fbPlayStart.setOnClickListener {
             if (buildMode) {
                 gamePresenter.buildStartWave()
-                buildMode = false
-                llTraps.visibility = View.GONE
-                llRotationArrow.visibility = View.GONE
+                llTraps.visibility = View.INVISIBLE
+                llRotationArrow.visibility = View.INVISIBLE
             } else {
                 gamePresenter.gameHeroAttack()
             }
@@ -152,6 +151,14 @@ class GameActivity : AppCompatActivity(), GameScreen {
         )
         tvTrapCount.forEachIndexed { index, textView ->
             textView.text = gamePresenter.getTrapCount(index).toString()
+        }
+    }
+
+    override fun updateBuildMode(value: Boolean) {
+        buildMode = value
+        runOnUiThread {
+            if (value)
+                llTraps.visibility = View.VISIBLE
         }
     }
 

@@ -12,7 +12,7 @@ open class Trap(override var data: TrapData) : AFeature<TrapData.TrapAnimationSt
 
     override fun hit(thing: IInteractable) {
         data.health -= thing.data.damage
-        if (data.health<=0)
+        if (data.health <= 0)
             remove()
     }
 
@@ -55,13 +55,15 @@ open class Trap(override var data: TrapData) : AFeature<TrapData.TrapAnimationSt
                 }
             }
             targets.forEach {
-                if (it is Enemy) {
-                    super.triggered()
+                if (it is Enemy)
                     it.hit(this)
-                    data.animationState = data.animationState.changeToAttack(data.animationState)
-                    data.animationProgress = 0
-                    used()
-                } }
+            }
+            if (targets.any { it is Enemy }) {
+                super.triggered()
+                data.animationState = data.animationState.changeToAttack(data.animationState)
+                data.animationProgress = 0
+                used()
+            }
         }
     }
 

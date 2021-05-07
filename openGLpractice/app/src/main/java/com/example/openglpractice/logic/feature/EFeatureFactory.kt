@@ -22,7 +22,7 @@ enum class EFeatureFactory {
                 0,
                 null,
                 rotation,
-                1500
+                10000
             )
             val trap = Trap(data)
             trap.data.functionality = trap
@@ -48,7 +48,7 @@ enum class EFeatureFactory {
                 0,
                 null,
                 rotation,
-                5000
+                10000
             )
             val trap = Trap(data)
             trap.data.functionality = trap

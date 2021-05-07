@@ -60,10 +60,6 @@ class BuildInteractor @Inject constructor() {
         levelManager.positionToHero(to)
     }
 
-    fun gameEndWave() {
-        OLevelManager.buildMode = true
-    }
-
     fun gameHeroAttack() {
         OLevelManager.hero.requestAttack()
     }
@@ -76,4 +72,6 @@ class BuildInteractor @Inject constructor() {
 
     fun buildRemoveTouch(vector: Vector<Int>) = OLevelManager.removeTrapFromData(vector)
     fun gameNotifyUIAboutTrapLimitChange() = gamePresenter.notifyUIAboutTrapLimitChange()
+
+    fun gameNotifyUIAboutBuildModeUpdate(value:Boolean) = gamePresenter.notifyUIAboutBuildModeUpdate(value)
 }

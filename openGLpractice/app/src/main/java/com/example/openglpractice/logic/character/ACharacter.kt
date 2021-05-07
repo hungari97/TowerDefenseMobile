@@ -138,7 +138,9 @@ abstract class ACharacter<T : IAnimateEnum> : IInteractable, IAnimatable {
         val knownPositions: MutableList<Vector<Int>> = mutableListOf(from)
         val reversedPath: MutableList<Vector<Int>> = mutableListOf()
         var actualPosition: Vector<Int> = from
-        val directionMatrix = Array(8) { Array<EDirection?>(14) { null } }
+        val directionMatrix = Array(OLevelManager.levelSize.y) {
+            Array<EDirection?>(OLevelManager.levelSize.x) { null }
+        }
 
         var actualPositionIndex = 0
         mainCycle@ while (actualPositionIndex < knownPositions.size) {
@@ -155,8 +157,8 @@ abstract class ACharacter<T : IAnimateEnum> : IInteractable, IAnimatable {
                 //és az adott pozíció a pályán belülre esik
                 //akkor megvizsgáluk
                 if (!knownPositions.contains(neighbourPosition)
-                    && neighbourPosition.y in directionMatrix.indices
-                    && neighbourPosition.x in directionMatrix[0].indices
+                    && neighbourPosition.y in 0 until OLevelManager.levelSize.y
+                    && neighbourPosition.x in 0 until OLevelManager.levelSize.x
                 ) {
                     //( ha az adott pozícióban nincs karakter
                     //vagy ( az adott pozíciót elhagyni készül
@@ -205,7 +207,9 @@ abstract class ACharacter<T : IAnimateEnum> : IInteractable, IAnimatable {
         } else {
             val knownPositionsBackwards: MutableList<Vector<Int>> = mutableListOf(to)
             var actualPositionBackwards: Vector<Int> = to
-            val directionMatrixBackwards = Array(8) { Array<EDirection?>(14) { null } }
+            val directionMatrixBackwards = Array(OLevelManager.levelSize.y) {
+                Array<EDirection?>(OLevelManager.levelSize.x) { null }
+            }
 
             actualPositionIndex = 0
             mainCycle@ while (actualPositionIndex < knownPositionsBackwards.size) {
@@ -221,8 +225,8 @@ abstract class ACharacter<T : IAnimateEnum> : IInteractable, IAnimatable {
                     //és az adott pozíció a pályán belülre esik
                     //akkor megvizsgáluk
                     if (!knownPositionsBackwards.contains(neighbourPosition)
-                        && neighbourPosition.y in directionMatrixBackwards.indices
-                        && neighbourPosition.x in directionMatrixBackwards[0].indices
+                        && neighbourPosition.y in 0 until OLevelManager.levelSize.y
+                        && neighbourPosition.x in 0 until OLevelManager.levelSize.x
                     ) {
                         //ha az aktuális pozíció út
                         //akkor járható és felvesszük következő pozíciónak az útkeresésbe
@@ -275,14 +279,14 @@ abstract class ACharacter<T : IAnimateEnum> : IInteractable, IAnimatable {
             OLevelManager.characterTargetMatrix[data.hitBoxPosition] = null
         for (direction in EDirection.values().map { it.vector }) {
             val position = data.hitBoxPosition + direction
-            if (position.y !in OLevelManager.characterPositionMatrix.indices
-                || position.x !in OLevelManager.characterPositionMatrix[0].indices
+            if (position.y !in 0 until OLevelManager.levelSize.y
+                || position.x !in 0 until OLevelManager.levelSize.x
             )
                 continue
-            if (OLevelManager.characterTargetMatrix[data.hitBoxPosition + direction] == this)
-                OLevelManager.characterTargetMatrix[data.hitBoxPosition + direction] = null
-            if (OLevelManager.characterPositionMatrix[data.hitBoxPosition + direction] == this)
-                OLevelManager.characterPositionMatrix[data.hitBoxPosition + direction] = null
+            if (OLevelManager.characterTargetMatrix[position] == this)
+                OLevelManager.characterTargetMatrix[position] = null
+            if (OLevelManager.characterPositionMatrix[position] == this)
+                OLevelManager.characterPositionMatrix[position] = null
         }
     }
 
