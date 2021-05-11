@@ -7,6 +7,6 @@ import com.example.openglpractice.model.interaction.InteractableData
 
 abstract class AFeatureData<T: IAnimateEnum> : InteractableData, AnimatableData<T> {
     abstract override val functionality: AFeature<T>?
-    abstract override val animationState: IAnimateEnum
+    abstract override val animationState: T
 }
 

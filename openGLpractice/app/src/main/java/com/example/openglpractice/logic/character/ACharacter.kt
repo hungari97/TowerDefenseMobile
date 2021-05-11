@@ -11,8 +11,8 @@ import com.example.openglpractice.model.IAnimateEnum
 import com.example.openglpractice.utility.*
 import kotlin.math.abs
 
-abstract class ACharacter<T : IAnimateEnum> : IInteractable, IAnimatable {
-    abstract override val data: CharacterData<T>
+abstract class ACharacter : IInteractable, IAnimatable {
+    abstract override val data: CharacterData
     var attackRequested = false
 
     init {
@@ -74,8 +74,7 @@ abstract class ACharacter<T : IAnimateEnum> : IInteractable, IAnimatable {
     private fun onWalk() {
         // ha egy animációs ciklus véget ért
         if (data.animationProgress == 15) {
-            //és támadás lett kérve, akkor támadjon
-            //ha van út, akkor kövesse
+            //és támadás lett kérve, akkor támadjon ha van út, akkor kövesse
             data.path?.toMutableList()?.also { localPath ->
                 //tároljuk el az aktuális pozíciót és léptessük a karaktert
                 val before = localPath.removeAt(0)
@@ -93,20 +92,18 @@ abstract class ACharacter<T : IAnimateEnum> : IInteractable, IAnimatable {
 
         } else if (data.animationProgress == 0) {
             data.path?.let { localPath ->
-                //ha az út már nem a célhelyszínre vezet
-                //vagy a következő pozíciót valaki már célbavette
-                //vagy (a pozícióban más tartózkodik
-                //, aki nem készül azt elhagyni
-                //vagy éppen az aktuális karakter pozícióját vette célba)
-                //akkor új utat számítunk.
+                /*
+                ha az út már nem a célhelyszínre vezet vagy a következő pozíciót valaki már célbavette
+                //vagy (a pozícióban más tartózkodik, aki nem készül azt elhagyni
+                //vagy éppen az aktuális karakter pozícióját vette célba) akkor új utat számítunk.
+                */
                 if (data.goal != localPath.last() ||
                     OLevelManager.characterTargetMatrix[localPath[1]] != null ||
                     (OLevelManager.characterPositionMatrix[localPath[1]] != null && (
                             OLevelManager.characterPositionMatrix[localPath[1]]!!.data.animationState.action != WALK ||
-                                    OLevelManager.characterTargetMatrix[data.hitBoxPosition] ==
-                                    OLevelManager.characterPositionMatrix[localPath[1]]
-                            ))
-
+                            OLevelManager.characterTargetMatrix[data.hitBoxPosition] ==
+                            OLevelManager.characterPositionMatrix[localPath[1]]
+                    ))
                 ) {
                     data.path = calcPathBetween(data.hitBoxPosition, data.goal!!)
                     data.path?.let { path ->
@@ -153,26 +150,22 @@ abstract class ACharacter<T : IAnimateEnum> : IInteractable, IAnimatable {
             for (direction in EDirection.values()) {
                 //szomszédos pozíció
                 val neighbourPosition = actualPosition + direction.vector
-                //ha nem jártunk még az adott pozíción
-                //és az adott pozíció a pályán belülre esik
+                //ha nem jártunk még az adott pozíción és az adott pozíció a pályán belülre esik
                 //akkor megvizsgáluk
                 if (!knownPositions.contains(neighbourPosition)
                     && neighbourPosition.y in 0 until OLevelManager.levelSize.y
                     && neighbourPosition.x in 0 until OLevelManager.levelSize.x
                 ) {
-                    //( ha az adott pozícióban nincs karakter
-                    //vagy ( az adott pozíciót elhagyni készül
-                    //és nem az aktuális pozícióba tart ) )
-                    //és más nem vette még célba az aktuális pozíciót
-                    //és az aktuális pozíció út
-                    //akkor járható és felvesszük következő pozíciónak az útkeresésbe
-                    if ((
-                                OLevelManager.characterPositionMatrix[neighbourPosition] == null || (
-                                        OLevelManager.characterPositionMatrix[neighbourPosition]!!.data.animationState.action == WALK &&
-                                                OLevelManager.characterTargetMatrix[actualPosition] ==
-                                                OLevelManager.characterPositionMatrix[neighbourPosition]
-                                        )
-                                ) && OLevelManager.characterTargetMatrix[neighbourPosition] == null
+                    /*
+                    ( ha az adott pozícióban nincs karakter vagy ( az adott pozíciót elhagyni készül
+                    és nem az aktuális pozícióba tart ) ) és más nem vette még célba az aktuális pozíciót
+                    és az aktuális pozíció út akkor járható és felvesszük következő pozíciónak az útkeresésbe
+                    */
+                    if ((OLevelManager.characterPositionMatrix[neighbourPosition] == null || (
+                                OLevelManager.characterPositionMatrix[neighbourPosition]!!.data.animationState.action == WALK &&
+                                OLevelManager.characterTargetMatrix[actualPosition] ==
+                                OLevelManager.characterPositionMatrix[neighbourPosition]
+                                )) && OLevelManager.characterTargetMatrix[neighbourPosition] == null
                         && OLevelManager.fieldMatrix[neighbourPosition].data.type == 0
                     ) {
                         //felvesszük a szomszédos pozícióba a vissza vezető irányt
@@ -221,15 +214,15 @@ abstract class ACharacter<T : IAnimateEnum> : IInteractable, IAnimatable {
                 for (direction in EDirection.values()) {
                     //szomszédos pozíció
                     val neighbourPosition = actualPositionBackwards + direction.vector
-                    //ha nem jártunk még az adott pozíción
-                    //és az adott pozíció a pályán belülre esik
-                    //akkor megvizsgáluk
+                    /*
+                    ha nem jártunk még az adott pozíción
+                    és az adott pozíció a pályán belülre esik akkor megvizsgáluk
+                    */
                     if (!knownPositionsBackwards.contains(neighbourPosition)
                         && neighbourPosition.y in 0 until OLevelManager.levelSize.y
                         && neighbourPosition.x in 0 until OLevelManager.levelSize.x
                     ) {
-                        //ha az aktuális pozíció út
-                        //akkor járható és felvesszük következő pozíciónak az útkeresésbe
+                        //ha az aktuális pozíció út akkor járható és felvesszük következő pozíciónak az útkeresésbe
                         if (OLevelManager.fieldMatrix[neighbourPosition].data.type == 0) {
                             //felvesszük a szomszédos pozícióba a vissza vezető irányt
                             directionMatrixBackwards[neighbourPosition] = direction.invers

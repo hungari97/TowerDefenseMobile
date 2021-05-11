@@ -23,7 +23,7 @@ object OLevelManager {
     var buildMode: Boolean = true
         set(value) {
             field = value
-            interactor?.gameNotifyUIAboutBuildModeUpdate(value)
+            interactor?.notifyUIAboutBuildModeUpdate(value)
         }
     var selectedRotation: EDirection = EDirection.LEFT
     var selectedTraps: Set<EFeatureFactory> = setOf()
@@ -31,8 +31,8 @@ object OLevelManager {
     lateinit var hero: Hero
     var featureMatrix: Array<Array<AFeature<*>?>> = arrayOf()
     var fieldMatrix: Array<Array<Field>> = arrayOf()
-    var characterPositionMatrix: Array<Array<ACharacter<*>?>> = arrayOf()
-    var characterTargetMatrix: Array<Array<ACharacter<*>?>> = arrayOf()
+    var characterPositionMatrix: Array<Array<ACharacter?>> = arrayOf()
+    var characterTargetMatrix: Array<Array<ACharacter?>> = arrayOf()
     private var idGen: Long = 0
     val levelSize = Vector(14, 8)
 
@@ -113,12 +113,12 @@ object OLevelManager {
         return tempArray.toTypedArray()
     }
 
-    private fun initialiseCharacterLayer(): Array<CharacterData<*>?> {
+    private fun initialiseCharacterLayer(): Array<CharacterData?> {
         characterPositionMatrix = Array(levelSize.y) { Array(levelSize.x) { null } }
         characterTargetMatrix = Array(levelSize.y) { Array(levelSize.x) { null } }
-        characterPositionMatrix[hero.data.hitBoxPosition] = hero
+        characterPositionMatrix.set(hero.data.hitBoxPosition, hero)
 
-        val tempArray: MutableList<CharacterData<*>?> = mutableListOf()
+        val tempArray: MutableList<CharacterData?> = mutableListOf()
         characterPositionMatrix.forEach { external ->
             tempArray.addAll(external.map { it?.data })
         }
@@ -127,7 +127,7 @@ object OLevelManager {
 
     private fun spawn() {
         if (buildMode || data.enemyToSpawnCount[0] == 0) return
-        characterPositionMatrix.first().forEachIndexed { index: Int, it: ACharacter<*>? ->
+        characterPositionMatrix.first().forEachIndexed { index: Int, it: ACharacter? ->
             if (data.enemyToSpawnCount[0] != 0
                 && it == null
                 && fieldMatrix.first()[index].data.type == 0
@@ -141,7 +141,7 @@ object OLevelManager {
                 data.enemyToSpawnCount[0]--
             }
         }
-        characterPositionMatrix.last().forEachIndexed { index: Int, it: ACharacter<*>? ->
+        characterPositionMatrix.last().forEachIndexed { index: Int, it: ACharacter? ->
             if (data.enemyToSpawnCount[0] != 0 && it == null
                 && fieldMatrix.last()[index].data.type == 0
             ) {
@@ -154,7 +154,7 @@ object OLevelManager {
                 data.enemyToSpawnCount[0]--
             }
         }
-        characterPositionMatrix.forEachIndexed { index: Int, it: Array<ACharacter<*>?> ->
+        characterPositionMatrix.forEachIndexed { index: Int, it: Array<ACharacter?> ->
             it.first()
             it.last()
             if (data.enemyToSpawnCount[0] != 0
@@ -202,13 +202,8 @@ object OLevelManager {
             || featureMatrix[data.crystalPosition] == null
             || hero.data.health <= 0
         ) {
-            interactor?.gameNotifyUIAboutGameEnd()
+            interactor?.notifyUIAboutGameEnd()
         }
-    }
-
-    fun nextWave() {
-        data.enemyToSpawnCount =
-            data.enemyToSpawnCount.toMutableList().also { it.removeAt(0) }.toTypedArray()
     }
 
     fun selectedFromThePalette(selectedTypeIndex: Int) {
@@ -303,13 +298,13 @@ object OLevelManager {
             data.trapLimits[EFeatureFactory.values()
                 .indexOfFirst { it.isProducedType(trapNotNull) }]++
         }
-        interactor?.gameNotifyUIAboutTrapLimitChange()
+        interactor?.notifyUIAboutTrapLimitChange()
     }
 
     private fun addTrapToData(position: Vector<Int>) {
         val indexOfTrapType = selectedTraps.indexOf(selectedTrap)
         data.trapLimits[indexOfTrapType]--
-        interactor?.gameNotifyUIAboutTrapLimitChange()
+        interactor?.notifyUIAboutTrapLimitChange()
         val temp =
             selectedTrap!!.createFeature(position, idGenerate(selectedTrap!!), selectedRotation)
 

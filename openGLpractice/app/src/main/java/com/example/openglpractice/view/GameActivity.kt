@@ -30,9 +30,6 @@ class GameActivity : AppCompatActivity(), GameScreen {
     lateinit var gamePresenter: GamePresenter
     private lateinit var ibSelectTraps: Array<ImageButton>
     private lateinit var ibSelectArrow: Array<ImageButton>
-
-    /*private var x: Float = 0.0f
-    private var y: Float = 0.0f*/
     private lateinit var render: Renderer
     private var buildMode: Boolean = true
 
@@ -84,7 +81,7 @@ class GameActivity : AppCompatActivity(), GameScreen {
                     if (!ibSelectTraps.any {
                             it.background.constantState == getDrawable(R.drawable.selected_traplist_item)!!.constantState
                         } && buildMode) {
-                        gamePresenter.removeTouch(
+                        gamePresenter.buildRemoveTouch(
                             Vector(x.toInt(), y.toInt())
                         )
                         return@setOnTouchListener false
@@ -113,8 +110,7 @@ class GameActivity : AppCompatActivity(), GameScreen {
 
         ibSelectTraps = arrayOf(
             ibTrapSelect1,
-            ibTrapSelect2,
-            //ibTrapSelect3
+            ibTrapSelect2
         )
         ibSelectTraps.forEach { button ->
             button.setOnClickListener { trapSelectOnClick(button) }
@@ -122,11 +118,10 @@ class GameActivity : AppCompatActivity(), GameScreen {
 
         val tvTrapCount = arrayOf(
             tvTrapCount1,
-            tvTrapCount2,
-            //tvTrapCount3
+            tvTrapCount2
         )
         tvTrapCount.forEachIndexed { index, textView ->
-            textView.text = gamePresenter.getTrapCount(index).toString()
+            textView.text = gamePresenter.logicGetTrapCount(index).toString()
         }
 
         ibSelectTraps[0].setImageResource(gamePresenter.logicGetSelectedTrapList()[0])
@@ -146,11 +141,10 @@ class GameActivity : AppCompatActivity(), GameScreen {
     override fun updateTrapLimits() {
         val tvTrapCount = arrayOf(
             tvTrapCount1,
-            tvTrapCount2,
-            //tvTrapCount3
+            tvTrapCount2
         )
         tvTrapCount.forEachIndexed { index, textView ->
-            textView.text = gamePresenter.getTrapCount(index).toString()
+            textView.text = gamePresenter.logicGetTrapCount(index).toString()
         }
     }
 
@@ -161,22 +155,6 @@ class GameActivity : AppCompatActivity(), GameScreen {
                 llTraps.visibility = View.VISIBLE
         }
     }
-
-    /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
-    }*/
 
     private fun fieldLayer(): Array<Array<Int>> {
         val fieldTypeList = mutableListOf<Array<Int>>()
@@ -239,7 +217,7 @@ class GameActivity : AppCompatActivity(), GameScreen {
         }
     }
 
-    override fun LevelEnded() {
+    override fun levelEnded() {
         val intent = Intent(this, LevelEndActivity::class.java)
         startActivity(intent)
     }

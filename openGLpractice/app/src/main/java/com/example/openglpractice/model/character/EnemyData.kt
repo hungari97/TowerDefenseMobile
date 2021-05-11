@@ -17,7 +17,7 @@ data class EnemyData(
     override var path: Array<Vector<Int>>?,
     override var rotation: EDirection,
     override var functionality: Enemy?,
-) : CharacterData<EnemyData.EnemyAnimateState>() {
+) : CharacterData() {
     enum class EnemyAnimateState : ICharacterAnimationEnum {
         SLIMEREST {
             override val action: EActionType = REST

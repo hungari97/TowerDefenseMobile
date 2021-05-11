@@ -4,7 +4,6 @@ import android.opengl.GLES20
 import android.opengl.Matrix
 import android.renderscript.Matrix4f
 import com.example.openglpractice.R
-import com.example.openglpractice.logic.OLevelManager
 import com.example.openglpractice.logic.character.ACharacter
 import com.example.openglpractice.utility.EDirection.*
 import com.example.openglpractice.utility.Vector
@@ -16,7 +15,6 @@ import java.nio.FloatBuffer
 
 class CharacterLayer(override val render: Renderer) : IDrawableLayer {
     override var rectengleCount: Int = 0
-    var matrix: Array<Array<ACharacter<*>?>> = render.presenter.logicCharacterMatrix()[0]
     override var positionArray = FloatArray(rectengleCount * 3 * 6) { 0.0f }
     override var textureCoordArray = FloatArray(rectengleCount * 2 * 6) { 0.0f }
 
@@ -39,7 +37,7 @@ class CharacterLayer(override val render: Renderer) : IDrawableLayer {
         private set
 
     override fun initialize() {
-        val characters = OLevelManager.characterPositionMatrix.reduce { left, right ->
+        val characters = render.presenter.logicCharacterMatrix()[0].reduce { left, right ->
             val newArray = Array(left.size + right.size) {
                 if (it < left.size)
                     left[it]
@@ -129,7 +127,7 @@ class CharacterLayer(override val render: Renderer) : IDrawableLayer {
     }
 
     private fun cellTextureWithRotation(
-        it: ACharacter<*>,
+        it: ACharacter,
     ): FloatArray {
         val temp: FloatArray = it.data.animationState.textureArray[it.data.animationProgress]
 
@@ -247,7 +245,6 @@ class CharacterLayer(override val render: Renderer) : IDrawableLayer {
     }
 
     override fun updateMatrix() {
-        matrix = render.presenter.logicCharacterMatrix()[0]
         initialize()
     }
 }

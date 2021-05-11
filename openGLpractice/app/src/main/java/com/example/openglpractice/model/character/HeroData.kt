@@ -19,7 +19,7 @@ data class HeroData(
     override var rotation: EDirection,
     var trapTypes: Set<EFeatureFactory>,
 
-    ) : CharacterData<HeroData.HeroAnimateState>() {
+    ) : CharacterData() {
     enum class HeroAnimateState : ICharacterAnimationEnum {
         HEROREST {
             override val action: EActionType = EActionType.REST

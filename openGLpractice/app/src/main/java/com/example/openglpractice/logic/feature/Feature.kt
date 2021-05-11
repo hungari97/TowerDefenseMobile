@@ -14,8 +14,6 @@ class Feature(override var data: FeatureData) : AFeature<FeatureData.FeatureAnim
         }
     }
 
-    override fun onThick() {
-        //TODO("Not yet implemented")
-    }
+    override fun onThick() {}
 
 }

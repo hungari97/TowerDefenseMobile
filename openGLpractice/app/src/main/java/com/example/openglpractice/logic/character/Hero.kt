@@ -4,7 +4,7 @@ import com.example.openglpractice.logic.interaction.IInteractable
 import com.example.openglpractice.model.character.EActionType
 import com.example.openglpractice.model.character.HeroData
 
-class Hero(rawData: HeroData) : ACharacter<HeroData.HeroAnimateState>() {
+class Hero(rawData: HeroData) : ACharacter() {
     override var data: HeroData = rawData
 
     override fun hit(thing: IInteractable) {

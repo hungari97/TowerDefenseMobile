@@ -16,63 +16,46 @@ class GamePresenter(private val buildInteractor: BuildInteractor) : Presenter<Ga
         this.screen = screen
     }
 
-    fun buildTrapHasBeenSelected(trap: Int) {
-        buildInteractor.buildTrapSelect(trap)
-    }
+    fun buildTrapHasBeenSelected(trap: Int) = buildInteractor.buildTrapSelect(trap)
 
-    fun buildTouch(position: Vector<Int>) {
-        buildInteractor.buildTouchPosition(position)
-    }
+    fun buildTouch(position: Vector<Int>) = buildInteractor.buildTouchPosition(position)
 
     fun buildInitialise(field: Array<Array<Int>>): Array<Array<Field>> {
         buildInteractor.buildInitialiseManager(field)
         return buildInteractor.logicFieldMatrix()
     }
 
-    fun buildArrowSelected(arrow: Int) {
-        buildInteractor.buildArrowSelected(arrow)
-    }
+    fun buildArrowSelected(arrow: Int) = buildInteractor.buildArrowSelected(arrow)
 
-    fun buildStartWave() {
-        buildInteractor.buildStartWave()
-    }
+    fun buildStartWave() = buildInteractor.buildStartWave()
 
-    fun logicGetSelectedTrapList(): Array<Int> {
-        return buildInteractor.logicGetSelectedTrapList()
-    }
+    fun buildRemoveTouch(vector: Vector<Int>) = buildInteractor.buildRemoveTouch(vector)
 
-    fun logicFieldMatrix(): Array<Array<Field>> {
-        return buildInteractor.logicFieldMatrix()
-    }
-
-    fun logicFeatureMatrix(): Array<Array<AFeature<*>?>> {
-        return buildInteractor.logicFeatureMatrix()
-    }
-
-    fun logicCharacterMatrix(): Array<Array<Array<ACharacter<*>?>>> {
-        return buildInteractor.logicGetCharacterMatrix()
-    }
-
-    fun gameHeroGoalPosition(to: Vector<Int>) {
-        buildInteractor.gameHeroGoalPosition(to)
-    }
-
-    fun gameHeroAttack() {
-        buildInteractor.gameHeroAttack()
-    }
+    fun logicGetSelectedTrapList(): Array<Int> = buildInteractor.logicGetSelectedTrapList()
 
 
+    fun logicFieldMatrix(): Array<Array<Field>> = buildInteractor.logicFieldMatrix()
 
-    fun getTrapCount(index: Int): Int = buildInteractor.logicTrapCount(index)
 
-    fun removeTouch(vector: Vector<Int>) = buildInteractor.buildRemoveTouch(vector)
+    fun logicFeatureMatrix(): Array<Array<AFeature<*>?>> = buildInteractor.logicFeatureMatrix()
 
-    fun notifyUIAboutGameEnd() {
-        screen?.LevelEnded()
-    }
+
+    fun logicCharacterMatrix(): Array<Array<Array<ACharacter?>>> =
+        buildInteractor.logicGetCharacterMatrix()
+
+
+    fun logicGetTrapCount(index: Int): Int = buildInteractor.logicTrapCount(index)
+
+
+    fun gameHeroGoalPosition(to: Vector<Int>) = buildInteractor.gameHeroGoalPosition(to)
+
+    fun gameHeroAttack() = buildInteractor.gameHeroAttack()
+
+
+    fun notifyUIAboutGameEnd() = screen?.levelEnded()
 
     fun notifyUIAboutTrapLimitChange() = screen?.updateTrapLimits()
 
-    fun notifyUIAboutBuildModeUpdate(value:Boolean) = screen?.updateBuildMode(value)
+    fun notifyUIAboutBuildModeUpdate(value: Boolean) = screen?.updateBuildMode(value)
 
 }

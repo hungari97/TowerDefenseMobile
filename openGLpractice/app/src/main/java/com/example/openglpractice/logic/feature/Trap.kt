@@ -38,7 +38,7 @@ open class Trap(override var data: TrapData) : AFeature<TrapData.TrapAnimationSt
 
     override fun triggered() {
         if (available) {
-            val targets = mutableListOf<ACharacter<*>>()
+            val targets = mutableListOf<ACharacter>()
             OLevelManager.characterPositionMatrix[data.hitBoxPosition]?.let {
                 targets.add(it)
             }

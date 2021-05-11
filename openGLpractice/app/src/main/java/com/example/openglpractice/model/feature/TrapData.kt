@@ -14,7 +14,7 @@ data class TrapData(
     override var animationState: TrapAnimationState,
     override var animationProgress: Int,
     override var functionality: Trap?,
-    override var rotation: EDirection, //0-left, 1 -up, 2-rigth, 3, down
+    override var rotation: EDirection,
     val coolDown: Long
 
 ) : AFeatureData<TrapData.TrapAnimationState>() {

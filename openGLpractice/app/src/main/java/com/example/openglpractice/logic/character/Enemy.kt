@@ -7,7 +7,7 @@ import com.example.openglpractice.model.character.EnemyData
 import com.example.openglpractice.utility.*
 import kotlin.math.abs
 
-class Enemy(_data: EnemyData) : ACharacter<EnemyData.EnemyAnimateState>() {
+class Enemy(_data: EnemyData) : ACharacter() {
     override var data: EnemyData = _data
 
     override fun hit(thing: IInteractable) {
