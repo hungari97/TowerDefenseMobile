@@ -17,7 +17,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OpenGLpractice">
-        <activity android:name=".view.LevelEndActivity"></activity>
+        <activity android:name=".view.LevelEndActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.OpenGLpractice.NoActionBar">
+
+        </activity>
         <activity
             android:name=".view.GameActivity"
             android:label="@string/app_name"

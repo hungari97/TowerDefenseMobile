@@ -1,13 +1,12 @@
 package com.example.openglpractice.logic.character
 
 import com.example.openglpractice.logic.IAnimatable
-import com.example.openglpractice.logic.interaction.IInteractable
 import com.example.openglpractice.logic.OLevelManager
 import com.example.openglpractice.logic.OTimer
+import com.example.openglpractice.logic.interaction.IInteractable
 import com.example.openglpractice.model.character.CharacterData
 import com.example.openglpractice.model.character.EActionType
 import com.example.openglpractice.model.character.EActionType.*
-import com.example.openglpractice.model.IAnimateEnum
 import com.example.openglpractice.utility.*
 import kotlin.math.abs
 

@@ -23,7 +23,7 @@ data class EnemyData(
             override val action: EActionType = REST
             override val frameSize: Vector<Int> = Vector(1, 1)
             override val textureArray: Array<FloatArray> by lazy {
-                textureArrayInitialise(frameSize.x, frameSize.y, 6)
+                textureArrayInitialise(frameSize.x, frameSize.y, 5)
             }
 
         },
@@ -31,7 +31,7 @@ data class EnemyData(
             override val action: EActionType = WALK
             override val frameSize: Vector<Int> = Vector(2, 1)
             override val textureArray: Array<FloatArray> by lazy {
-                textureArrayInitialise(frameSize.x, frameSize.y, 7)
+                textureArrayInitialise(frameSize.x, frameSize.y, 6)
 
             }
 
@@ -40,7 +40,7 @@ data class EnemyData(
             override val action: EActionType = ATTACK
             override val frameSize: Vector<Int> = Vector(2, 1)
             override val textureArray: Array<FloatArray> by lazy {
-                textureArrayInitialise(frameSize.x, frameSize.y, 9)
+                textureArrayInitialise(frameSize.x, frameSize.y, 8)
 
             }
         };

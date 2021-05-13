@@ -56,8 +56,8 @@ class Renderer(activityContext: Context, var presenter: GamePresenter) :
     private val layers = listOf<IDrawableLayer>(
         FieldLayer(this),
         FeatureLayer(this),
-        CharacterLayer(this),
-       // TopCharacterLayer(this)
+        CharacterLayer(this)
+
     )
 
     private val vertexShader: String by lazy {

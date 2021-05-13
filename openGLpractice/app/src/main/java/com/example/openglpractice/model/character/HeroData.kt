@@ -25,21 +25,21 @@ data class HeroData(
             override val action: EActionType = EActionType.REST
             override val frameSize: Vector<Int> = Vector(1, 1)
             override val textureArray: Array<FloatArray> by lazy {
-                textureArrayInitialise(frameSize.x, frameSize.y, 1)
+                textureArrayInitialise(frameSize.x, frameSize.y, 0)
             }
         },
         HEROWALK {
             override val action: EActionType = EActionType.WALK
             override val frameSize: Vector<Int> = Vector(2, 1)
             override val textureArray: Array<FloatArray> by lazy {
-                textureArrayInitialise(frameSize.x, frameSize.y, 2)
+                textureArrayInitialise(frameSize.x, frameSize.y, 1)
             }
         },
         HEROATTACK {
             override val action: EActionType = EActionType.ATTACK
             override val frameSize: Vector<Int> = Vector(2, 1)
             override val textureArray: Array<FloatArray> by lazy {
-                textureArrayInitialise(frameSize.x, frameSize.y, 4)
+                textureArrayInitialise(frameSize.x, frameSize.y, 3)
             }
         };
 

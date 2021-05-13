@@ -454,7 +454,7 @@ enum class TileType {
     },
     CHARACTER_NOTHING{
         override val textureSize: Vector<Int> = Vector(16, 11)
-        override val tilePosition: Vector<Int> = Vector(0, 0)
+        override val tilePosition: Vector<Int> = Vector(1, 1)
         override val textureIndexes: FloatArray by lazy {
             generateTextureIndexes()
         }
