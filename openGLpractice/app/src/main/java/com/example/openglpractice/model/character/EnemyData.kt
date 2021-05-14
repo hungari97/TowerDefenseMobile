@@ -45,33 +45,6 @@ data class EnemyData(
             }
         };
 
-        fun changeToAction(rest: EnemyAnimateState, toAction: EActionType): EnemyAnimateState {
-            return when (toAction) {
-                REST -> {
-                    when (rest.ordinal % 3) {
-                        0 -> values()[rest.ordinal]
-                        1 -> values()[rest.ordinal - 1]
-                        else -> values()[rest.ordinal - 2]
-                    }
-                }
-                WALK -> {
-                    when (rest.ordinal % 3) {
-                        0 -> values()[rest.ordinal + 1]
-                        1 -> values()[rest.ordinal]
-                        else -> values()[rest.ordinal - 1]
-                    }
-                }
-                ATTACK -> {
-                    when {
-                        rest.ordinal % 3 == 0 -> values()[rest.ordinal + 2]
-                        rest.ordinal % 3 == 1 -> values()[rest.ordinal + 1]
-                        else -> values()[rest.ordinal]
-                    }
-                }
-
-            }
-        }
-
         fun calculateCurrentState(
             minR: Int,
             minC: Int,
@@ -87,16 +60,6 @@ data class EnemyData(
                 maxC / 16.0f, minR / 11.0f
             )
         }
-
-        /*override fun calculateAnimationArray(type: Int, rest: Boolean): Array<FloatArray> {
-            when (type) {
-                0 -> if (rest) {
-                    EnemyAnimateState.SLIMEREST.textureArray
-                } else
-                    SLIMEWALK.textureArray
-            }
-            return SLIMEREST.textureArray
-        }*/
 
         fun textureArrayInitialise(
             frameSizeX: Int,

@@ -27,13 +27,6 @@ data class FeatureData(
             override val frameSize: Vector<Int> = Vector(1,1)
         };
 
-        /*fun changeToAttack(rest: TrapData.TrapAnimationState): TrapData.TrapAnimationState {
-            return if (rest.ordinal % 2 == 0)
-                TrapData.TrapAnimationState.values()[rest.ordinal + 1]
-            else
-                TrapData.TrapAnimationState.values()[rest.ordinal - 1]
-        }*/
-
         fun calculateCurrentState(
             minR: Int,
             minC: Int,
@@ -50,12 +43,6 @@ data class FeatureData(
             )
         }
 
-        /*override fun calculateAnimationArray(type: Int, rest: Boolean): Array<FloatArray> {
-            when (type) {
-                0 ->return CRYSTAL.textureArray
-            }
-            return CRYSTAL.textureArray
-        }*/
 
         fun textureArrayInitialise(
             frameSizeX: Int,

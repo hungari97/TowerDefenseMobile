@@ -12,7 +12,7 @@ import com.example.openglpractice.model.*
 import com.example.openglpractice.model.character.CharacterData
 import com.example.openglpractice.model.character.HeroData
 import com.example.openglpractice.model.feature.AFeatureData
-import com.example.openglpractice.model.interactor.BuildInteractor
+import com.example.openglpractice.interactor.BuildInteractor
 import com.example.openglpractice.utility.*
 import kotlin.random.Random
 
@@ -208,9 +208,6 @@ object OLevelManager {
 
     fun selectedFromThePalette(selectedTypeIndex: Int) {
         when {
-            selectedTypeIndex == 3 -> {
-                OTimer.killTimer()
-            }
             selectedTrap == null -> {
                 selectedTrap = selectedTraps.elementAt(selectedTypeIndex)
             }

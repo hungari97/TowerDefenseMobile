@@ -59,17 +59,6 @@ data class HeroData(
             )
         }
 
-        /*override fun calculateAnimationArray(type: Int, rest: Boolean): Array<FloatArray> {
-            when (type) {
-                0 -> if (rest) {
-                   HEROREST.textureArray
-                } else
-                    HEROWALK.textureArray
-            }
-            return HEROREST.textureArray
-        }*/
-
-
         fun textureArrayInitialise(
             frameSizeX: Int,
             frameSizeY: Int,

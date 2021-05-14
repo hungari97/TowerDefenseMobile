@@ -4,7 +4,7 @@ import com.example.openglpractice.logic.feature.AFeature
 import com.example.openglpractice.logic.character.ACharacter
 import com.example.openglpractice.logic.Field
 import com.example.openglpractice.utility.Vector
-import com.example.openglpractice.model.interactor.BuildInteractor
+import com.example.openglpractice.interactor.BuildInteractor
 import com.example.openglpractice.screen.GameScreen
 
 class GamePresenter(private val buildInteractor: BuildInteractor) : Presenter<GameScreen>() {
